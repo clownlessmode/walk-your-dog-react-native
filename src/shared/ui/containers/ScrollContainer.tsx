@@ -18,7 +18,7 @@ const ScrollContainer = ({ children, style, header }: Props) => {
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <>
-        <View style={[{ backgroundColor: 'white', paddingTop: insets.top, paddingHorizontal: 15 }]}>{header}</View>
+        <View style={[{ backgroundColor: 'white', paddingTop: insets.top + 10, paddingHorizontal: 15 }]}>{header}</View>
         <KeyboardAwareScrollView
           style={[
             {

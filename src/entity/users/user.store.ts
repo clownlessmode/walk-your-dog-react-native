@@ -9,6 +9,7 @@ interface UserStore {
     isRegistered: boolean;
     isHydrated: boolean;
     setUser: (user: User | null) => void;
+    updateNumber: (telephone: string) => void;
     setToken: (token: string | null) => void;
     setIsRegistered: (isRegistered: boolean) => void;
     setIsHydrated: (isHydrated: boolean) => void;
@@ -22,6 +23,12 @@ const useUserStore = create(
             isRegistered: false,
             isHydrated: false,
             setUser: (user) => set(() => ({ user: user })),
+            updateNumber: (telephone: string) => set((state) => {
+                if (state.user) {
+                  return { user: { ...state.user, telephone } };
+                }
+                return state;
+              }),
             setToken: (token) => set(() => ({ token: token })),
             setIsRegistered: (isRegistered) => set(() => ({ isRegistered })),
             setIsHydrated: (isHydrated) => set(() => ({ isHydrated })),

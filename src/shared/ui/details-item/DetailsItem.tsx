@@ -4,7 +4,7 @@ import styles from './styles';
 import globalStyles from '@shared/constants/globalStyles';
 interface Props {
   title: string;
-  description: string;
+  description: string | undefined;
   link?: () => void
 }
 function DetailsItem({ title, description, link }: Props) {

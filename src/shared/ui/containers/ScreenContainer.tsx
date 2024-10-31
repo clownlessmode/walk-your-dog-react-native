@@ -17,7 +17,7 @@ const ScreenContainer = ({ children, style }: Props) => {
       <View
         style={[
           {
-            padding: insets.top,
+            paddingTop: insets.top + 10,
             paddingHorizontal: 15,
             backgroundColor: 'white',
             flex: 1,

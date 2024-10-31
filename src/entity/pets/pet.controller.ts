@@ -1,4 +1,4 @@
-import { useQueryClient, useMutation } from '@tanstack/react-query';
+import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query';
 import { CreatePetRo } from './model/pet.dto';
 import PetService from './pet.service';
 import { Pet } from './model/pet.interface';
@@ -10,13 +10,13 @@ interface ApiError {
   error: string;
   statusCode: number;
 }
-export const useAuthPetController = () => {
+export const useAuthPetController = (id?: string) => {
   const queryClient = useQueryClient();
   const signUpPet = useMutation<Pet, AxiosError<ApiError>, FormData>({
     mutationFn: PetService.postSignUpPet,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['pet'],
+        queryKey: ['myPets'],
       });
     },
     onError: (error: AxiosError<ApiError>) => {
@@ -28,10 +28,16 @@ export const useAuthPetController = () => {
       }
     },
   });
+  const getPet = useQuery({
+    queryKey: ['myPets', id],
+    queryFn: () => PetService.getPets(id as string),
+    enabled: !!id,
+  });
 
   return {
+    myPets: getPet.data,
     signUpPet: signUpPet.mutateAsync,
     error: signUpPet.error,
-    isLoading: signUpPet.isPending
+    isLoading: signUpPet.isPending,
   };
 };

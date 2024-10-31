@@ -1,23 +1,31 @@
 import React from 'react';
-import { Text, View, ViewProps } from 'react-native';
+import { StyleProp, Text, View, ViewProps, ViewStyle } from 'react-native';
 import styles from './styles';
 import globalStyles from '@shared/constants/globalStyles';
 interface Props extends ViewProps {
   children: React.ReactNode;
   before?: React.ReactNode;
   after?: React.ReactNode;
+  style?: StyleProp<ViewStyle>;
 }
 function Header({
   children,
-  before = <View></View>,
-  after = <View></View>,
+  before,
+  after,
+  style
 }: Props) {
   return (
-    <View style={[styles.wrapper, { justifyContent: 'space-between' }]}>
+    <View style={[style, styles.wrapper]}>
       <View style={[styles.sideContainer, !before && styles.invisible]}>
         {before}
       </View>
-      <Text style={[globalStyles.text500, styles.text]}>{children}</Text>
+      {typeof children === 'string' ? (
+        <Text style={[globalStyles.text500, styles.text]}>{children}</Text>
+      ) : (
+        <View style={{}}>  
+        {children}
+        </View>
+      )}
       <View style={[styles.sideContainer, !after && styles.invisible]}>
         {after}
       </View>

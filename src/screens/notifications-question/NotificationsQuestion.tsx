@@ -5,54 +5,18 @@ import React, { useState } from 'react';
 import { Image, Text, TouchableOpacity } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
+import { registerIndieID } from 'native-notify';
+import useUserStore from '@entity/users/user.store';
+import { useAppNavigation } from '@shared/hooks/useAppNavigation';
 
 function NotificationsQuestion() {
-  const [permissionGranted, setPermissionGranted] = useState(false); // Следим за состоянием разрешения
-
-  // Функция для запроса разрешения
-  const requestNotificationPermission = async () => {
-    if (Device.isDevice) {
-      const { status: existingStatus } = await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
-
-      // Если разрешение не получено, запрашиваем его
-      if (existingStatus !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-      }
-
-      // Проверяем результат запроса разрешения
-      if (finalStatus !== 'granted') {
-        alert('Не удалось получить разрешение на отправку уведомлений!');
-        return;
-      }
-
-      // Если разрешение получено, обновляем состояние
-      setPermissionGranted(true);
-    } else {
-      alert('Уведомления работают только на реальных устройствах!');
-    }
-  };
-
-  // Функция для отправки уведомления
-  const sendTestNotification = async () => {
-    if (permissionGranted) {
-      console.log('Отправляем уведомление...');
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: 'Проверка уведомления',
-          body: 'Это тестовое уведомление!',
-          sound: true,
-        },
-        trigger: null, // Немедленная отправка
-      });
-      console.log('Уведомление отправлено!');
-    } else {
-      alert('Сначала разрешите отправку уведомлений!');
-    }
-  };
-  console.log('Permission granted:', permissionGranted);
-
+  const navigation = useAppNavigation()
+  const { user } = useUserStore()
+ 
+const onSubmit = () => {
+  registerIndieID(user?.id, 24230, 'F4CZByJ4fRNUi31zZPdEBp');
+  navigation.navigate('appStack')
+}
   return (
     <ScreenContainer style={{ alignItems: "center", justifyContent: "center", gap: 20 }}>
       <Image
@@ -70,14 +34,7 @@ function NotificationsQuestion() {
       </Text>
 
       {/* Кнопка для запроса разрешений */}
-      <Button onPress={requestNotificationPermission}>Хочу получать уведомления</Button>
-
-      {/* Кнопка для тестового уведомления будет доступна только после получения разрешений */}
-      {permissionGranted && (
-        <Button onPress={sendTestNotification}>
-          Отправить тестовое уведомление
-        </Button>
-      )}
+      <Button onPress={onSubmit}>Хочу получать уведомления</Button>
 
       <TouchableOpacity>
         <Text style={[globalStyles.text500, { opacity: 0.5 }]}>

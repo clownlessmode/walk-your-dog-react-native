@@ -6,18 +6,20 @@ import styles from './styles'
 import globalStyles from '@shared/constants/globalStyles'
 import normalizeData from '@shared/utils/normalizeDate'
 import Logout from '@features/logout/Logout'
+import { useAppNavigation } from '@shared/hooks/useAppNavigation'
 interface Props {
   user: User
 }
 const UserDetails = ({user} : Props) => {
+  const navigation = useAppNavigation()
   return (
     <View style={styles.wrapper}>
       <DetailsItem title='Имя' description={user.meta.name} />
-      <DetailsItem title='Телефон' description={user.meta.telephone} />
+      <DetailsItem link={() => navigation.navigate("updateTelephone")} title='Телефон' description={user.meta.telephone} />
       <DetailsItem title='Email' description={user.meta.email} />
       <DetailsItem title='Способы оплаты' description={'MIR'} />
-      <DetailsItem title='Активные абонементы' description={'Активные абонементы'} />
-      {/* <DetailsItem title='Мои питомцы' description={petCount(user.pets.length)} /> */}
+      <DetailsItem title='Активные абонементы' description={'Активные абонементы'}  link={() => navigation.navigate('myPets')}/>
+      <DetailsItem link={() => navigation.navigate('myPets')} title='Мои питомцы' description={petCount(user.pets.length)}/>
       <DetailsItem title='Мои адреса' description={user.meta.address ? user.meta.address : "Нет адресов"} />
       <DetailsItem title='Бонусная программа' description='Как она работает?' />
       <DetailsItem title='Город' description={user.meta.city} />

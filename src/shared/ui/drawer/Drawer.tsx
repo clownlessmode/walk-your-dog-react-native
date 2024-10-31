@@ -1,4 +1,4 @@
-import React, { Children, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   Animated,
   Dimensions,
@@ -11,28 +11,36 @@ import {
 } from 'react-native';
 import styles from './styles';
 import Button from '../button/Button';
+
 interface Props {
   trigger: React.ReactNode;
   children: React.ReactNode;
   close?: string;
+  modalVisible?: boolean; // Сделали modalVisible необязательным
+  setModalVisible?: (visible: boolean) => void;
 }
-const { height } = Dimensions.get('window');
-function Drawer({ trigger, children, close }: Props) {
-  const panAnim = React.useRef(new Animated.Value(height)).current;
-  const opacityAnim = React.useRef(new Animated.Value(0)).current; // для прозрачности
-  const handleAnim = React.useRef(new Animated.Value(0)).current; // для линии
-  const [modalVisible, setModalVisible] = useState(false);
-  useEffect(() => {
-    if (modalVisible) {
-      // Сброс значения panAnim перед началом анимации
-      panAnim.setValue(height);
 
+const { height } = Dimensions.get('window');
+
+function Drawer({ trigger, children, close, modalVisible, setModalVisible }: Props) {
+  const panAnim = React.useRef(new Animated.Value(height)).current;
+  const opacityAnim = React.useRef(new Animated.Value(0)).current;
+  const handleAnim = React.useRef(new Animated.Value(0)).current;
+
+  // Используем локальный state, если modalVisible не передан
+  const [internalModalVisible, setInternalModalVisible] = React.useState(false);
+  const isModalVisible = modalVisible ?? internalModalVisible;
+  const toggleModalVisible = setModalVisible || setInternalModalVisible;
+
+  useEffect(() => {
+    if (isModalVisible) {
+      panAnim.setValue(height);
       Animated.parallel([
         Animated.timing(panAnim, {
           toValue: 0,
-          duration: 400, // Увеличьте продолжительность для более плавной анимации
+          duration: 400,
           useNativeDriver: true,
-          easing: Easing.out(Easing.ease), // Используйте более плавную функцию сглаживания
+          easing: Easing.out(Easing.ease),
         }),
         Animated.timing(opacityAnim, {
           toValue: 1,
@@ -57,7 +65,8 @@ function Drawer({ trigger, children, close }: Props) {
         }),
       ]).start();
     }
-  }, [modalVisible, panAnim, opacityAnim]);
+  }, [isModalVisible, panAnim, opacityAnim]);
+
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gestureState) => {
@@ -68,37 +77,34 @@ function Drawer({ trigger, children, close }: Props) {
     },
     onPanResponderRelease: (evt, gestureState) => {
       const { dy } = gestureState;
-      const modalHeight = 300; // Высота модального окна
-      const threshold = modalHeight / 2; // Порог для определения, закрывать ли окно
+      const modalHeight = 300;
+      const threshold = modalHeight / 2;
 
       if (dy > threshold) {
-        // Если свайп был больше половины высоты модального окна, закрываем окно с анимацией
         Animated.timing(panAnim, {
           toValue: height,
           duration: 200,
           useNativeDriver: true,
           easing: Easing.ease,
         }).start(() => {
-          setModalVisible(false);
+          toggleModalVisible(false);
         });
       } else {
-        // Если свайп был меньше половины высоты модального окна, возвращаем окно в исходное положение с анимацией
         Animated.timing(panAnim, {
           toValue: 0,
           duration: 200,
           useNativeDriver: true,
           easing: Easing.ease,
         }).start(() => {
-          // Анимация для линии
           Animated.sequence([
             Animated.timing(handleAnim, {
-              toValue: -2, // Поднимаем линию на 10 пикселей вверх
+              toValue: -2,
               duration: 150,
               useNativeDriver: true,
               easing: Easing.ease,
             }),
             Animated.timing(handleAnim, {
-              toValue: 0, // Возвращаем линию в исходное положение
+              toValue: 0,
               duration: 150,
               useNativeDriver: true,
               easing: Easing.ease,
@@ -108,14 +114,15 @@ function Drawer({ trigger, children, close }: Props) {
       }
     },
   });
+
   return (
     <View style={{ width: '100%' }}>
-      <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
+      <TouchableOpacity onPress={() => toggleModalVisible(!isModalVisible)}>
         {trigger}
       </TouchableOpacity>
       <Modal
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(!modalVisible)}
+        visible={isModalVisible}
+        onRequestClose={() => toggleModalVisible(!isModalVisible)}
         animationType="slide"
         transparent={true}
       >
@@ -135,7 +142,7 @@ function Drawer({ trigger, children, close }: Props) {
                 easing: Easing.in(Easing.ease),
               }),
             ]).start(() => {
-              setModalVisible(false);
+              toggleModalVisible(false);
             });
           }}
         >
@@ -146,27 +153,16 @@ function Drawer({ trigger, children, close }: Props) {
           style={[
             styles.wrapper,
             {
-              transform: [
-                {
-                  translateY: panAnim,
-                },
-              ],
+              transform: [{ translateY: panAnim }],
               opacity: opacityAnim,
             },
           ]}
         >
-          <Animated.View
-            style={[
-              styles.handle,
-              {
-                transform: [{ translateY: handleAnim }],
-              },
-            ]}
-          />
-          <View style={{width: "100%"}}>
+          <Animated.View style={[styles.handle, { transform: [{ translateY: handleAnim }] }]} />
+          <View style={{ width: '100%' }}>
             {children}
             {close && (
-              <Button onPress={() => setModalVisible(false)}>
+              <Button onPress={() => toggleModalVisible(false)}>
                 {close}
               </Button>
             )}

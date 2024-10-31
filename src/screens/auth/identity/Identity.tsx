@@ -6,19 +6,17 @@ import { View } from 'react-native';
 import styles from './styles';
 import { useAppNavigation } from '@shared/hooks/useAppNavigation';
 import useRoleStore from '../role.store';
-import { useState } from 'react';
-import CustomDropdown from '@shared/ui/dropdown/Dropdown';
-import Input from '@shared/ui/input/Input';
+import Home from '@screens/home/Home';
 
 const Identity = () => {
-  const navigation = useAppNavigation()
-  const {setRole} = useRoleStore()
+  const navigation = useAppNavigation();
+  const { setRole } = useRoleStore();
   const handleRole = (role: string) => {
-    setRole(role)
-    navigation.navigate("authorization")
-  }
+    setRole(role);
+    navigation.navigate('authorization');
+  };
   return (
-    <ScreenContainer style={{justifyContent: "space-around"}}>
+    <ScreenContainer style={{ justifyContent: 'space-around' }}>
       <Logotype />
       <View style={styles.buttonContainer}>
         <Button onPress={() => handleRole('CLIENT')}>Клиент</Button>

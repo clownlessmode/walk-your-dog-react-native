@@ -69,7 +69,7 @@ function Form() {
         refreshToken: response.user?.refreshToken,
       });
       setToken(response.accessToken)
-      navigation.navigate('profile');
+      navigation.navigate('appStack');
     }
   };
 

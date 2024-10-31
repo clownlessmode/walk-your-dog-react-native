@@ -1,3 +1,4 @@
+import registerNNPushToken from 'native-notify';
 import NavigationProvider from '@app/providers/navigation/Navigation';
 import useUserStore from '@entity/users/user.store';
 import { useLoadFonts } from '@shared/hooks/useLoadFonts';
@@ -8,6 +9,7 @@ import { DevToolsBubble } from 'react-native-react-query-devtools';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function App() {
+  registerNNPushToken(24230, 'F4CZByJ4fRNUi31zZPdEBp');
   const { isHydrated } = useUserStore()
   const { fontsLoaded, onLayoutRootView, isReady } = useLoadFonts();
   const queryClient = new QueryClient({});

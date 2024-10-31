@@ -1,6 +1,7 @@
 import useUserStore from '@entity/users/user.store';
 import globalStyles from '@shared/constants/globalStyles';
 import { useAppNavigation } from '@shared/hooks/useAppNavigation';
+import axios from 'axios';
 import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 
