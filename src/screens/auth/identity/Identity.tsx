@@ -7,6 +7,9 @@ import styles from './styles';
 import { useAppNavigation } from '@shared/hooks/useAppNavigation';
 import useRoleStore from '../role.store';
 import Home from '@screens/home/Home';
+import Service from '@screens/service/Service';
+import DetailsService from '@screens/details-service/DetailsService';
+import BuyAbonements from '@screens/buy-abonements/BuyAbonements';
 
 const Identity = () => {
   const navigation = useAppNavigation();
@@ -20,7 +23,9 @@ const Identity = () => {
       <Logotype />
       <View style={styles.buttonContainer}>
         <Button onPress={() => handleRole('CLIENT')}>Клиент</Button>
-        <Button variant="light" onPress={() => handleRole('SITTER')}>Сотрудник</Button>
+        <Button variant="light" onPress={() => handleRole('SITTER')}>
+          Сотрудник
+        </Button>
       </View>
       <ContactSupport />
     </ScreenContainer>

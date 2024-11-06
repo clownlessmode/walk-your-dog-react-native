@@ -2,7 +2,7 @@ import { Pet } from '@entity/pets/model/pet.interface';
 import useUserStore from '@entity/users/user.store';
 import GoBack from '@features/go-back/GoBack';
 import { useAppNavigation } from '@shared/hooks/useAppNavigation';
-import AddMorePet from '@shared/ui/add-more-pet/AddMorePet';
+import AddMore from '@shared/ui/add-more/AddMore';
 import ScrollContainer from '@shared/ui/containers/ScrollContainer';
 import Header from '@shared/ui/header/Header';
 import PetInfo from '@shared/ui/pet-info/PetInfo';
@@ -20,8 +20,8 @@ function MyPets() {
   return (
     <ScrollContainer header={<Header before={<GoBack />}>Мои питомцы</Header>}>
       <View style={{gap: 20}}>
-        <PetInfo pet={user?.pets} onPress={handlePetPress}/>
-        <AddMorePet />
+        <PetInfo pet={user?.pets || []} onPress={handlePetPress}/>
+        <AddMore title='Добавить еще питомца' onPress={() => navigation.navigate('signUpPet')}/>
       </View>
     </ScrollContainer>
   );

@@ -18,9 +18,9 @@ const UserDetails = ({user} : Props) => {
       <DetailsItem link={() => navigation.navigate("updateTelephone")} title='Телефон' description={user.meta.telephone} />
       <DetailsItem title='Email' description={user.meta.email} />
       <DetailsItem title='Способы оплаты' description={'MIR'} />
-      <DetailsItem title='Активные абонементы' description={'Активные абонементы'}  link={() => navigation.navigate('myPets')}/>
-      <DetailsItem link={() => navigation.navigate('myPets')} title='Мои питомцы' description={petCount(user.pets.length)}/>
-      <DetailsItem title='Мои адреса' description={user.meta.address ? user.meta.address : "Нет адресов"} />
+      <DetailsItem link={() => navigation.navigate('abonements')} title='Активные абонементы' description={'Активные абонементы'} />
+      <DetailsItem link={() => navigation.navigate('myPets')} title='Мои питомцы' description={`${petCount(user.pets.length)}`}/>
+      <DetailsItem link={() => navigation.navigate('myAddresses')} title='Мои адреса' description={user.meta.addresses ? user.meta.addresses : "Нет адресов"} />
       <DetailsItem title='Бонусная программа' description='Как она работает?' />
       <DetailsItem title='Город' description={user.meta.city} />
       <DetailsItem title='Сколько времени вы с нами' description={normalizeData(user.created_at)} />

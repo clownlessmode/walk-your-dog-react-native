@@ -7,6 +7,8 @@ import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, View } from 'react-native';
 import { DevToolsBubble } from 'react-native-react-query-devtools';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
+import ToastConfig from '@shared/ui/toast/Toast';
 
 export default function App() {
   registerNNPushToken(24230, 'F4CZByJ4fRNUi31zZPdEBp');
@@ -21,9 +23,12 @@ export default function App() {
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
         <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+       
           <NavigationProvider />
           <StatusBar style="auto" />
+          <Toast config={ToastConfig}/>
         </View>
+       
       </QueryClientProvider>
     </SafeAreaProvider>
   );

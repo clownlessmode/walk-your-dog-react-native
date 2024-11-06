@@ -163,7 +163,7 @@ export default function AppStack() {
         modalVisible={modalVisible} // Pass the visibility state
         setModalVisible={setModalVisible} // Pass the function to change visibility
       >
-        <AddRecord /> 
+        <AddRecord setModalVisible={setModalVisible}/> 
       </Drawer>
      </>
   );

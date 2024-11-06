@@ -14,24 +14,33 @@ import SelectedRemind from '@features/selected-remind/SelectedRemind';
 import { Controller, useForm } from 'react-hook-form';
 import Button from '@shared/ui/button/Button';
 import useUserStore from '@entity/users/user.store';
+import { useReminderController } from '@entity/reminders/reminders.controller';
 function InfoEvent() {
-  const { user } = useUserStore()
+  const { user } = useUserStore();
   const { selectPet } = useSelectPetStore();
   const { reminder } = useReminderStore();
+  const { createReminder } = useReminderController()
+  let petIds: string[] = [];
 
+  if (Array.isArray(selectPet)) {
+    petIds = selectPet.map((pet) => pet.id);
+  } else if (selectPet) {
+    petIds = [selectPet.id];
+  }
   const { control, handleSubmit } = useForm({
     defaultValues: {
       user: user?.id,
       datetime: '',
       reminderType: reminder?.value,
-      pet: selectPet,
+      pet: petIds,
       remind: 0,
       repeatDays: [],
     },
   });
 
-  const onSubmit = (data: any) => {
-    console.log("Заполненные данные:", data);
+  const onSubmit = async (data: any) => {
+    const response = await createReminder(data)
+    console.log('Заполненные данные:', response);
   };
   return (
     <ScreenContainer style={{ gap: 20 }}>
@@ -65,14 +74,14 @@ function InfoEvent() {
               <SelectedRepeat onChange={onChange} value={value} />
             )}
           />
-         <Controller
+          <Controller
             control={control}
             name="remind"
             render={({ field: { onChange, value } }) => (
               <SelectedRemind onChange={onChange} value={value} />
             )}
           />
-          <Button  onPress={handleSubmit(onSubmit)}>PRIVET</Button>
+          <Button onPress={handleSubmit(onSubmit)}>PRIVET</Button>
         </View>
       </View>
     </ScreenContainer>

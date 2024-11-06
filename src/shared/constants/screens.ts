@@ -17,6 +17,12 @@ import Reminder from '@screens/reminder/Reminder';
 import SelectPet from '@screens/reminder/select-pet/SelectPet';
 import InfoEvent from '@screens/reminder/info-event/InfoEvent';
 import Map from '@screens/map/Map';
+import Abonements from '@screens/abonements/Abonements';
+import Service from '@screens/service/Service';
+import DetailsService from '@screens/details-service/DetailsService';
+import BuyAbonements from '@screens/buy-abonements/BuyAbonements';
+import MyAddresses from '@screens/my-addresses/MyAddresses';
+import MyAddress from '@screens/my-addresses/my-address/MyAddress';
 
 type ScreenConfig = {
   name: keyof Screens;
@@ -147,6 +153,48 @@ export const AUTHSCREENS: ScreenConfig[] = [
   {
     name: 'map',
     component: Map,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'abonements',
+    component: Abonements,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'service',
+    component: Service,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'detailsService',
+    component: DetailsService,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'buyAbonements',
+    component: BuyAbonements,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'myAddresses',
+    component: MyAddresses,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'myAddress',
+    component: MyAddress,
     options: {
       headerShown: false,
     },

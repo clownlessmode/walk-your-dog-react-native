@@ -20,4 +20,10 @@ export type Screens = {
     selectPet: undefined;
     infoEvent: undefined;
     map: undefined;
+    abonements: undefined;
+    service: undefined;
+    detailsService: undefined;
+    buyAbonements: undefined;
+    myAddresses: undefined;
+    myAddress: {address: string, lat: number, lon: number};
 } 

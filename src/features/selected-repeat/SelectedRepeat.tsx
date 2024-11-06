@@ -6,8 +6,8 @@ import styles from './styles';
 
 const daysOfWeek = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 interface Props {
-  onChange: (value: number[]) => void;
-  value: number[]
+  onChange?: (value: number[]) => void;
+  value?: number[]
 }
 function SelecteadRepeat({onChange, value = []}: Props) {
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
@@ -18,8 +18,9 @@ function SelecteadRepeat({onChange, value = []}: Props) {
     const newSelectedDays = value.includes(dayIndex + 1)
       ? value.filter((d) => d !== dayIndex + 1) // Убираем день, если он уже выбран
       : [...value, dayIndex + 1]; // Добавляем день, если он не выбран
-
-    onChange(newSelectedDays); // Обновляем значение в форме
+    if (onChange) {
+    (newSelectedDays); // Обновляем значение в форме
+    }
   };
 
   return (

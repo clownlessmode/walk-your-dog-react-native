@@ -5,22 +5,56 @@ import { StyleSheet, Text, View } from 'react-native';
 import Button from '@shared/ui/button/Button';
 import globalStyles from '@shared/constants/globalStyles';
 import { useAppNavigation } from '@shared/hooks/useAppNavigation';
+import { useAdressesController } from '@entity/adresses/adresses.controller';
+import { useForm } from 'react-hook-form';
+import useUserStore from '@entity/users/user.store';
+import styles from './styles';
 
+interface Location {
+  address: string;
+  lat: number;
+  lon: number;
+}
 function Map() {
-  const navigation = useAppNavigation()
-    const { setMap } = useMapStore()
-    const [selectedAddress, setSelectedAddress] = useState(null);
-    const handleLocationSelect = (location: any) => {
-        console.log('Выбранное местоположение:', location);
-        setSelectedAddress(location.address); // Сохраняем адрес в локальное состояние
+  const navigation = useAppNavigation();
+  const { createAdresses, isLoading } = useAdressesController();
+  const {user} = useUserStore()
+  const { setMap, setAddress } = useMapStore();
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+
+  const { handleSubmit } = useForm();
+
+  const handleLocationSelect = (location: any) => {
+    console.log('Выбранное местоположение:', location);
+    setSelectedAddress(location.address);
+    const lat = location.coordinates.lat;
+    const lon = location.coordinates.lon;
+    const address = location.address;
+    setSelectedLocation({ address, lat, lon });
+  };
+
+  const onSubmit = async () => {
+    if (selectedLocation) {
+      const { address, lat, lon } = selectedLocation;
+      const userId = user?.id;
+      const adressesDto = {
+        address,
+        lat,
+        lon,
+        userId,
       };
-      const handleSelectAddress = () => {
-        if (selectedAddress) {
-          setMap(selectedAddress); // Сохраняем адрес в сторе
-          navigation.goBack()
-          console.log('Адрес сохранен:', selectedAddress);
-        }
-      };
+      try {
+        const response = await createAdresses(adressesDto);
+        setMap(address); 
+        setAddress({lat, lon, address})
+        navigation.goBack();
+        console.log('Адрес сохранен:', adressesDto);
+      } catch (error) {
+        console.error('Ошибка при сохранении адреса:', error);
+      }
+    }
+  };
   return (
     <>
       <YaMap
@@ -28,33 +62,26 @@ function Map() {
         mode="edit"
         initialLocation={{ lat: 55.751574, lon: 37.573856 }}
         onLocationSelect={handleLocationSelect}
-        markerIcon='https://i.ibb.co/Mfj99Lx/Pin-fill.png'
+        markerIcon="https://i.ibb.co/Mfj99Lx/Pin-fill.png"
       />
-        <View style={styles.modal}>
-          <Text style={[globalStyles.text500, {fontSize: 16, textAlign: "center"}]}>{selectedAddress}</Text>
-          <View style={{backgroundColor: "#EDEDED", height: 1, width: "100%", borderRadius: 16}}></View>
-          <Button onPress={handleSelectAddress}>Выбрать этот адрес</Button>
-        </View>
+      <View style={styles.modal}>
+        <Text
+          style={[globalStyles.text500, { fontSize: 16, textAlign: 'center' }]}
+        >
+          {selectedAddress}
+        </Text>
+        <View
+          style={{
+            backgroundColor: '#EDEDED',
+            height: 1,
+            width: '100%',
+            borderRadius: 16,
+          }}
+        ></View>
+        <Button isLoading={isLoading} onPress={handleSubmit(onSubmit)}>Выбрать этот адрес</Button>
+      </View>
     </>
   );
 }
-const styles = StyleSheet.create({
-    modal: {
-      gap: 16,
-      position: 'absolute',
-      bottom: 0,
-      width: '100%',
-      backgroundColor: '#fff',
-      paddingVertical: 36,
-      paddingHorizontal: 15,
-      borderTopLeftRadius: 16,
-      borderTopRightRadius: 16,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: -2 },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-      elevation: 5,
-    },
-  });
 
 export default Map;

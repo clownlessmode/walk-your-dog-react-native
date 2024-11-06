@@ -9,7 +9,7 @@ interface Props {
   image?: string;
   additional?: React.ReactNode;
 }
-const UserPofile = ({ name, description, link, image, additional }: Props) => {
+const UserProfile = ({ name, description, link, image, additional }: Props) => {
   return (
     <TouchableOpacity style={styles.wrapper} onPress={link}>
       <View style={styles.content}>
@@ -29,4 +29,4 @@ const UserPofile = ({ name, description, link, image, additional }: Props) => {
   );
 };
 
-export default UserPofile;
+export default UserProfile;

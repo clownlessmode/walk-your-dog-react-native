@@ -12,7 +12,7 @@ const SignUpUser = () => {
     <ScrollContainer
       header={
         <>
-          <Header before={<GoBack />}>Давайте знакомиться!</Header>
+          <Header before={<GoBack />} >Давайте знакомиться!</Header>
           <Description>Расскажите о себе</Description>
         </>
       }

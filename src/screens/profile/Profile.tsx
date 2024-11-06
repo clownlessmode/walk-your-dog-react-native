@@ -1,4 +1,4 @@
-import UserPofile from '@entity/users/ui/user-profile/UserProfile';
+import UserProfile from '@entity/users/ui/user-profile/UserProfile';
 import useUserStore from '@entity/users/user.store';
 import { AntDesign } from '@expo/vector-icons';
 import globalStyles from '@shared/constants/globalStyles';
@@ -26,7 +26,7 @@ function Profile() {
         </>
       }
     >
-        <UserPofile
+        <UserProfile
           name={user ? user?.meta.name : ''}
           description={user ? user?.meta.email : ''}
           image={user?.meta.image}

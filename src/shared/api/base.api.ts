@@ -5,7 +5,7 @@ interface ApiError {
   statusCode: number;
 }
 const baseApi = axios.create({
-  baseURL: "https://r6nt2plp-4500.asse.devtunnels.ms/api/",
+  baseURL: "https://walk-your-dog-server.onrender.com/api/",
 });
 baseApi.interceptors.response.use(
   (response) => response,

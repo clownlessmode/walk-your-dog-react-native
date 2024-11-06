@@ -7,7 +7,7 @@ export interface Meta extends BaseEntity {
     role: Role;
     name: string;
     city: string;
-    address: string;
+    addresses: string;
     email: string;
     promocode: string;
 }

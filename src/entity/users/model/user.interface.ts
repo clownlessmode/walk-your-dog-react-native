@@ -9,3 +9,5 @@ export interface User extends BaseEntity {
     balance: Balance;
     pets: Pet[];
 }
+
+

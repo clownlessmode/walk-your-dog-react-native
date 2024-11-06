@@ -3,16 +3,15 @@ import InputButton from '@shared/ui/input-button/InputButton';
 import React, { useState, useEffect } from 'react';
 import { Platform, View } from 'react-native';
 interface Props {
-  onChange: (value: string) => void;
-  value: string
+  onChange?: (value: string) => void;
+  value?: string;
 }
 function SelectedTime({ onChange, value }: Props) {
-  const [date, setDate] = useState(new Date()); // Состояние для даты
-  const [time, setTime] = useState(new Date()); // Состояние для времени
-  const [showDatePicker, setShowDatePicker] = useState(false); // Видимость DateTimePicker для даты
-  const [showTimePicker, setShowTimePicker] = useState(false); // Видимость DateTimePicker для времени
+  const [date, setDate] = useState(new Date()); 
+  const [time, setTime] = useState(new Date()); 
+  const [showDatePicker, setShowDatePicker] = useState(false); 
+  const [showTimePicker, setShowTimePicker] = useState(false); 
 
-  // Устанавливаем начальные значения из value, если они передаются
   useEffect(() => {
     if (value) {
       const dateValue = new Date(value);
@@ -23,26 +22,26 @@ function SelectedTime({ onChange, value }: Props) {
 
   const onDateChange = (event: any, selectedDate: Date | undefined) => {
     const currentDate = selectedDate || date;
-    setShowDatePicker(false); // Закрываем выбор даты
-    setDate(currentDate); // Устанавливаем выбранную дату
+    setShowDatePicker(false); 
+    setDate(currentDate); 
     console.log('Выбранная дата:', currentDate.toLocaleDateString());
 
-    // Сразу открываем выбор времени после выбора даты
     setShowTimePicker(true);
   };
 
   const onTimeChange = (event: any, selectedTime: Date | undefined) => {
     const currentTime = selectedTime || time;
-    setShowTimePicker(false); // Закрываем выбор времени
-    setTime(currentTime); // Устанавливаем выбранное время
-    console.log('Выбранное время:', currentTime.toLocaleTimeString());
+    setShowTimePicker(false);
+    setTime(currentTime); 
 
-    // Обновляем значение в react-hook-form
-    const combinedDateTime = new Date(currentTime);
-    combinedDateTime.setFullYear(date.getFullYear());
-    combinedDateTime.setMonth(date.getMonth());
-    combinedDateTime.setDate(date.getDate());
-    onChange(combinedDateTime.toISOString()); // Устанавливаем значение в формате ISO
+    const combinedDateTime = new Date(date);
+    combinedDateTime.setHours(currentTime.getHours());
+    combinedDateTime.setMinutes(currentTime.getMinutes());
+  
+    console.log('Выбранная дата и время:', combinedDateTime.toISOString());
+    if (onChange) {
+      onChange(combinedDateTime.toISOString());
+    }
   };
 
   const formatDate = (date: Date) => {
@@ -57,7 +56,7 @@ function SelectedTime({ onChange, value }: Props) {
     return date.toLocaleTimeString('ru-RU', {
       hour: '2-digit',
       minute: '2-digit',
-      hour12: false, // 24-часовой формат
+      hour12: false,
     });
   };
 
@@ -65,7 +64,7 @@ function SelectedTime({ onChange, value }: Props) {
     <View>
       <InputButton
         onPress={() => setShowDatePicker(true)}
-        title='Время'
+        title="Время"
         description={`${formatDate(date)}, ${formatTime(time)}`}
       />
 

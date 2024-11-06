@@ -21,7 +21,7 @@ function PetInfo({ variant = 'grey', pet, onPress }: Props) {
         <TouchableOpacity
           key={index}
           style={[variant === 'grey' ? styles.greyBlock : styles.lightBlock]}
-          onPress={() => onPress && onPress(p)} // Обработка выбора питомца
+          onPress={() => onPress && onPress(p)}
         >
           <View style={{ flexDirection: 'row', gap: 10 }}>
             <Image style={styles.img} source={{ uri: p.image }} />

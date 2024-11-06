@@ -1,9 +1,10 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   wrapper: {
-    flexDirection: "row",
-    alignItems: "center",
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
   },
   text: {
@@ -17,5 +18,14 @@ const styles = StyleSheet.create({
   invisible: {
     opacity: 0,
   },
+  footerContainer: {
+    alignItems: 'center',
+  },
+  footerText: {
+    fontSize: 16,
+    color: '#333',
+    textAlign: 'center',
+  },
 });
+
 export default styles;

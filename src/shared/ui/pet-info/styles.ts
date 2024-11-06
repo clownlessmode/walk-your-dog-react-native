@@ -2,22 +2,20 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   greyBlock: {
+    width: '100%',
     gap: 10,
-    alignItems: 'center',
     flexDirection: 'row',
     backgroundColor: '#EEEEEE',
     borderRadius: 16,
     padding: 10,
-    marginTop: 20
   },
   lightBlock: {
+    width: '100%',
     gap: 10,
-    alignItems: 'center',
     flexDirection: 'row',
     backgroundColor: 'white',
     borderRadius: 16,
     padding: 10,
-    marginTop: 20
   },
   img: {
     width: 50,
