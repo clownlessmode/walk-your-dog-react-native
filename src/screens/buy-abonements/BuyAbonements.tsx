@@ -1,4 +1,5 @@
 import { useAbonementsController } from '@entity/abonements/abonements.controller';
+import { AbonementRo } from '@entity/abonements/modal/abonements.interface';
 import DrawBuyAbonements from '@features/buy-abonements/DrawBuyAbonements';
 import GoBack from '@features/go-back/GoBack';
 import ScreenContainer from '@shared/ui/containers/ScreenContainer';
@@ -6,35 +7,43 @@ import Drawer from '@shared/ui/drawer/Drawer';
 import Header from '@shared/ui/header/Header';
 import Ticket from '@shared/ui/ticket/Ticket';
 import { abonementWorlds } from '@shared/utils/abonementWorlds';
-import React from 'react';
+import React, { useState } from 'react';
+import { ActivityIndicator, View } from 'react-native';
 
 function BuyAbonements() {
-  const { allAbonements, postAbonements } = useAbonementsController();
+  const { allAbonements, postAbonements, loadAllAbonements } =
+    useAbonementsController();
   return (
     <ScreenContainer>
       <Header before={<GoBack />}>Приобрести абонементы</Header>
-      {allAbonements?.map((abonement: any) => (
-        <Drawer
-        key={abonement.id}
-          trigger={
-            
-            <Ticket
+      {loadAllAbonements ? ( // Check if loading
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <ActivityIndicator size="large" color="#9D9D9D" />
+        </View>
+      ) : (
+        allAbonements?.map((abonement: AbonementRo) => (
+          <Drawer
+            key={abonement.id}
+            trigger={
+              <Ticket
+                count={abonement.total}
+                total={abonement.total}
+                title={abonement.abonementType.name}
+              />
+            }
+          >
+            <DrawBuyAbonements
+              id={abonement.id}
               count={abonement.total}
               total={abonement.total}
-              title={abonementWorlds(abonement.abonementType, abonement.total)}
+              title={abonement.abonementType.name}
+              price={abonement.price}
             />
-          }
-        >
-          <DrawBuyAbonements
-            id={abonement.id}
-            count={abonement.count}
-            total={abonement.total}
-            date={abonement.date}
-            title={abonement.abonementType}
-            price={abonement.price}
-          />
-        </Drawer>
-      ))}
+          </Drawer>
+        ))
+      )}
     </ScreenContainer>
   );
 }

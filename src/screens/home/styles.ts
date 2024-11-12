@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
   },
   paddedContent: {
     paddingHorizontal: 15,
-    paddingVertical: 20,
+    paddingVertical: 10,
     gap: 20,
   },
   balance: {

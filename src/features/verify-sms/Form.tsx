@@ -1,6 +1,7 @@
 import { useAuthController } from '@entity/auth/auth.controller';
 import { VerifyCodeRo } from '@entity/auth/model/auth.interface';
 import useUserStore from '@entity/users/user.store';
+import useRoleStore from '@screens/auth/role.store';
 import useTelephoneStore from '@screens/auth/telephone.store';
 import globalStyles from '@shared/constants/globalStyles';
 import { useAppNavigation } from '@shared/hooks/useAppNavigation';
@@ -9,11 +10,13 @@ import Otp from '@shared/ui/otp/Otp';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import Toast from 'react-native-toast-message';
 interface FormData {
   code: string;
 }
 function Form() {
   const navigation = useAppNavigation();
+  const { role } = useRoleStore();
   const { setUser, setToken } = useUserStore();
   const [timeLeft, setTimeLeft] = useState(60);
   const [isTimerActive, setIsTimerActive] = useState(true);
@@ -43,7 +46,7 @@ function Form() {
       return null;
     }
     const response = await preAuth({ telephone: telephone });
-    console.log('Код повторно отправлен на', telephone);
+    console.info('Код повторно отправлен на', telephone);
     setTimeLeft(60);
     setIsTimerActive(true);
   };
@@ -58,18 +61,12 @@ function Form() {
     });
     if (!response.user) {
       navigation.navigate('signUpUser');
+      Toast.hide();
     } else {
-      setUser({
-        balance: response.user?.balance,
-        id: response.user?.id,
-        pets: response.user?.pets,
-        meta: response.user?.meta,
-        created_at: response.user?.created_at,
-        updated_at: response.user?.updated_at,
-        refreshToken: response.user?.refreshToken,
-      });
-      setToken(response.accessToken)
+      setUser(response.user);
+      setToken(response.accessToken);
       navigation.navigate('appStack');
+      Toast.hide();
     }
   };
 

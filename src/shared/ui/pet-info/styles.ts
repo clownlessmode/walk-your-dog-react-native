@@ -17,6 +17,10 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 10,
   },
+  selectedPet: {
+    borderWidth: 1,
+    borderColor: 'black'
+  },
   img: {
     width: 50,
     height: 50,

@@ -29,7 +29,7 @@ function Drawer({
   close,
   modalVisible,
   setModalVisible,
-  hasBackdrop,
+  hasBackdrop=true,
 }: Props) {
   const panAnim = React.useRef(new Animated.Value(height)).current;
   const opacityAnim = React.useRef(new Animated.Value(0)).current;
@@ -124,7 +124,7 @@ function Drawer({
   });
 
   return (
-    <View style={{}}>
+    <View >
       <TouchableOpacity onPress={() => toggleModalVisible(!isModalVisible)}>
         {trigger}
       </TouchableOpacity>

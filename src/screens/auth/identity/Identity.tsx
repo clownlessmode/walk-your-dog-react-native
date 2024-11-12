@@ -6,10 +6,9 @@ import { View } from 'react-native';
 import styles from './styles';
 import { useAppNavigation } from '@shared/hooks/useAppNavigation';
 import useRoleStore from '../role.store';
-import Home from '@screens/home/Home';
-import Service from '@screens/service/Service';
-import DetailsService from '@screens/details-service/DetailsService';
-import BuyAbonements from '@screens/buy-abonements/BuyAbonements';
+import useUserStore from '@entity/users/user.store';
+import Form from '@features/sign-up-pet/Form';
+
 
 const Identity = () => {
   const navigation = useAppNavigation();
@@ -17,9 +16,10 @@ const Identity = () => {
   const handleRole = (role: string) => {
     setRole(role);
     navigation.navigate('authorization');
-  };
+  };  
+
   return (
-    <ScreenContainer style={{ justifyContent: 'space-around' }}>
+    <ScreenContainer style={{justifyContent: 'space-between'}}>
       <Logotype />
       <View style={styles.buttonContainer}>
         <Button onPress={() => handleRole('CLIENT')}>Клиент</Button>

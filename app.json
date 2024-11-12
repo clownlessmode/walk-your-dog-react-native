@@ -3,6 +3,8 @@
     "name": "wyd",
     "slug": "wyd",
     "version": "1.0.0",
+    "scheme": "wyd",
+
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -12,6 +14,7 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
+      "bundleIdentifier": "com.sssuettta.wyd",
       "supportsTablet": true
     },
     "android": {

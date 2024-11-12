@@ -18,6 +18,10 @@ export const useAbonementsController = (id?: string) => {
     queryKey: ['myAbonements'],
     queryFn: () => AbonementsService.getAllAbonementsUs(),
   });
+  const getPrizes = useQuery({
+    queryKey: ['prizes'],
+    queryFn: () => AbonementsService.getPrizes(),
+  });
   const postAbonements = useMutation<AbonementBuyRo, AxiosError<ApiError>, AbonementBuyDto>({
     mutationFn: AbonementsService.postAbonementsUs,
     onSuccess: () => {
@@ -36,7 +40,10 @@ export const useAbonementsController = (id?: string) => {
   });
   return {
     myAbonements: getAbonements.data,
+    loadAbonements: getAbonements.isLoading,
     allAbonements: getAllAbonements.data,
+    prizes: getPrizes.data,
+    loadAllAbonements: getAllAbonements.isLoading,
     postAbonements: postAbonements.mutateAsync
   };
 };

@@ -5,41 +5,36 @@ import globalStyles from '@shared/constants/globalStyles';
 import { useAppNavigation } from '@shared/hooks/useAppNavigation';
 import ScreenContainer from '@shared/ui/containers/ScreenContainer';
 import Header from '@shared/ui/header/Header';
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import styles from './styles';
+import { useUserController } from '@entity/users/user.controller';
+import formatMapText from '@shared/utils/formatMapText';
+import getMeOnFocus from '@shared/utils/getMeOnFocus';
+import UpcomingEvents from '@widgets/upcoming-events/UpcomingEvents';
+import Stories from '@shared/ui/stories/Stories';
+import StoryViewer from '@widgets/stories/StoriesViewer';
 
 function Home() {
+  getMeOnFocus()
   const navigation = useAppNavigation();
-  const { user } = useUserStore();
-  const { map } = useMapStore();
-  const formatMapText = (mapText: string | undefined) => {
-    if (!mapText) return ''; // Если map не определен, вернуть пустую строку
-
-    // Разделяем строку по запятой
-    const parts = mapText.split(',');
-
-    // Если есть хотя бы одна запятая, берем текст после первой запятой
-    const remainingText = parts.length > 1 ? parts.slice(1).join(',').trim() : mapText;
-
-    // Обрезаем текст до 10 символов и добавляем "..." если больше 10 символов
-    return remainingText.length > 10 ? `${remainingText.slice(0, 20)}...` : remainingText;
-  };
+  const { user } = useUserStore();  
+  const balanceTextColor = user?.balance.general === 0 ? '#4c131a' : 'black';
   return (
     <ScreenContainer style={{ paddingHorizontal: 0 }}>
       <Header
-      style={{paddingHorizontal: 15}}
+        style={{ paddingHorizontal: 15 }}
         before={
           <TouchableOpacity
+            onPress={() => navigation.navigate('map')}
             style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}
           >
-            <MaterialCommunityIcons
-              name="map-marker"
-              size={29}
-              color="#000"
-              onPress={() => navigation.navigate('map')}
-            />
-            <Text style={globalStyles.text500}>{formatMapText(map !== null ? map : undefined)}</Text>
+            <MaterialCommunityIcons name="map-marker" size={29} color="#000" />
+            <Text style={globalStyles.text500}>
+              {user?.meta.addresses[0]
+                ? formatMapText(user?.meta.addresses[user?.meta.addresses.length - 1].address !== null ? user?.meta.addresses[user?.meta.addresses.length - 1].address : undefined)
+                : 'Добавьте адрес'}
+            </Text>
           </TouchableOpacity>
         }
         after={
@@ -52,14 +47,26 @@ function Home() {
         <View style={styles.fullWidthBackground}>
           <View style={styles.paddedContent}>
             <View style={styles.balance}>
-              <Text style={globalStyles.text500}>
+              <TouchableOpacity onPress={() => navigation.navigate('deposit')}>
+              <Text style={[globalStyles.text500, {color: balanceTextColor}]}>
                 Ваш баланс: {user?.balance.general} ₽
               </Text>
+              </TouchableOpacity>
             </View>
+            <UpcomingEvents />
           </View>
         </View>
         <View style={styles.paddedContent}></View>
+        <View style={{paddingHorizontal: 15, overflow: 'hidden', borderRadius: 16, marginBottom: 10}}>
+      <ImageBackground source={require('@assets/vigul.png')} style={{borderRadius: 16, padding: 10}}>
+        <Text style={[globalStyles.text600, {fontSize: 16, color: 'white', textAlign: 'center'}]}>Выгода до 40% на выгул и дрессировку</Text>
+        <Text style={[globalStyles.text500, {fontSize: 12, color: 'white', textAlign: 'center'}]}>Чтобы пользоваться нашими услугами было еще выгоднее — попробуйте абонементы в личном кабинете. </Text>
+      </ImageBackground>
       </View>
+        <StoryViewer />
+
+      </View>
+
     </ScreenContainer>
   );
 }

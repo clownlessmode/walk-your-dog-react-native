@@ -16,6 +16,9 @@ import Switch from '@shared/ui/switch/Switch';
 import { useAuthPetController } from '@entity/pets/pet.controller';
 import useUserStore from '@entity/users/user.store';
 import { useAppNavigation } from '@shared/hooks/useAppNavigation';
+import Error from '@shared/ui/error/Error';
+import AddForm from '@features/add-info-pet/Form';
+import { AntDesign, Feather, FontAwesome6 } from '@expo/vector-icons';
 interface FormData {
   image: any;
   name: any;
@@ -37,7 +40,8 @@ interface ItemType {
 }
 
 function Form() {
-  const navigation = useAppNavigation()
+  const navigation = useAppNavigation();
+  const [showAdditionalInfo, setShowAdditionalInfo] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedType, setSelectedType] = useState<string | undefined>(
     undefined
@@ -117,7 +121,12 @@ function Form() {
     await signUpPet(formData);
     // setIsRegistered(true)
     reset();
-    navigation.navigate("notificationsQuestion")
+    // navigation.navigate("notificationsQuestion")
+    navigation.navigate('appStack');
+  };
+
+  const toggleAdditionalInfo = () => {
+    setShowAdditionalInfo((prev) => !prev);
   };
   return (
     <View style={styles.form}>
@@ -131,76 +140,86 @@ function Form() {
       <Controller
         name="name"
         control={control}
-        rules={{ required: true }}
-        render={({ field: { onChange, value } }) => (
-          <Input
-            value={value}
-            onChangeText={onChange}
-            placeholder="Имя друга"
-          />
+        rules={{
+          required: 'Имя питомца обязательно',
+          pattern: {
+            value: /^[A-Za-zА-Яа-яЁё]/,
+            message: 'Имя питомца обязательно',
+          },
+        }}
+        render={({ field: { onChange, value }, fieldState }) => (
+          <View style={{ gap: 2, width: '100%' }}>
+            <Input
+              value={value}
+              onChangeText={onChange}
+              placeholder="Имя друга"
+              error={!!fieldState.error}
+            />
+            {fieldState.error && (
+              <Error
+                style={{ justifyContent: 'flex-start' }}
+                title={fieldState.error.message}
+              />
+            )}
+          </View>
         )}
       />
       <Controller
         name="petType"
         control={control}
-        rules={{ required: true }}
-        render={({ field: { onChange, value } }) => (
-          <View style={{ zIndex: 9999 }}>
+        rules={{ required: 'Выбор вида питомца обязателен' }}
+        render={({ field: { onChange, value }, fieldState }) => (
+          <View style={{ gap: 2, width: '100%', zIndex: 100 }}>
             <Dropdown
               placeholder="Вид питомца"
               multiple={false}
               options={petTypeOptions}
               selectedValue={value}
               onSelect={(selectedValue) => {
-                onChange(selectedValue); // Обновляем состояние формы
-                setSelectedType(selectedValue as string); // Обновляем состояние типа питомца
+                onChange(selectedValue);
+                setSelectedType(selectedValue as string);
               }}
+              error={!!fieldState.error}
             />
+            {fieldState.error && (
+              <Error
+                style={{ justifyContent: 'flex-start' }}
+                title={fieldState.error.message}
+              />
+            )}
           </View>
         )}
       />
-      <Controller
-        name="breed"
-        control={control}
-        rules={{ required: true }}
-        render={({ field: { onChange, value } }) => (
-          <View style={{ zIndex: 999 }}>
-            <Dropdown
-              emptyLabel="Выберите сначала вид питомца"
-              isLoading={isBreedsLoading}
-              placeholder="Порода питомца"
-              multiple={false}
-              options={breeds}
-              selectedValue={value}
-              onSelect={onChange}
-            />
-          </View>
-        )}
-      />
+
       <Controller
         name="birthdate"
         control={control}
-        rules={{ required: true }}
-        render={({ field: { onChange, value } }) =>
+        rules={{ required: 'Выбор даты рождения питомца обязательно' }}
+        render={({ field: { onChange, value }, fieldState }) =>
           Platform.OS === 'ios' ? (
             <Drawer
               close={'Готово'}
               trigger={
-                <View
-                  style={{
-                    height: 50,
-                    borderColor: '#9D9D9D',
-                    borderRadius: 12,
-                    borderWidth: 1,
-                    paddingHorizontal: 10,
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Text style={[globalStyles.text400]}>
-                    {value
-                      ? new Date(value).toLocaleDateString('ru-RU')
-                      : 'Дата рождения'}
-                  </Text>
+                <View style={{ gap: 2, width: '100%' }}>
+                  <View
+                    style={
+                      fieldState.error
+                        ? styles.errorInputForIos
+                        : styles.inputForIos
+                    }
+                  >
+                    <Text style={[globalStyles.text400]}>
+                      {value
+                        ? new Date(value).toLocaleDateString('ru-RU')
+                        : 'Дата рождения'}
+                    </Text>
+                  </View>
+                  {fieldState.error && (
+                    <Error
+                      style={{ justifyContent: 'flex-start' }}
+                      title={fieldState.error.message}
+                    />
+                  )}
                 </View>
               }
             >
@@ -223,14 +242,23 @@ function Form() {
                 style={{ width: '100%' }}
                 onPress={() => setModalVisible(true)}
               >
-                <Input
-                  editable={false}
-                  placeholder={
-                    value
-                      ? new Date(value).toLocaleDateString('ru-RU')
-                      : 'Дата рождения'
-                  }
-                />
+                <View style={{ gap: 2, width: '100%' }}>
+                  <Input
+                    editable={false}
+                    placeholder={
+                      value
+                        ? new Date(value).toLocaleDateString('ru-RU')
+                        : 'Дата рождения'
+                    }
+                    error={!!fieldState.error}
+                  />
+                  {fieldState.error && (
+                    <Error
+                      style={{ justifyContent: 'flex-start' }}
+                      title={fieldState.error.message}
+                    />
+                  )}
+                </View>
               </TouchableOpacity>
               {modalVisible && (
                 <DateTimePicker
@@ -252,6 +280,31 @@ function Form() {
         }
       />
       <Controller
+        name="breed"
+        control={control}
+        rules={{ required: 'Выбор породы питомца обязателен' }}
+        render={({ field: { onChange, value }, fieldState }) => (
+          <View style={{ gap: 2, width: '100%', zIndex: 99 }}>
+            <Dropdown
+              emptyLabel="Выберите сначала вид питомца"
+              isLoading={isBreedsLoading}
+              placeholder="Порода питомца"
+              multiple={false}
+              options={breeds}
+              selectedValue={value}
+              onSelect={onChange}
+              error={!!fieldState.error}
+            />
+            {fieldState.error && (
+              <Error
+                style={{ justifyContent: 'flex-start' }}
+                title={fieldState.error.message}
+              />
+            )}
+          </View>
+        )}
+      />
+      <Controller
         control={control}
         name="gender"
         render={({ field: { onChange, value } }) => (
@@ -266,36 +319,41 @@ function Form() {
           />
         )}
       />
-      <Controller
-        control={control}
-        name="sterilized"
-        render={({ field: { onChange, value } }) => (
-          <Switch
-            value={value}
-            onChange={onChange}
-            title="Стерилизация/Кастрация"
-            options={[
-              { label: 'Да', value: true },
-              { label: 'Нет', value: false },
-            ]}
+      {(selectedType === 'c1f5e962-4045-4cbb-8254-f056df04a6da' ||
+        selectedType === 'e819ae59-39c8-48b4-bbfa-794f58eaf3aa') && (
+        <>
+          <Controller
+            control={control}
+            name="sterilized"
+            render={({ field: { onChange, value } }) => (
+              <Switch
+                value={value}
+                onChange={onChange}
+                title="Стерилизация/Кастрация"
+                options={[
+                  { label: 'Да', value: true },
+                  { label: 'Нет', value: false },
+                ]}
+              />
+            )}
           />
-        )}
-      />
-      <Controller
-        control={control}
-        name="pulls"
-        render={({ field: { onChange, value } }) => (
-          <Switch
-            value={value}
-            onChange={onChange}
-            title="Тянет поводок"
-            options={[
-              { label: 'Да', value: true },
-              { label: 'Нет', value: false },
-            ]}
+          <Controller
+            control={control}
+            name="pulls"
+            render={({ field: { onChange, value } }) => (
+              <Switch
+                value={value}
+                onChange={onChange}
+                title="Тянет поводок"
+                options={[
+                  { label: 'Да', value: true },
+                  { label: 'Нет', value: false },
+                ]}
+              />
+            )}
           />
-        )}
-      />
+        </>
+      )}
       <Controller
         control={control}
         name="aggressive"
@@ -314,35 +372,51 @@ function Form() {
       <Controller
         name="vaccine"
         control={control}
-        rules={{ required: true }}
-        render={({ field: { onChange, value } }) => (
-          <View style={{ zIndex: 999 }}>
+        rules={{ required: 'Выбор прививки обязателен' }}
+        render={({ field: { onChange, value }, fieldState }) => (
+          <View style={{ gap: 2, width: '100%', zIndex: 98 }}>
             <Dropdown
               placeholder="Прививки"
               multiple={true}
               options={vaccineOptions}
               selectedValue={value}
               onSelect={onChange}
+              error={!!fieldState.error}
             />
+            {fieldState.error && (
+              <Error
+                style={{ justifyContent: 'flex-start' }}
+                title={fieldState.error.message}
+              />
+            )}
           </View>
         )}
       />
       <Controller
         name="health"
         control={control}
-        rules={{ required: true }}
-        render={({ field: { onChange, value } }) => (
-          <Input
-            value={value}
-            onChangeText={onChange}
-            placeholder="Общее здоровье"
-          />
+        rules={{ required: 'Информация о общем здоровье обязательна' }}
+        render={({ field: { onChange, value }, fieldState }) => (
+          <View style={{ gap: 2, width: '100%' }}>
+            <Input
+              value={value}
+              onChangeText={onChange}
+              placeholder="Общее здоровье"
+              error={!!fieldState.error}
+            />
+            {fieldState.error && (
+              <Error
+                style={{ justifyContent: 'flex-start' }}
+                title={fieldState.error.message}
+              />
+            )}
+          </View>
         )}
       />
       <Controller
         name="additional"
         control={control}
-        rules={{ required: true }}
+        rules={{ required: false }}
         render={({ field: { onChange, value } }) => (
           <Input
             value={value}

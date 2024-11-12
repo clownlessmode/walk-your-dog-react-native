@@ -14,15 +14,16 @@ import { Text, View } from 'react-native';
 import styles from './styles';
 import ConditionsApp from '@features/conditions-app/ConditionsApp';
 import Toast from 'react-native-toast-message';
+import { useAppNavigation } from '@shared/hooks/useAppNavigation';
 interface Props {
   id: string;
   count: number;
   total: number;
   title: string;
   price: number;
-  date: Date;
 }
-function DrawBuyAbonements({ id, count, total, title, price, date }: Props) {
+function DrawBuyAbonements({ id, count, total, title, price }: Props) {
+  const navigation = useAppNavigation()
   const [balanceType, setBalanceType] = useState<'general' | 'promo'>(
     'general'
   );
@@ -33,6 +34,7 @@ function DrawBuyAbonements({ id, count, total, title, price, date }: Props) {
     if (!user) return;
     const userBalance =
       balanceType === 'general' ? user.balance.general : user.balance.promo;
+     
     if (userBalance < price) {
       Toast.show({
         type: 'error',
@@ -47,12 +49,15 @@ function DrawBuyAbonements({ id, count, total, title, price, date }: Props) {
       balanceType: balanceType,
     };
     const response = await postAbonements(purchaseData);
-    Toast.show({
-      type: 'success',
-      text1: 'Успешно',
-      text2: 'Абонемент приобретен!',
-    });
-    console.log('РЕСПОНС', response);
+    if (response) {
+      navigation.navigate('abonements')
+      Toast.show({
+        type: 'success',
+        text1: 'Успешно',
+        text2: 'Абонемент приобретен!',
+      });
+    }
+
   };
   return (
     <View style={styles.wrapper}>
@@ -76,7 +81,6 @@ function DrawBuyAbonements({ id, count, total, title, price, date }: Props) {
           count={total}
           total={total}
           title={abonementWorlds(title, total)}
-          date={date}
         />
         <Balances balanceType={balanceType} selectedBalance={setBalanceType} />
       </View>

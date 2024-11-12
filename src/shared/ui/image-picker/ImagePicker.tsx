@@ -36,7 +36,7 @@ export default function ImagePicker({
   };
 
   return (
-    <TouchableOpacity onPress={() => selectImage(true)}>
+    <TouchableOpacity style={{alignItems: 'center'}} onPress={() => selectImage(true)}>
       <View>
         {image ? (
           // Отображение изображения в base64 формате

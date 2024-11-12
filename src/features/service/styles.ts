@@ -7,16 +7,21 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 16,
     borderBottomLeftRadius: 16,
     paddingBottom: 12,
-    marginBottom: 16
+    marginBottom: 16,
   },
   addBlock: {
+    flexWrap: 'wrap',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    gap: 12,
   },
   line: {
     width: '100%',
     height: 1,
     backgroundColor: '#D9D9D9',
   },
+  serviceContainer: {
+    flexDirection: 'column',
+    gap: 12,
+  }
 });
 export default styles;

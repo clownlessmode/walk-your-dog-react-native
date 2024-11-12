@@ -1,29 +1,54 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Text, TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
+import { Text,  View, ViewProps } from 'react-native';
 import styles from './styles';
 import globalStyles from '@shared/constants/globalStyles';
-interface Props extends TouchableOpacityProps {}
-function EventBlock({...props}: Props) {
+import { formatDate } from '@widgets/date-event-block/DateEventBlock';
+interface Props extends ViewProps {
+  datetime: string;
+  nameService: string;
+  address: string
+}
+function EventBlock({datetime, nameService, address, ...props}: Props) {
+  const formatAddress = (address: string) => {
+    if (!address) return '';
+    
+    const withoutCity = address.split(',').slice(1).join(',').trim();
+    
+    const streetTypes = [
+      'улица', 'ул.',
+      'переулок', 'пер.',
+      'проспект', 'просп.',
+      'бульвар', 'б-р',
+      'шоссе',
+      'проезд'
+    ];
+    
+    let result = withoutCity;
+    streetTypes.forEach(type => {
+      result = result.replace(new RegExp(type, 'gi'), '');
+    });
+    
+    return result.replace(/\s+/g, ' ').trim();
+  };
+  
+
+const { dayMonth, hoursMinutes } = formatDate(datetime);
   return (
-    <TouchableOpacity style={styles.wrapper} {...props}>
+    <View style={styles.wrapper} {...props}>
       <View style={styles.allInfo}>
         <Text style={[globalStyles.text500, {opacity: 0.5} ]}>
-          {/* {new Intl.DateTimeFormat('ru-RU', {
-            day: 'numeric',
-            month: 'long',
-          }).format(new Date(event.date))} */}
-          date
+         {dayMonth}
         </Text>
         <Ionicons name="ellipse" size={4} color="grey" />
         <Text style={[globalStyles.text500, {opacity: 0.5} ]}>
-          time
+        {hoursMinutes}
         </Text>
       </View>
-      <Text style={[globalStyles.text500, {fontSize: 16, opacity: 0.5} ]}>
-        {/* {event.serviceName} | {event.address} */} service | address
+      <Text style={[globalStyles.text500, {fontSize: 16} ]}>
+        {nameService} | {formatAddress(address)} 
       </Text>
-    </TouchableOpacity>
+    </View>
   );
 }
 

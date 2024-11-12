@@ -6,9 +6,14 @@ export interface AbonementDto {
 }
 
 export interface AbonementRo extends BaseEntity {
-    expiresAt: string;
-    abonementType: string;
+    abonementType: AbonementType;
     total: number;
+    price: number;
+}
+
+export interface AbonementType extends BaseEntity {
+    name: string;
+    price: string;
 }
 
 export interface AbonementBuyDto{
@@ -25,8 +30,7 @@ export interface AbonementBuyRo extends BaseEntity {
 }
 
 interface Abonement extends BaseEntity {
-    id: string;
-    abonementType: string;
     total: number;
-    price: number;
+    price: string;
+    abonementType: AbonementType
 }

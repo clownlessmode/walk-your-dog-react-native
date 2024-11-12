@@ -10,5 +10,6 @@ export const useReminderController = () => {
 
   return {
     createReminder: reminder.mutateAsync,
+    loadingReminder: reminder.isPending
   };
 };

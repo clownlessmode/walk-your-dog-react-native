@@ -8,32 +8,38 @@ import MyAddressMap from '@shared/ui/my-address-map/MyAddressMap';
 import { Text, View } from 'react-native';
 import Drawer from '@shared/ui/drawer/Drawer';
 import InputInfo from '@shared/ui/input-info/InputInfo';
+import { Controller, useForm } from 'react-hook-form';
+import Error from '@shared/ui/error/Error';
+import Button from '@shared/ui/button/Button';
+import { useAdressesController } from '@entity/adresses/adresses.controller';
+import useUserStore from '@entity/users/user.store';
 type MyAddressRouteProp = RouteProp<Screens, 'myAddress'>;
 function MyAddress() {
   const route = useRoute<MyAddressRouteProp>();
-  const { lat, lon, address } = route.params;
+  const { user } = useUserStore();
+  const { lat, lon, address, id, name, apartment, doorcode, entrance } =
+    route.params;
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
-    // Автоматически открываем Drawer при монтировании компонента
     setIsModalVisible(true);
   }, []);
-  const addres = address;
   const [city, street, houseNumber] = address.split(', ');
-  // const formatAddress = (fullAddress: string) => {
-  //   const parts = fullAddress.split(',').map((part) => part.trim());
-  //   const city = parts[0]; // Первый элемент - это город
-  //   const streetAndNumber = parts[1] || ''; // Второй элемент - это улица и номер дома
-
-  //   const formattedStreet = streetAndNumber.replace(/улица/i, 'ул.').trim();
-
-  //   return {
-  //     city,
-  //     street: formattedStreet,
-  //   };
-  // };
-
-  // const { city, street } = formatAddress(address);
+  const { isUpdateLoading, updateAddress } = useAdressesController(id);
+  const { control, handleSubmit } = useForm({
+    defaultValues: {
+      city: '',
+      street: '',
+      name: name || '',
+      apartment: apartment || '',
+      entrance: entrance || '',
+      doorcode: doorcode || '',
+    },
+  });
+  const onSubmit = async (data: any) => {
+    const response = await updateAddress(data);
+    console.log(response);
+  };
   return (
     <>
       <MyAddressMap
@@ -45,7 +51,7 @@ function MyAddress() {
       <Drawer
         modalVisible={isModalVisible}
         setModalVisible={setIsModalVisible}
-        close="Сохранить"
+        // close="Сохранить"
         hasBackdrop={false}
       >
         <View>
@@ -55,24 +61,107 @@ function MyAddress() {
             description={`${street}, ${houseNumber}`}
             editable={false}
           />
-          <InputInfo
-            title="Квартира/офис"
-            description={'Квартира/офис'}
-            keyboardType="numeric"
-            maxLength={4}
+          <Controller
+            name="name"
+            control={control}
+            rules={{
+              required: 'Название адреса обязательно',
+            }}
+            render={({ field: { onChange, value }, fieldState }) => (
+              <View style={{ width: '100%' }}>
+                <InputInfo
+                  value={value}
+                  onChangeText={onChange}
+                  title="Название"
+                  description={'Название'}
+                />
+                {fieldState.error && (
+                  <Error
+                    style={{ justifyContent: 'flex-start' }}
+                    title={fieldState.error.message}
+                  />
+                )}
+              </View>
+            )}
           />
-          <InputInfo
-            title="Подъезд"
-            description={'Номер подъезда'}
-            keyboardType="numeric"
-            maxLength={2}
+          <Controller
+            name="apartment"
+            control={control}
+            rules={{
+              required: 'Номер квартиры обязателен',
+            }}
+            render={({ field: { onChange, value }, fieldState }) => (
+              <View style={{ width: '100%' }}>
+                <InputInfo
+                  value={value}
+                  onChangeText={onChange}
+                  title="Квартира/офис"
+                  description={'Квартира/офис'}
+                  keyboardType="numeric"
+                  maxLength={4}
+                />
+                {fieldState.error && (
+                  <Error
+                    style={{ justifyContent: 'flex-start' }}
+                    title={fieldState.error.message}
+                  />
+                )}
+              </View>
+            )}
           />
-          <InputInfo
-            title="Код домофона"
-            description={'Код домофона'}
-            keyboardType="numeric"
-            maxLength={5}
+          <Controller
+            name="entrance"
+            control={control}
+            rules={{
+              required: 'Номер подъезда обязателен',
+            }}
+            render={({ field: { onChange, value }, fieldState }) => (
+              <View style={{ width: '100%' }}>
+                <InputInfo
+                  value={value}
+                  onChangeText={onChange}
+                  title="Подъезд"
+                  description={'Подъезд'}
+                  keyboardType="numeric"
+                  maxLength={2}
+                />
+                {fieldState.error && (
+                  <Error
+                    style={{ justifyContent: 'flex-start' }}
+                    title={fieldState.error.message}
+                  />
+                )}
+              </View>
+            )}
           />
+          <Controller
+            name="doorcode"
+            control={control}
+            rules={{
+              required: false,
+            }}
+            render={({ field: { onChange, value }, fieldState }) => (
+              <View style={{ width: '100%' }}>
+                <InputInfo
+                  value={value}
+                  onChangeText={onChange}
+                  title="Код домофона"
+                  description={'Код домофона'}
+                  keyboardType="numeric"
+                  maxLength={5}
+                />
+                {fieldState.error && (
+                  <Error
+                    style={{ justifyContent: 'flex-start' }}
+                    title={fieldState.error.message}
+                  />
+                )}
+              </View>
+            )}
+          />
+          <Button isLoading={isUpdateLoading} onPress={handleSubmit(onSubmit)}>
+            Изменить
+          </Button>
         </View>
       </Drawer>
     </>

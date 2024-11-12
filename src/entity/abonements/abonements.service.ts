@@ -10,6 +10,10 @@ class AbonementsService {
       const response = await baseApi.get('abonements/');
       return response.data;
     }
+    static async getPrizes(): Promise<any> {
+      const response = await baseApi.get('abonements/prizes');
+      return response.data;
+    }
     static async postAbonementsUs(data: AbonementBuyDto): Promise<AbonementBuyRo> {
       const response = await baseApi.post('abonements/buy', data, {
         headers: {

@@ -67,8 +67,6 @@ function Form() {
     formData.append('role', data.role);
     formData.append('promocode', data.promocode as string);
     const res = await signUp(formData);
-    console.log("RESPONSE", res)
-    console.log("RESPONSEUSER", res.user)
     setUser(res.user)
     setToken(res.accessToken)
     reset()

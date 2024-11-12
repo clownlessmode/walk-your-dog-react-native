@@ -19,10 +19,20 @@ import InfoEvent from '@screens/reminder/info-event/InfoEvent';
 import Map from '@screens/map/Map';
 import Abonements from '@screens/abonements/Abonements';
 import Service from '@screens/service/Service';
-import DetailsService from '@screens/details-service/DetailsService';
 import BuyAbonements from '@screens/buy-abonements/BuyAbonements';
 import MyAddresses from '@screens/my-addresses/MyAddresses';
 import MyAddress from '@screens/my-addresses/my-address/MyAddress';
+import SignUpSitter from '@screens/sign-up-sitter/SignUpSitter';
+import FindNumber from '@screens/find-number/FindNumber';
+import UserChat from '@screens/chat/user-chat/UserChat';
+import Deposit from '@screens/deposit/Deposit';
+import WebViewPayment from '@screens/web-view-payment/WebViewPayment';
+import Payment from '@shared/ui/payment/Payment';
+import PaymentsHistory from '@screens/payments-history/PaymentsHistory';
+import Archive from '@screens/archive/Archive';
+import BonusProgram from '@screens/bonus-program/BonusProgram';
+import HelpAndDocumentation from '@screens/help-and-documentation/HelpAndDocumentation';
+import EventWaiting from '@screens/event-waiting/EventWaiting';
 
 type ScreenConfig = {
   name: keyof Screens;
@@ -172,13 +182,6 @@ export const AUTHSCREENS: ScreenConfig[] = [
     },
   },
   {
-    name: 'detailsService',
-    component: DetailsService,
-    options: {
-      headerShown: false,
-    },
-  },
-  {
     name: 'buyAbonements',
     component: BuyAbonements,
     options: {
@@ -195,6 +198,83 @@ export const AUTHSCREENS: ScreenConfig[] = [
   {
     name: 'myAddress',
     component: MyAddress,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'findNumber',
+    component: FindNumber,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'signUpSitter',
+    component: SignUpSitter,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'userChat',
+    component: UserChat,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'deposit',
+    component: Deposit,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'webViewPayment',
+    component: WebViewPayment,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'payment',
+    component: Payment,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'paymentsHistory',
+    component: PaymentsHistory,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'archive',
+    component: Archive,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'bonusProgram',
+    component: BonusProgram,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'helpAndDocumentation',
+    component: HelpAndDocumentation,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'eventWaiting',
+    component: EventWaiting,
     options: {
       headerShown: false,
     },

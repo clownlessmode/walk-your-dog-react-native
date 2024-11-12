@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000', // Цвет тени для iOS
     shadowOffset: { width: 2, height: 2 },
     shadowOpacity: 0.3, // Прозрачность тени для iOS
-    shadowRadius: 4, // Радиус тени для iOS
+    shadowRadius: 3, // Радиус тени для iOS
   },
   optionButton: {
     flex: 1,

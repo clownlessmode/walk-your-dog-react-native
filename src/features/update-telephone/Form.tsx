@@ -47,7 +47,7 @@ function Form() {
       return null;
     }
     const response = await verifyCode({ telephone: updateTelephone });
-    console.log('Код повторно отправлен на', updateTelephone);
+    console.info('Код повторно отправлен на', updateTelephone);
     setTimeLeft(60);
     setIsTimerActive(true);
   };
@@ -58,7 +58,7 @@ function Form() {
     }
     const res = await updateUser(data)
     updateNumber(res.meta.telephone)
-    console.log(data)
+    console.info(data)
     navigation.navigate('successUpdate');
   };
 
@@ -91,7 +91,7 @@ function Form() {
               justifyContent: 'center',
             }}
           >
-            <ActivityIndicator size="small" color="#9D9D9D" />
+            <ActivityIndicator size="small" color="#9D9D9D"/>
           </View>
         )}
         {error && <Error title="Неверный СМС-код" />}

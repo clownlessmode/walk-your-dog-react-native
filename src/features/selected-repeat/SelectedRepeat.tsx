@@ -5,12 +5,13 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import styles from './styles';
 
 const daysOfWeek = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+
 interface Props {
   onChange?: (value: number[]) => void;
-  value?: number[]
+  value?: number[];
 }
-function SelecteadRepeat({onChange, value = []}: Props) {
-  const [selectedDays, setSelectedDays] = useState<string[]>([]);
+
+function SelecteadRepeat({ onChange, value = [] }: Props) {
   const [isDaysVisible, setIsDaysVisible] = useState(false);
 
   const handleDayPress = (dayIndex: number) => {
@@ -18,8 +19,10 @@ function SelecteadRepeat({onChange, value = []}: Props) {
     const newSelectedDays = value.includes(dayIndex + 1)
       ? value.filter((d) => d !== dayIndex + 1) // Убираем день, если он уже выбран
       : [...value, dayIndex + 1]; // Добавляем день, если он не выбран
+
+    // Обновляем значение в форме
     if (onChange) {
-    (newSelectedDays); // Обновляем значение в форме
+      onChange(newSelectedDays); // Вызов onChange с новым массивом
     }
   };
 
@@ -28,7 +31,9 @@ function SelecteadRepeat({onChange, value = []}: Props) {
       <InputButton
         title="Повторение"
         description={
-          value.length !== 0 ? value.map((day) => daysOfWeek[day - 1]).join(', ') : 'Никогда'
+          value.length !== 0
+            ? value.map((day) => daysOfWeek[day - 1]).join(', ')
+            : 'Никогда'
         }
         onPress={() => setIsDaysVisible((prev) => !prev)}
       />
@@ -58,6 +63,6 @@ function SelecteadRepeat({onChange, value = []}: Props) {
       )}
     </View>
   );
-};
+}
 
 export default SelecteadRepeat;

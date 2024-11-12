@@ -1,9 +1,14 @@
+import BaseEntity from '@shared/types/base-entity.interface';
 import { create } from 'zustand';
 
-export interface Location {
+export interface Location extends BaseEntity {
   address: string;
   lat: number;
-  lon: number
+  lon: number;
+  name: string | null;
+  apartment?: string | null;
+  entrance?: string | null;
+  doorcode?: string | null;
 }
 interface MapStore {
   map: string | null; // Для хранения последнего выбранного адреса

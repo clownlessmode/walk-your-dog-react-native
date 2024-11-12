@@ -1,9 +1,8 @@
 import { StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 0,
-  },
+
   map: {
     flex: 1,
   },

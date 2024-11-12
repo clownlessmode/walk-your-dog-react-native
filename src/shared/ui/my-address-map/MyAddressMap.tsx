@@ -4,6 +4,8 @@ import Header from '../header/Header';
 import GoBack from '@features/go-back/GoBack';
 import ScreenContainer from '../containers/ScreenContainer';
 import styles from './styles';
+import { View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 interface Coordinates {
   lat: number;
   lon: number;
@@ -15,6 +17,7 @@ interface Location {
 }
 
 interface YandexMapComponentProps {
+  needHeader?: boolean
   title?: string;
   apiKey: string;
   initialLocation?: Coordinates;
@@ -36,6 +39,7 @@ const MyAddressMap: React.FC<YandexMapComponentProps> = ({
   onLocationSelect,
   customMapStyle = '',
   markerIcon = '',
+  needHeader = true,
 }) => {
   const webViewRef = useRef<WebView>(null);
 
@@ -105,12 +109,19 @@ const MyAddressMap: React.FC<YandexMapComponentProps> = ({
       console.error('Ошибка при обработке сообщения из WebView:', error);
     }
   };
-
+  const insets = useSafeAreaInsets()
   return (
-    <ScreenContainer style={styles.container}>
+    <View style={{ 
+      paddingBottom: 15,
+      paddingTop: needHeader ? insets.top + 10 : 0,
+      backgroundColor: 'white',
+      flex: 1,
+    }}>
+      {needHeader &&
       <Header style={{ paddingHorizontal: 15 }} before={<GoBack />}>
         {title}
       </Header>
+      }
       <WebView
         ref={webViewRef}
         source={{ html: mapHTML }}
@@ -120,7 +131,7 @@ const MyAddressMap: React.FC<YandexMapComponentProps> = ({
         domStorageEnabled={true}
         geolocationEnabled={true}
       />
-    </ScreenContainer>
+    </View>
   );
 };
 

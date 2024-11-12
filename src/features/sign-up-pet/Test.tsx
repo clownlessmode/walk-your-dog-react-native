@@ -29,7 +29,6 @@ const useSubmitPet = () => {
   return useMutation<any, AxiosError<ApiError>, PetData>({
     mutationFn: submitPetData, // В TanStack React Query mutationFn определяет функцию мутации
     onError: (error: AxiosError<ApiError>) => {
-      console.log(error)
       if (error.response && error.response.data) {
         const apiError = error.response.data;
         console.error('Произошла ошибка:', apiError.message);

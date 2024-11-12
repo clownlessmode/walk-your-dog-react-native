@@ -15,7 +15,7 @@ const UserProfile = ({ name, description, link, image, additional }: Props) => {
       <View style={styles.content}>
         <Image
           source={
-            image ? { uri: image } : require('@assets/signUp/EmptyAvatar.png')
+            image ? { uri: image } : require('@assets/signUp/avatarUser.png')
           }
           style={styles.img}
         />

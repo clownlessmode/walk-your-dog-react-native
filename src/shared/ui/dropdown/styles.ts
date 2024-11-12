@@ -38,8 +38,20 @@ const styles = StyleSheet.create({
       paddingHorizontal: 10,
       width: '100%',
     },
+    wrapperError: {
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      flexDirection: 'row',
+      height: 50,
+      borderColor: "red",
+      borderRadius: 12,
+      borderWidth: 1,
+      paddingHorizontal: 10,
+      width: '100%',
+    },
     text: {
       color: '#2A2A2A',
+      maxWidth: '93%'
     },
   });
   export default styles;

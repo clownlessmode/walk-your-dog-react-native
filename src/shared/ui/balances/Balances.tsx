@@ -4,38 +4,70 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import styles from './styles';
 interface Props {
   balanceType: 'general' | 'promo';
-  selectedBalance: (type: 'general' | 'promo') => void
+  selectedBalance: (type: 'general' | 'promo') => void;
 }
-function Balances({balanceType, selectedBalance}: Props) {
+function Balances({ balanceType, selectedBalance }: Props) {
   const { user } = useUserStore();
+  const balanceTextColor = user?.balance.general === 0 ? '#da4c5d' : 'black';
   return (
-    <View style={{flexDirection: "row", justifyContent: "space-between"}}>
-        <TouchableOpacity onPress={() => selectedBalance('general')} style={[
-            styles.balanceContainer,
-            balanceType === 'general' ? styles.selected : styles.unselected,
-          ]}>
-          <Text  style={[
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+      <TouchableOpacity
+        onPress={() => selectedBalance('general')}
+        style={[
+          styles.balanceContainer,
+          balanceType === 'general' ? styles.selected : styles.unselected,
+        ]}
+      >
+        <Text
+          style={[
             styles.balanceText,
-            balanceType === 'general' ? styles.selectedText : styles.unselectedText,
-          ]}>{user?.balance.general} ₽</Text>
-          <Text style={[
+            balanceType === 'general'
+              ? styles.selectedText
+              : styles.unselectedText,
+            { color: balanceTextColor },
+          ]}
+        >
+          {user?.balance.general} ₽
+        </Text>
+        <Text
+          style={[
             styles.labelText,
-            balanceType === 'general' ? styles.selectedText : styles.unselectedText,
-          ]}>Баланс счета</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => selectedBalance('promo')} style={[
-            styles.balanceContainer,
-            balanceType === 'promo' ? styles.selected : styles.unselected,
-          ]}>
-          <Text style={[
+            balanceType === 'general'
+              ? styles.selectedText
+              : styles.unselectedText,
+          ]}
+        >
+          Баланс счета
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => selectedBalance('promo')}
+        style={[
+          styles.balanceContainer,
+          balanceType === 'promo' ? styles.selected : styles.unselected,
+        ]}
+      >
+        <Text
+          style={[
             styles.balanceText,
-            balanceType === 'promo' ? styles.selectedText : styles.unselectedText,
-          ]}>{user?.balance.promo} Б</Text>
-          <Text style={[
+            balanceType === 'promo'
+              ? styles.selectedText
+              : styles.unselectedText,
+          ]}
+        >
+          {user?.balance.promo} Б
+        </Text>
+        <Text
+          style={[
             styles.labelText,
-            balanceType === 'promo' ? styles.selectedText : styles.unselectedText,
-          ]}>Бонусный счет</Text>
-        </TouchableOpacity>
+            balanceType === 'promo'
+              ? styles.selectedText
+              : styles.unselectedText,
+          ]}
+        >
+          Бонусный счет
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }

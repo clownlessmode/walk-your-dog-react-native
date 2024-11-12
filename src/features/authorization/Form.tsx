@@ -7,6 +7,7 @@ import Error from '@shared/ui/error/Error';
 import Input from '@shared/ui/input/Input';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import Toast from 'react-native-toast-message';
 export interface FormData {
   telephone: string;
   promocode: string;
@@ -26,8 +27,16 @@ const Form = () => {
     const onSubmit = async (data: FormData) => {
     // const number = normalizeTelephone(data.telephone);
     const response = await preAuth({ telephone: data.telephone });
-    console.log(response);
+    console.info(response);
     if (response.code) {
+      setTimeout(() => {
+        Toast.show({
+          type: 'info',
+          text1: 'Код подтверждения',
+          text2: `${response.DEVCODE}`,
+          autoHide: false
+        });
+      }, 3000);
       setTelephone(data.telephone);
       setPromocode(data.promocode);
       navigation.navigate('verifySms');

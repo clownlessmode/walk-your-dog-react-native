@@ -7,12 +7,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
+    width: '49%'
   },
   selected: {
     backgroundColor: '#262626',
   },
   unselected: {
-    backgroundColor: '#F4F4F4',
+    backgroundColor: 'white',
   },
   balanceText: {
     ...globalStyles.text500,

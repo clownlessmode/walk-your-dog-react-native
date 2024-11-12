@@ -7,13 +7,15 @@ interface Props extends TouchableOpacityProps {
     placeholder: string;
     selectedValue: string | string[],
     isDropdownVisible: boolean;
+    error?: boolean
 }
-function SelectItem({ placeholder, selectedValue, isDropdownVisible, ...props }: Props) {
+function SelectItem({ placeholder, selectedValue, isDropdownVisible, error, ...props }: Props) {
     const displayValue = Array.isArray(selectedValue) 
     ? selectedValue.join(', ')
-    : selectedValue; 
+    : selectedValue;
+    const wrapperStyle = error? styles.wrapperError : styles.wrapper
   return (
-    <TouchableOpacity style={styles.wrapper} {...props}>
+    <TouchableOpacity style={wrapperStyle} {...props}>
       <Text style={[globalStyles.text400, styles.text]}>{displayValue || placeholder}</Text>
       <AntDesign name={isDropdownVisible ? 'up' : 'down'} size={20} color="black" />
     </TouchableOpacity>

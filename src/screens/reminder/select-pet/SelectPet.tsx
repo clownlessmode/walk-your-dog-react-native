@@ -14,14 +14,12 @@ import AddMore from '@shared/ui/add-more/AddMore';
 
 function SelectPet() {
   const { user } = useUserStore();
-  // console.log(user)
   const { myPets } = useAuthPetController(user?.id)
   const { setSelectPet } = useSelectPetStore();
   const navigation = useAppNavigation();
   const [selectedPet, setSelectedPetLocal] = useState<Pet | null>(null);
   const handlePetPress = (pet: Pet) => {
     setSelectedPetLocal(pet);
-    console.log(pet)
   };
 
   const handleContinue = () => {
@@ -41,6 +39,7 @@ function SelectPet() {
           <PetInfo
             pet={myPets || []} // Передаем массив питомцев
             onPress={handlePetPress} // Обработка выбора питомца
+            selectedPet={selectedPet}
             variant="grey"
           />
         <AddMore title='Добавить еще питомца' onPress={() => navigation.navigate('signUpPet')}/>

@@ -37,7 +37,7 @@ const Switch = ({ error, title, options, value, onChange, ...props}: Props) => {
   };
 
   return (
-    <View style={{ gap: 10, alignItems: 'center', width: '99%' }}>
+    <View style={{ gap: 10, alignItems: 'center', width: '100%' }}>
       <Text style={[globalStyles.text500, styles.titleText]}>{title}</Text>
       <View style={styles.optionContainer}>
       {options.map(option => (

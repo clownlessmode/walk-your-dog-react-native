@@ -5,6 +5,7 @@ import SlideItem from './SlideItem';
 import globalStyles from '@shared/constants/globalStyles';
 import styles from './styles';
 import { useAppNavigation } from '@shared/hooks/useAppNavigation';
+import useUserStore from '@entity/users/user.store';
 
 const { width } = Dimensions.get('window');
 

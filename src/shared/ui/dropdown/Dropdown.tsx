@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  ActivityIndicator,
+} from 'react-native';
 import globalStyles from '@shared/constants/globalStyles';
 import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import SelectBlock from './SelectItem';
@@ -17,7 +23,8 @@ interface DropdownProps {
   placeholder: string;
   multiple: boolean; // Флаг множественного выбора
   isLoading?: boolean;
-  emptyLabel?: string
+  emptyLabel?: string;
+  error?: boolean;
 }
 
 const Dropdown = ({
@@ -27,7 +34,8 @@ const Dropdown = ({
   placeholder,
   multiple = false,
   isLoading = false,
-  emptyLabel
+  emptyLabel,
+  error,
 }: DropdownProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [dropdownHeight, setDropdownHeight] = useState(0);
@@ -53,6 +61,7 @@ const Dropdown = ({
     } else {
       // Логика для одиночного выбора
       onSelect(newValue); // Отдаем строку
+      toggleDropdown()
     }
   };
 
@@ -70,16 +79,19 @@ const Dropdown = ({
           .filter((value) => !selectedSet.has(value));
 
         onSelect([...selectedValue, ...remainingOptions]); // Добавляем оставшиеся опции
+        toggleDropdown()
       }
     } else {
       // Если ничего не выбрано, выбираем все
       onSelect(options.map((option) => option.value));
+      toggleDropdown()
     }
   };
 
   return (
     <View style={{ width: '100%' }}>
       <SelectBlock
+        error={error}
         placeholder={placeholder}
         selectedValue={
           multiple
@@ -103,12 +115,24 @@ const Dropdown = ({
       {isVisible && (
         <View style={[styles.dropdownContainer, { top: dropdownHeight }]}>
           <FlatList
-            data={multiple ? [...options, { value: 'select_all', label: 'Выбрать все' }] : options}
+            data={
+              multiple
+                ? [...options, { value: 'select_all', label: 'Выбрать все' }]
+                : options
+            }
             keyExtractor={(item) => item.value}
-            renderItem={({ item }) => 
+            renderItem={({ item }) =>
               !isLoading ? (
-                item.value === "null" ? (
-                  <Text  style={[globalStyles.text500, styles.optionText, {padding: 30, textAlign: "center"}]}>{emptyLabel}</Text>
+                item.value === 'null' ? (
+                  <Text
+                    style={[
+                      globalStyles.text500,
+                      styles.optionText,
+                      { padding: 30, textAlign: 'center' },
+                    ]}
+                  >
+                    {emptyLabel}
+                  </Text>
                 ) : (
                   <TouchableOpacity
                     onPress={() =>
@@ -123,13 +147,15 @@ const Dropdown = ({
                     </Text>
                     {item.value === 'select_all' ? (
                       // Логика для "Выбрать все"
-                      Array.isArray(selectedValue) && selectedValue.length === options.length ? (
+                      Array.isArray(selectedValue) &&
+                      selectedValue.length === options.length ? (
                         <AntDesign name="checkcircle" size={18} color="black" />
                       ) : (
                         <FontAwesome5 name="circle" size={18} color="black" />
                       )
                     ) : multiple ? (
-                      Array.isArray(selectedValue) && selectedValue.includes(item.value) ? (
+                      Array.isArray(selectedValue) &&
+                      selectedValue.includes(item.value) ? (
                         <AntDesign name="checkcircle" size={18} color="black" />
                       ) : (
                         <FontAwesome5 name="circle" size={18} color="black" />
@@ -142,7 +168,11 @@ const Dropdown = ({
                   </TouchableOpacity>
                 )
               ) : (
-                <ActivityIndicator style={{padding: 30}} color="black" size="small" />
+                <ActivityIndicator
+                  style={{ padding: 30 }}
+                  color="#9D9D9D"
+                  size="small"
+                />
               )
             }
           />

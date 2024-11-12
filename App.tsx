@@ -9,8 +9,11 @@ import { DevToolsBubble } from 'react-native-react-query-devtools';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import ToastConfig from '@shared/ui/toast/Toast';
+import setupErrorHandling from '@app/providers/errors/setupErrorHandling';
 
 export default function App() {
+  setupErrorHandling();
+
   registerNNPushToken(24230, 'F4CZByJ4fRNUi31zZPdEBp');
   const { isHydrated } = useUserStore()
   const { fontsLoaded, onLayoutRootView, isReady } = useLoadFonts();

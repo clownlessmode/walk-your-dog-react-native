@@ -15,11 +15,14 @@ import { Controller, useForm } from 'react-hook-form';
 import Button from '@shared/ui/button/Button';
 import useUserStore from '@entity/users/user.store';
 import { useReminderController } from '@entity/reminders/reminders.controller';
+import { useAppNavigation } from '@shared/hooks/useAppNavigation';
+import Toast from 'react-native-toast-message';
 function InfoEvent() {
+  const navigation= useAppNavigation()
   const { user } = useUserStore();
   const { selectPet } = useSelectPetStore();
   const { reminder } = useReminderStore();
-  const { createReminder } = useReminderController()
+  const { createReminder, loadingReminder } = useReminderController()
   let petIds: string[] = [];
 
   if (Array.isArray(selectPet)) {
@@ -40,12 +43,18 @@ function InfoEvent() {
 
   const onSubmit = async (data: any) => {
     const response = await createReminder(data)
-    console.log('Заполненные данные:', response);
+    if (response) {
+      navigation.navigate('appStack')
+      Toast.show({
+        type:'success',
+        text1: 'Напоминание создано',
+      })
+    }
   };
   return (
-    <ScreenContainer style={{ gap: 20 }}>
+    <ScreenContainer>
       <Header before={<GoBack />}>Информация о событии</Header>
-      <View>
+      <View style={{gap: 20}}>
         <View style={styles.blockEvent}>
           <Text style={[globalStyles.text500, { fontSize: 12, opacity: 0.5 }]}>
             Название события
@@ -63,6 +72,7 @@ function InfoEvent() {
           <Controller
             control={control}
             name="datetime"
+            rules={{ required: true }}
             render={({ field: { onChange, value } }) => (
               <SelectedTime onChange={onChange} value={value} />
             )}
@@ -81,7 +91,7 @@ function InfoEvent() {
               <SelectedRemind onChange={onChange} value={value} />
             )}
           />
-          <Button onPress={handleSubmit(onSubmit)}>PRIVET</Button>
+          <Button isLoading={loadingReminder} onPress={handleSubmit(onSubmit)}>Сохранить</Button>
         </View>
       </View>
     </ScreenContainer>

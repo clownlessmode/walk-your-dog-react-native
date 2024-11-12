@@ -24,8 +24,6 @@ function SelectedTime({ onChange, value }: Props) {
     const currentDate = selectedDate || date;
     setShowDatePicker(false); 
     setDate(currentDate); 
-    console.log('Выбранная дата:', currentDate.toLocaleDateString());
-
     setShowTimePicker(true);
   };
 
@@ -37,8 +35,6 @@ function SelectedTime({ onChange, value }: Props) {
     const combinedDateTime = new Date(date);
     combinedDateTime.setHours(currentTime.getHours());
     combinedDateTime.setMinutes(currentTime.getMinutes());
-  
-    console.log('Выбранная дата и время:', combinedDateTime.toISOString());
     if (onChange) {
       onChange(combinedDateTime.toISOString());
     }

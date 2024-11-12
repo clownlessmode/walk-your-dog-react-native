@@ -12,6 +12,7 @@ interface Props {
   title?: string;
   price?: number | string; // Поддерживаем как число, так и строку
   showInfoButton?: boolean; // Опциональный пропс для отображения кнопки "i"
+  disabled?: boolean | null; // Опциональный пропс для отключения кнопки
 }
 const RadioButton = ({
   checked,
@@ -19,10 +20,11 @@ const RadioButton = ({
   title,
   price,
   showInfoButton = false,
+  disabled
 }: Props) => {
   return (
     <View style={styles.radioButtonContainer}>
-      <TouchableOpacity onPress={onPress}>
+      <TouchableOpacity onPress={disabled ? undefined : onPress}>
         <View style={{ flexDirection: 'row', gap: 12 }}>
           <View
             style={[styles.radioButton, checked && styles.radioButtonChecked]}
@@ -36,7 +38,7 @@ const RadioButton = ({
       </TouchableOpacity>
       {showInfoButton && (
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <Text style={{ fontWeight: 500, fontSize: 16 }}>{price} ₽</Text>
+          <Text style={ [globalStyles.text500, {fontSize: 16}]}>{price} руб</Text>
           <Drawer
             close="Понятно"
             trigger={

@@ -20,7 +20,7 @@ export default function Ticket({
   isPreview = false,
 }: Ticket) {
   const displayDate =
-    date ?? new Date(new Date().setDate(new Date().getDate() + 30));
+    date ?? new Date(new Date().setDate(new Date().getDate() + 365));
   // displayDate.setDate(displayDate.getDate() + 30)
   const formattedDate = new Intl.DateTimeFormat('ru-RU', {
     day: 'numeric',
@@ -42,7 +42,7 @@ export default function Ticket({
       <View style={styles.container}>
         <View style={styles.containerText}>
           <Text style={[globalStyles.text500, { fontSize: 20 }]}>
-            {count} {title}
+          {title} ({total} разовых услуг) 
           </Text>
           <Text style={[globalStyles.text500, {opacity: 0.5 }]}>
             Срок действия:

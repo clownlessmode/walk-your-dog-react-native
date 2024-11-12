@@ -1,7 +1,8 @@
 import YaMap from '@shared/ui/map/Map';
-import React, { useState } from 'react';
+import * as Location from 'expo-location';
+import React, { useEffect, useRef, useState } from 'react';
 import useMapStore from './map.store';
-import { StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Button from '@shared/ui/button/Button';
 import globalStyles from '@shared/constants/globalStyles';
 import { useAppNavigation } from '@shared/hooks/useAppNavigation';
@@ -9,19 +10,71 @@ import { useAdressesController } from '@entity/adresses/adresses.controller';
 import { useForm } from 'react-hook-form';
 import useUserStore from '@entity/users/user.store';
 import styles from './styles';
+import { useUserController } from '@entity/users/user.controller';
+import { FontAwesome } from '@expo/vector-icons';
+import WebView from 'react-native-webview';
 
 interface Location {
   address: string;
   lat: number;
   lon: number;
 }
+
 function Map() {
   const navigation = useAppNavigation();
   const { createAdresses, isLoading } = useAdressesController();
-  const {user} = useUserStore()
-  const { setMap, setAddress } = useMapStore();
+  const { user, setUser } = useUserStore();
+  const { getMe } = useUserController(); // Теперь без user?.id
   const [selectedAddress, setSelectedAddress] = useState(null);
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(
+    null
+  );
+  const [initialLocation, setInitialLocation] = useState<
+    { lat: number; lon: number } | undefined
+  >(undefined);
+
+  useEffect(() => {
+    const getLocation = async () => {
+      // Запрос разрешения на доступ к местоположению
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+      setInitialLocation({
+        lat: location.coords.latitude,
+        lon: location.coords.longitude,
+      });
+    };
+
+    getLocation();
+  }, []);
+
+  const [isLocating, setIsLocating] = useState(false);
+  const yaMapRef = useRef<WebView>(null);
+  const getUserLocation = async () => {
+    setIsLocating(true);
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setIsLocating(false);
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+      const lat = location.coords.latitude;
+      const lon = location.coords.longitude;
+
+      // Устанавливаем начальное положение и центрируем карту на текущем местоположении
+      setInitialLocation({ lat, lon });
+      yaMapRef.current?.injectJavaScript(`setMapCenter(${lat}, ${lon});`);
+    } catch (error) {
+      console.error('Ошибка при запросе геопозиции:', error);
+    } finally {
+      setIsLocating(false); // Скрываем лоадер после завершения запроса
+    }
+  };
 
   const { handleSubmit } = useForm();
 
@@ -45,9 +98,7 @@ function Map() {
         userId,
       };
       try {
-        const response = await createAdresses(adressesDto);
-        setMap(address); 
-        setAddress({lat, lon, address})
+        await createAdresses(adressesDto);
         navigation.goBack();
         console.log('Адрес сохранен:', adressesDto);
       } catch (error) {
@@ -55,15 +106,23 @@ function Map() {
       }
     }
   };
+
   return (
     <>
       <YaMap
         apiKey="4ae2e824-85eb-482c-9eab-88f665a7d668"
         mode="edit"
-        initialLocation={{ lat: 55.751574, lon: 37.573856 }}
+        initialLocation={initialLocation}
         onLocationSelect={handleLocationSelect}
         markerIcon="https://i.ibb.co/Mfj99Lx/Pin-fill.png"
       />
+       <TouchableOpacity style={styles.locationButton} onPress={getUserLocation}>
+        {isLocating ? (
+          <ActivityIndicator size="small" color="black" /> 
+        ) : (
+          <FontAwesome name="location-arrow" size={24} color="black" />
+        )}
+      </TouchableOpacity>
       <View style={styles.modal}>
         <Text
           style={[globalStyles.text500, { fontSize: 16, textAlign: 'center' }]}
@@ -78,7 +137,9 @@ function Map() {
             borderRadius: 16,
           }}
         ></View>
-        <Button isLoading={isLoading} onPress={handleSubmit(onSubmit)}>Выбрать этот адрес</Button>
+        <Button isLoading={isLoading} onPress={handleSubmit(onSubmit)}>
+          Выбрать этот адрес
+        </Button>
       </View>
     </>
   );

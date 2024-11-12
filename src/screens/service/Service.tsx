@@ -7,8 +7,8 @@ import Form from '@features/service/Form';
 function Service() {
  
   return (
-    <ScreenContainer style={{ paddingHorizontal: 0 }}>
-      <Header style={{ paddingHorizontal: 15 }} before={<GoBack />}>
+    <ScreenContainer style={{ paddingHorizontal: 0, gap: 0 }} >
+      <Header style={{ paddingHorizontal: 15  }} before={<GoBack />}>
         Выберите питомца и услугу
       </Header>
       <Form />
