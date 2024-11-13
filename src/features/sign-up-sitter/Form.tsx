@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import styles from './styles';
 import { Controller, useForm } from 'react-hook-form';
 import useTelephoneStore from '@screens/auth/telephone.store';
@@ -315,14 +315,13 @@ function Form() {
           close={'Сохранить'}
           hasBackdrop={true}
           trigger={
-            <View>
             <Input
               value={intervalDisplay || 'Выберите интервал для работы'}
               editable={false}
+              pointerEvents="none"
               placeholder="Выберите интервал для работы"
               style={[intervalError ? styles.inputError : styles.input]}
             />
-            </View>
           }
         >
           <SelectInterval
