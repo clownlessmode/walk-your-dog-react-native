@@ -1,4 +1,11 @@
-import { Animated, Dimensions, ScrollView, Text, View } from 'react-native';
+import {
+  Animated,
+  Dimensions,
+  ScrollView,
+  Text,
+  View,
+  TouchableOpacity,
+} from 'react-native';
 import slides from './slides';
 import { useEffect, useRef, useState } from 'react';
 import SlideItem from './SlideItem';
@@ -6,6 +13,7 @@ import globalStyles from '@shared/constants/globalStyles';
 import styles from './styles';
 import { useAppNavigation } from '@shared/hooks/useAppNavigation';
 import useUserStore from '@entity/users/user.store';
+import { AntDesign } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
@@ -89,6 +97,12 @@ const Onboarding = () => {
           </View>
         ))}
       </View>
+      <TouchableOpacity
+        style={{ opacity: 0.3 }}
+        onPress={() => navigation.navigate('identity')}
+      >
+        <Text style={{ paddingVertical: 40 }}>Пропустить</Text>
+      </TouchableOpacity>
     </View>
   );
 };

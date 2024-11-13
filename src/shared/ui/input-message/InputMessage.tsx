@@ -10,7 +10,18 @@ interface MessageInputProps {
   onSend?: () => void;
 }
 
-function InputMessage({ value, onChangeText, placeholder, onSend }: MessageInputProps) {
+function InputMessage({
+  value,
+  onChangeText,
+  placeholder,
+  onSend,
+}: MessageInputProps) {
+  const handleKeyPress = ({ nativeEvent }: { nativeEvent: any }) => {
+    if (nativeEvent.key === 'Enter') {
+      onSend && onSend();
+    }
+  };
+
   return (
     <View style={styles.inputContainer}>
       <TextInput
@@ -19,13 +30,17 @@ function InputMessage({ value, onChangeText, placeholder, onSend }: MessageInput
         onChangeText={onChangeText}
         placeholder={placeholder || 'Сообщение'}
         placeholderTextColor="#A7A7A7"
-        multiline
+        onKeyPress={handleKeyPress}
         textAlignVertical="center"
         onSubmitEditing={onSend}
         blurOnSubmit={false} // Keeps the TextInput focused after submitting
       />
       <TouchableOpacity onPress={onSend} disabled={!value?.trim()}>
-        <Feather name="send" size={24} color={value?.trim() ? 'blue' : 'gray'} />
+        <Feather
+          name="send"
+          size={24}
+          color={value?.trim() ? '#51582F' : 'gray'}
+        />
       </TouchableOpacity>
     </View>
   );
