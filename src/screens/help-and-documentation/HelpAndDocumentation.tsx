@@ -18,7 +18,6 @@ function HelpAndDocumentation() {
   if (!user) return null;
   const handleDelete = async () => {
     const response = await deleteUser(user.id);
-    console.log(response);
     if (response) {
       navigation.navigate('identity');
       setModalVisible(false);

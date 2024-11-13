@@ -2,10 +2,8 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingTop: 20,
-    paddingBottom: 30,
-    gap: 15,
-    alignItems: 'center',
+    paddingVertical: 20,
+    gap: 20,
   },
 });
 export default styles;

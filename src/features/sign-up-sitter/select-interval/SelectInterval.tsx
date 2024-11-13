@@ -26,13 +26,13 @@ function SelectInterval({ onChange, value }: SelectIntervalProps) {
     }
   };
   return (
-    <View style={{ gap: 20 }}>
+    <View style={{ gap: 20, paddingBottom: 20 }}>
       <SelectDay onChange={handleDaysChange} value={value?.days} />
       <SelectTime
         onChange={handleTimeChange}
         value={{ start: value?.start, end: value?.end }}
       />
-      <Button>Сохранить</Button>
+      {/* <Button>Сохранить</Button> */}
     </View>
   );
 }

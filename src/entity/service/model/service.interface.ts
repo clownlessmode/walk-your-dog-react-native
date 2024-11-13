@@ -7,7 +7,7 @@ import BaseEntity from '@shared/types/base-entity.interface';
 export interface Service extends BaseEntity {
   name: string;
   price: number;
-  additional: AdditionalService;
+  additional?: AdditionalService; //может быть косяк
 }
 
 export interface AdditionalService extends BaseEntity {

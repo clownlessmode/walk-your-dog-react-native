@@ -1,4 +1,5 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
+import Button from '@shared/ui/button/Button';
 import InputButton from '@shared/ui/input-button/InputButton';
 import React, { useState, useEffect } from 'react';
 import { Platform, View } from 'react-native';
@@ -57,7 +58,7 @@ function SelectedTime({ onChange, value }: Props) {
   };
 
   return (
-    <View>
+    <View style={{paddingBottom: 20}}>
       <InputButton
         onPress={() => setShowDatePicker(true)}
         title="Время"

@@ -18,7 +18,7 @@ import { useAbonementsController } from '@entity/abonements/abonements.controlle
 import { useFocusEffect } from '@react-navigation/native';
 import getMeOnFocus from '@shared/utils/getMeOnFocus';
 
-function Profile() {
+function ProfileUser() {
   getMeOnFocus();
   const navigation = useAppNavigation()
   const { user } = useUserStore();
@@ -53,4 +53,4 @@ function Profile() {
   );
 }
 
-export default Profile;
+export default ProfileUser;

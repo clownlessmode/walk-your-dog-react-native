@@ -1,10 +1,22 @@
+import { useSocket } from '@app/providers/SocketContext';
+import { useChatsController } from '@entity/chats/chats.controller';
+import { Chat as ChatType, Message } from '@entity/users/model/user.interface';
+import useUserStore from '@entity/users/user.store';
 import { useAppNavigation } from '@shared/hooks/useAppNavigation';
 import ScreenContainer from '@shared/ui/containers/ScreenContainer';
 import Header from '@shared/ui/header/Header';
 import UserChat from '@shared/ui/user-chat/UserChat';
 import getMeOnFocus from '@shared/utils/getMeOnFocus';
-import React from 'react';
-import { FlatList, ListRenderItem, TouchableOpacity } from 'react-native';
+import { format, parseISO } from 'date-fns';
+import { ru } from 'date-fns/locale';
+import React, { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  ListRenderItem,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 type ChatItem = {
   id: string;
   name: string;
@@ -12,78 +24,98 @@ type ChatItem = {
   dayOfWeek: string;
   messages: { id: string; sender: 'me' | 'other'; text: string }[];
 };
-const mess: ChatItem[] = [
-  {
-    id: '1',
-    name: 'Алексей',
-    message: 'Как тебе новая книга?',
-    dayOfWeek: 'Пн',
-    messages: [
-      { id: '1', sender: 'other', text: 'Привет, ты уже читал новую книгу Пелевина?' },
-      { id: '2', sender: 'me', text: 'Да, как раз дочитываю. Очень впечатляет!' },
-      { id: '3', sender: 'other', text: 'Согласен, там много интересных мыслей.' },
-      { id: '4', sender: 'me', text: 'Особенно нравится его подход к современным технологиям.' },
-      { id: '5', sender: 'other', text: 'Да, это точно. Очень актуально!' },
-      { id: '6', sender: 'me', text: 'Тебе какой момент больше всего понравился?' },
-      { id: '7', sender: 'other', text: 'Трудно выбрать, но глава о виртуальной реальности просто потрясающая.' },
-      { id: '8', sender: 'me', text: 'Согласен! Очень интересно описано.' },
-      { id: '9', sender: 'other', text: 'Интересно, что будет в его следующей книге.' },
-    ],
-  },
-  {
-    id: '2',
-    name: 'Ольга',
-    message: 'Ты был на концерте вчера?',
-    dayOfWeek: 'Ср',
-    messages: [
-      { id: '1', sender: 'other', text: 'Привет! Ты был на концерте вчера?' },
-      { id: '2', sender: 'me', text: 'Да, было просто невероятно!' },
-      { id: '3', sender: 'other', text: 'Какая песня тебе больше всего понравилась?' },
-      { id: '4', sender: 'me', text: 'Наверное, "Небо на ладони". Атмосфера была просто магическая.' },
-      { id: '5', sender: 'other', text: 'Жаль, что я не смогла пойти. Надеюсь, они приедут снова.' },
-      { id: '6', sender: 'me', text: 'Обязательно сходи в следующий раз! Ты не пожалеешь.' },
-    ],
-  },
-  {
-    id: '3',
-    name: 'Игорь',
-    message: 'Где будем встречаться?',
-    dayOfWeek: 'Вт',
-    messages: [
-      { id: '1', sender: 'other', text: 'Привет! Где будем встречаться в субботу?' },
-      { id: '2', sender: 'me', text: 'Может, в том кафе на Пушкинской? Там уютно и не так людно.' },
-      { id: '3', sender: 'other', text: 'Хорошая идея! Там действительно отличный кофе.' },
-      { id: '4', sender: 'me', text: 'Отлично, тогда в 7 вечера. Подходит?' },
-      { id: '5', sender: 'other', text: 'Да, супер. До встречи!' },
-    ],
-  },
-];
-
 
 function Chat() {
-  getMeOnFocus()
+  getMeOnFocus();
+  const { user } = useUserStore();
+  const { chats, isLoading } = useChatsController(user?.id);
+  const [chatsState, setChatsState] = useState<ChatType[]>(chats ? chats : []);
+  const { socket } = useSocket();
   const navigation = useAppNavigation();
-  const handleChatPress = (chat: ChatItem) => {
-    navigation.navigate('userChat', { chat });
+  useEffect(() => {
+    if (!socket) return;
+    const handleNewMessage = (message: Message) => {
+      setChatsState((prevChats) =>
+        prevChats.map((chat) =>
+          chat.id === message.chat.id
+            ? {
+                ...chat,
+                messages: [...chat.messages, message],
+                updated_at: message.updated_at,
+              }
+            : chat
+        )
+      );
+    };
+    socket.on(`newMessage`, handleNewMessage);
+    return () => {
+      socket.off(`newMessage`, handleNewMessage);
+    };
+  }, []);
+
+  const filteredChats = chatsState.filter((chat) => {
+    const otherUser =
+      chat.user1?.meta.name === 'support' ? chat.user2 : chat.user1;
+
+    // Проверяем, что otherUser и его username существуют
+    if (!otherUser || !otherUser.meta.name) return false;
+    return otherUser.meta.name.toLowerCase();
+  });
+  const formatDate = (date: string | Date | undefined) => {
+    if (!date) return 'Нет данных';
+    const dateObj = typeof date === 'string' ? parseISO(date) : date;
+    return format(dateObj, 'd MMM', { locale: ru });
   };
-  const renderChatItem: ListRenderItem<ChatItem> = ({ item }) => (
-    <TouchableOpacity onPress={() => handleChatPress(item)}>
+
+  const renderChatItem: ListRenderItem<ChatType> = ({ item }) => (
+    <TouchableOpacity
+      onPress={() => navigation.navigate('userChat', { id: item.id })}
+    >
       <UserChat
-        name={item.name}
-        message={item.message}
-        dayOfWeek={item.dayOfWeek}
+        image={item.user2.meta.image}
+        name={item.user2.meta.name}
+        message={`${item.messages[item.messages.length - 1].sender.meta.name}: ${item.messages[item.messages.length - 1].content}`}
+        dayOfWeek={`${formatDate(item.updated_at)}`}
       />
     </TouchableOpacity>
   );
+// const [selectedImages, setSelectedImages] = useState<string[]>([]);
+
+  // const pickImage = async () => {
+  //   const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  //   if (status !== 'granted') {
+  //     alert('Нам нужно разрешение на доступ к вашей галерее');
+  //     return;
+  //   }
+
+  //   const result = await ImagePicker.launchImageLibraryAsync({
+  //     mediaTypes: ImagePicker.MediaTypeOptions.Images,
+  //     allowsEditing: true,
+  //     aspect: [4, 3],
+  //     quality: 1,
+  //   });
+
+  //   if (!result.canceled) {
+  //     setSelectedImages([...selectedImages, result.assets[0].uri]);
+  //   }
+  // };
   return (
     <ScreenContainer>
       <Header>Чат</Header>
-      <FlatList
-        data={mess}
-        renderItem={renderChatItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ gap: 12 }}
-      />
+      {isLoading ? (
+        <View
+          style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+        >
+          <ActivityIndicator size="large" color="#000" />
+        </View>
+      ) : (
+        <FlatList
+          data={chats}
+          renderItem={renderChatItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={{ gap: 12 }}
+        />
+      )}
     </ScreenContainer>
   );
 }

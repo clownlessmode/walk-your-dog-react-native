@@ -6,7 +6,7 @@ import globalStyles from '@shared/constants/globalStyles';
 interface Props extends TouchableOpacityProps{
   variant: 'reminder' | 'service';
   title: string;
-  description: string;
+  description?: string;
 }
 
 function ImageRecord({ variant = 'reminder', title, description, ...props }: Props) {

@@ -36,10 +36,8 @@ https://walkyourdog.ru/
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
           // shared with activity type of result.activityType
-          console.log('shared with activity type');
         } else {
           // shared
-          console.log('shared');
         }
       }
     } catch (error) {

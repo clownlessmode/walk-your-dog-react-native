@@ -10,12 +10,13 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import ToastConfig from '@shared/ui/toast/Toast';
 import setupErrorHandling from '@app/providers/errors/setupErrorHandling';
+import { SocketProvider } from '@app/providers/SocketContext';
 
 export default function App() {
   setupErrorHandling();
 
   registerNNPushToken(24230, 'F4CZByJ4fRNUi31zZPdEBp');
-  const { isHydrated } = useUserStore()
+  const { isHydrated } = useUserStore();
   const { fontsLoaded, onLayoutRootView, isReady } = useLoadFonts();
   const queryClient = new QueryClient({});
   if (!fontsLoaded && isReady && !isHydrated) {
@@ -25,13 +26,13 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
-        <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-       
-          <NavigationProvider />
-          <StatusBar style="auto" />
-          <Toast config={ToastConfig}/>
-        </View>
-       
+        <SocketProvider>
+          <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+            <NavigationProvider />
+            <StatusBar style="auto" />
+            <Toast config={ToastConfig} />
+          </View>
+        </SocketProvider>
       </QueryClientProvider>
     </SafeAreaProvider>
   );

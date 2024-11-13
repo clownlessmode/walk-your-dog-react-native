@@ -3,22 +3,26 @@ import { User } from "@entity/users/model/user.interface";
 
 export interface PreAuthDto {
   telephone: string;
+  worker?: boolean
 }
 
 export interface PreAuthRo {
   isRegistered: boolean;
   code: boolean;
   DEVCODE: string;
+  workerAllowed: boolean;
 }
 
 export interface VerifyCodeDto {
   telephone: string;
   code: string;
+  worker?: boolean;
 }
 
 export interface VerifyCodeRo {
   user: User | null;
   accessToken: string;
+  isRegistered: boolean;
 }
 
 export interface SignUpDto {
@@ -28,7 +32,12 @@ export interface SignUpDto {
   email: string;
   city: string;
   role: Role;
-  promocode: string | null
+  promocode: string | null;
+  start?: string;
+  end?: string;
+  days?: string;
+  petTypes?: string[];
+  services?: string[]
 }
 
 export interface SignUpRo {

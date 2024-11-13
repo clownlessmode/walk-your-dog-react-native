@@ -4,15 +4,16 @@ import React from 'react';
 import { Image, Text, View } from 'react-native';
 import styles from './styles';
 interface Props {
+  image: string;
     name: string;
     message: string;
     dayOfWeek: string;
 }
-function UserChat({ name, message, dayOfWeek }: Props) {
+function UserChat({ name, message, dayOfWeek, image }: Props) {
   return (
     <View style={styles.wrapper}>
       <Image
-        source={require('@assets/signUp/avatarUser.png')}
+        source={image ? { uri: image } : require('@assets/signUp/avatarUser.png')}
         style={{ width: 50, height: 50 }}
       />
       <View style={{ width: '100%' }}>

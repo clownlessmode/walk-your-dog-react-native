@@ -7,9 +7,9 @@ import NotificationsQuestion from '@screens/notifications-question/Notifications
 import Onboarding from '@screens/onboarding/Onboarding';
 import { Screens } from '@shared/types/screens.type';
 import AppStack from '@app/providers/navigation/AppStack';
-import Telephone from '@screens/profile/update/telephone/Telephone';
-import UpdateTelephone from '@screens/profile/update/telephone/UpdateTelephone';
-import VerifySmsTelephone from '@screens/profile/update/telephone/VerifySmsTelephone';
+import Telephone from '@screens/profile-user/update/telephone/Telephone';
+import UpdateTelephone from '@screens/profile-user/update/telephone/UpdateTelephone';
+import VerifySmsTelephone from '@screens/profile-user/update/telephone/VerifySmsTelephone';
 import SuccessUpdate from '@shared/ui/success-update/SuccessUpdate';
 import MyPets from '@screens/my-pets/MyPets';
 import PetDetails from '@widgets/pet-details/PetDetails';
@@ -33,6 +33,9 @@ import Archive from '@screens/archive/Archive';
 import BonusProgram from '@screens/bonus-program/BonusProgram';
 import HelpAndDocumentation from '@screens/help-and-documentation/HelpAndDocumentation';
 import EventWaiting from '@screens/event-waiting/EventWaiting';
+import AddWindowEvent from '@screens/AddWindowEvent/AddWindowEvent';
+import AddEvent from '@screens/add-event/AddEvent';
+import Reviews from '@screens/reviews/Reviews';
 
 type ScreenConfig = {
   name: keyof Screens;
@@ -275,6 +278,27 @@ export const AUTHSCREENS: ScreenConfig[] = [
   {
     name: 'eventWaiting',
     component: EventWaiting,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'addEvent',
+    component: AddEvent,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'addWindowEvent',
+    component: AddWindowEvent,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'reviews',
+    component: Reviews,
     options: {
       headerShown: false,
     },

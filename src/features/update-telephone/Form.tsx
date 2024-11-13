@@ -3,7 +3,7 @@ import { VerifyCodeRo } from '@entity/auth/model/auth.interface';
 import { useUpdateController } from '@entity/update-telephone/update-telephone.controller';
 import useUserStore from '@entity/users/user.store';
 import useTelephoneStore from '@screens/auth/telephone.store';
-import useUpdateTelephoneStore from '@screens/profile/update/telephone/update-telephone.store';
+import useUpdateTelephoneStore from '@screens/profile-user/update/telephone/update-telephone.store';
 import globalStyles from '@shared/constants/globalStyles';
 import { useAppNavigation } from '@shared/hooks/useAppNavigation';
 import Error from '@shared/ui/error/Error';

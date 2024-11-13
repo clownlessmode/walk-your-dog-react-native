@@ -69,8 +69,6 @@ function AddForm({pet, setShowAddInfo, setSubmitted}:Props) {
   });
   const onSubmit = async (data: any) => {
     const response = await parametersPet({...data})
-    console.log(response)
-    console.log('Form submitted successfully!', data);
     setShowAddInfo(false);
     setSubmitted(true);
   };

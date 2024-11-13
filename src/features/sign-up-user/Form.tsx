@@ -161,6 +161,7 @@ function Form() {
               options={option}
               selectedValue={value}
               onSelect={onChange}
+              error={!!fieldState.error}
             />
             {fieldState.error && (
               <Error

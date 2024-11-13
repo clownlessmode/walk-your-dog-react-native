@@ -60,8 +60,12 @@ function Form() {
       code: data.code,
     });
     if (!response.user) {
+      if (role === 'CLIENT')
       navigation.navigate('signUpUser');
       Toast.hide();
+      if (role === 'SITTER')
+        navigation.navigate('signUpSitter');
+        Toast.hide();
     } else {
       setUser(response.user);
       setToken(response.accessToken);

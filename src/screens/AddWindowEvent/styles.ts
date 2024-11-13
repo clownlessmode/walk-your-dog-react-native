@@ -1,11 +1,10 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-  wrapper: {
-    paddingTop: 20,
-    paddingBottom: 30,
-    gap: 15,
-    alignItems: 'center',
+  blockEvent: {
+    padding: 10,
+    backgroundColor: '#F4F4F4',
+    borderRadius: 16,
   },
 });
 export default styles;
