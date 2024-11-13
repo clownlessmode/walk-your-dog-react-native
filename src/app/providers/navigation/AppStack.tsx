@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import useUserStore from '@entity/users/user.store';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons, MaterialIcons, Octicons } from '@expo/vector-icons';
 import AddRecord from '@screens/add-record/AddRecord';
 import Drawer from '@shared/ui/drawer/Drawer';
 import Home from '@screens/home/Home';
@@ -32,10 +32,16 @@ export default function AppStack() {
   const { role } = useRoleStore();
 
   const [modalVisible, setModalVisible] = React.useState(false);
+  useFocusEffect(
+    React.useCallback(() => {
+      setModalVisible(false);
+    }, [])
+  );
+
   const CustomTabBarButton = ({ children, onPress }: any) => (
     <Pressable
       style={{
-        top: -10, // Поднятие кнопки вверх
+        top: -10,
         justifyContent: 'center',
         alignItems: 'center',
       }}
@@ -99,17 +105,13 @@ export default function AppStack() {
         tabBarLabel: 'События',
         headerShown: false,
         tabBarIcon: ({ focused, color, size }) => (
-          <MaterialCommunityIcons
-            name={focused ? 'calendar' : 'calendar-outline'}
-            color={color}
-            size={30}
-          />
+          <Octicons name={focused ? 'bell-fill' : 'bell'} size={32} color='#222222' />
         ),
       }}
     />
   ) : (
     <Tab.Screen
-      name="Главная"
+      name="main"
       component={Home}
       options={{
         tabBarLabel: 'Главная',
@@ -127,33 +129,26 @@ export default function AppStack() {
         
         {role === 'SITTER' ? (
     <Tab.Screen
-      name="Записи"
+      name="records"
       component={CurrentTasks}
       options={{
         headerShown: false,
         tabBarLabel: 'Записи',
         tabBarIcon: ({ focused, color, size }) => (
-          <MaterialCommunityIcons
-            name={focused ? 'clipboard' : 'clipboard-outline'}
-            color={color}
-            size={30}
-          />
+         
+          <Ionicons name={focused ? 'clipboard' : 'clipboard-outline'} size={32} color="black" />
         ),
       }}
     />
   ) : (
     <Tab.Screen
-      name="События"
+      name="events"
       component={Events}
       options={{
         headerShown: false,
         tabBarLabel: 'События',
         tabBarIcon: ({ focused, color, size }) => (
-          <MaterialCommunityIcons
-            name={focused ? 'bell' : 'bell-outline'}
-            color={color}
-            size={size}
-          />
+          <Octicons name={focused ? 'bell-fill' : 'bell'} size={32} color={focused ? '#273B4A' : '#222222'} />
         ),
       }}
     />
@@ -180,27 +175,24 @@ export default function AppStack() {
           }}
         />
         <Tab.Screen
-          name="Чат"
+          name="chat"
           component={Chat}
           options={{
             headerShown: false,
             tabBarLabel: 'Чат',
             tabBarIcon: ({ focused, color, size }) => (
-              <MaterialCommunityIcons
-                name={focused ? 'chat' : 'chat-outline'}
-                color={color}
-                size={30}
-              />
+              <MaterialIcons name={focused ? 'chat' : 'chat-bubble-outline'} size={32} color="black" />
             ),
           }}
         />
 
         {role === 'SITTER' ? (
           <Tab.Screen
-            name="Профиль"
+            name="profileUser"
             component={ProfileWorker}
             options={{
               headerShown: false,
+              tabBarLabel: 'Профиль',
               tabBarIcon: ({ focused, color, size }) =>
                 user?.meta.image ? (
                   <Image
@@ -217,10 +209,11 @@ export default function AppStack() {
           />
         ) : (
           <Tab.Screen
-            name="Профиль"
+            name="profileWorker"
             component={ProfileUser}
             options={{
               headerShown: false,
+              tabBarLabel: 'Профиль',
               tabBarIcon: ({ focused, color, size }) =>
                 user?.meta.image ? (
                   <Image

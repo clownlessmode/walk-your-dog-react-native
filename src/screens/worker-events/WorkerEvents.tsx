@@ -211,7 +211,7 @@ function WorkerEvents() {
           flexDirection: 'row',
           alignItems: 'center',
           position: 'absolute',
-          top: 90,
+          top: 100,
           right: '28%',
           gap: 10,
           zIndex: 99999,

@@ -81,7 +81,7 @@ function EventDetailsItem({
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={{ gap: 14, paddingBottom: 10 }}>
+      <View style={[{ gap: 14, paddingBottom: 30 }]}>
         <View style={styles.wrapper}>
           <StatusText status={status} />
           <Text>{formatMapText(address)}</Text>
@@ -186,7 +186,9 @@ function EventDetailsItem({
             </View>
           ) : null}
         </View>
-
+        <View style={[showAddInfo ? {paddingBottom: 60} : {paddingBottom: 0}]}>
+        <Button isLoading={isLoadingAssignWorker} onPress={handleAssignWorker}>Взять заказ</Button>
+        </View>
         {role === 'SITTER' ? (
           <>
             <Button onPress={() => console.log('Связь с владельцем')}>
@@ -199,7 +201,7 @@ function EventDetailsItem({
         ) : (
           <></>
         )}
-         <Button isLoading={isLoadingAssignWorker} onPress={handleAssignWorker}>Взять заказ</Button>
+         
       </View>
       </ScrollView>
   );
