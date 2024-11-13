@@ -35,7 +35,7 @@ function AllEvent() {
               }
             });
       
-            dates[today] = { ...dates[today], selected: true, selectedColor: '#FFD600' };
+            dates[today] = { ...dates[today], selected: true, selectedColor: '#FFF3F8' };
             setMarkedDates(dates);
           };
           generateMarkedDates();
@@ -91,13 +91,13 @@ function AllEvent() {
         markingType={'multi-dot'}
         theme={{
           selectedDayBackgroundColor: 'blue', // Цвет фона выбранного дня
-          selectedDayTextColor: 'white', // Цвет текста выбранного дня
-          todayTextColor: '#FFD600', // Цвет текста для текущей даты
+          selectedDayTextColor: 'black', // Цвет текста выбранного дня
+          todayTextColor: 'black', // Цвет текста для текущей даты
           dayTextColor: 'black', // Основной цвет текста для дней
           textDisabledColor: 'gray', // Цвет для неактивных дат
           arrowColor: 'black', // Цвет стрелок переключения месяцев
           monthTextColor: 'black', // Цвет текста месяца
-          todayBackgroundColor: '#FFD600', // Фон для текущей даты
+          todayBackgroundColor: '#FFF3F8', // Фон для текущей даты
         }}
       />
       {selectedEvents.length > 0 ? (
