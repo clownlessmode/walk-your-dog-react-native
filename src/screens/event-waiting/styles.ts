@@ -3,7 +3,6 @@ import { Dimensions, StyleSheet } from "react-native";
 const { width } = Dimensions.get("window");
 const styles = StyleSheet.create({
   wrapper: {
-    
     paddingVertical: 12,
     flex: 1,
     elevation: 5,

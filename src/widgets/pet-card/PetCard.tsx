@@ -2,6 +2,7 @@ import { Pet } from '@entity/pets/model/pet.interface'
 import DetailsItem from '@shared/ui/details-item/DetailsItem'
 import { formatDate } from '@widgets/date-event-block/DateEventBlock';
 import React from 'react'
+import { View } from 'react-native';
 interface Props {
     pet: Pet
 }
@@ -9,7 +10,7 @@ function PetCard({pet}: Props) {
     const { parameters } = pet;
 
   return (
-    <>
+    <View style={{gap: 10}}>
        <DetailsItem title="Домашнее имя" description={parameters.homeName} />
       <DetailsItem title="Окрас" description={parameters.colorPet} />
       <DetailsItem title="Вес" description={parameters.weight} />
@@ -44,7 +45,7 @@ function PetCard({pet}: Props) {
       <DetailsItem title="Контактные телефоны и мессенджеры" description={parameters.preferredMessenger} />
       <DetailsItem title="Собака возвращается только к хозяину" description={parameters.returnOwner ? 'Да' : 'Нет'} />
       <DetailsItem title="Доверенное лицо" description={parameters.trustedPerson} />
-     </>
+     </View>
   )
 }
 

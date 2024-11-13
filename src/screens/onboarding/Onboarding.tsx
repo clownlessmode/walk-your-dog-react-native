@@ -12,16 +12,16 @@ import SlideItem from './SlideItem';
 import globalStyles from '@shared/constants/globalStyles';
 import styles from './styles';
 import { useAppNavigation } from '@shared/hooks/useAppNavigation';
-import useUserStore from '@entity/users/user.store';
-import { AntDesign } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
 const Onboarding = () => {
   const navigation = useAppNavigation();
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [isNavigated, setIsNavigated] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
   const progressAnim = useRef(new Animated.Value(0)).current;
+  const animationRef = useRef<Animated.CompositeAnimation | null>(null);
 
   const handleScroll = (event: any) => {
     const slideIndex = Math.round(event.nativeEvent.contentOffset.x / width);
@@ -31,18 +31,27 @@ const Onboarding = () => {
 
   const resetProgressAnimation = () => {
     progressAnim.setValue(0);
-    Animated.timing(progressAnim, {
+
+    if (animationRef.current) {
+      animationRef.current.stop();
+    }
+
+    animationRef.current = Animated.timing(progressAnim, {
       toValue: 1,
       duration: 5000,
       useNativeDriver: false,
-    }).start(({ finished }) => {
-      if (finished) {
+    });
+
+    animationRef.current.start(({ finished }) => {
+      if (finished && !isNavigated) {
         moveToNextSlide();
       }
     });
   };
 
   const moveToNextSlide = () => {
+    if (isNavigated) return;
+
     if (currentSlideIndex < slides.length - 1) {
       setCurrentSlideIndex(currentSlideIndex + 1);
       scrollViewRef.current?.scrollTo({
@@ -50,12 +59,18 @@ const Onboarding = () => {
         animated: true,
       });
     } else {
+      setIsNavigated(true);
       navigation.navigate('identity');
     }
   };
 
   useEffect(() => {
     resetProgressAnimation();
+    return () => {
+      if (animationRef.current) {
+        animationRef.current.stop();
+      }
+    };
   }, [currentSlideIndex]);
 
   return (
@@ -99,7 +114,13 @@ const Onboarding = () => {
       </View>
       <TouchableOpacity
         style={{ opacity: 0.3 }}
-        onPress={() => navigation.navigate('identity')}
+        onPress={() => {
+          if (animationRef.current) {
+            animationRef.current.stop();
+          }
+          setIsNavigated(true);
+          navigation.navigate('identity');
+        }}
       >
         <Text style={{ paddingVertical: 40 }}>Пропустить</Text>
       </TouchableOpacity>

@@ -115,7 +115,7 @@ function Waiting() {
 })
       ) : (
         <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 100}}>
-        <Text style={[globalStyles.text500]}>Событий на выбранную дату нет.</Text>
+        <Text style={[globalStyles.text500, {fontSize: 18}]}>Событий на выбранную дату нет</Text>
         </View>
       )}
     </View>

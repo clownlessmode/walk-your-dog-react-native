@@ -49,6 +49,7 @@ export type Screens = {
   addEvent: undefined
   addWindowEvent: undefined
   reviews: {countReviews: string}
+  eventDetails: { event: ServiceCreateRo };
 };
 
 type formattedData = {

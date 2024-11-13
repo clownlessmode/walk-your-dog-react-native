@@ -26,14 +26,16 @@ import useRoleStore from '@screens/auth/role.store';
 import AllEvent from '@screens/all-event/AllEvent';
 
 function WorkerEvents() {
-    const {role} = useRoleStore()
+  const { role } = useRoleStore();
   const [selectedTab, setSelectedTab] = useState('active');
   const navigation = useAppNavigation();
   const insets = useSafeAreaInsets();
   const [isModalVisible, setIsModalVisible] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const { user } = useUserStore();
-  const { getMyServices, loadingMyServices } = useServiceController(user?.id);
+  const { workerService, isLoadingWorkerServices } = useServiceController(
+    user?.id
+  );
   const [initialLocation, setInitialLocation] = useState<
     { lat: number; lon: number } | undefined
   >(undefined);
@@ -86,7 +88,7 @@ function WorkerEvents() {
   const threeHoursFromNow = new Date(now.getTime() + 3 * 60 * 60 * 1000);
 
   const filteredServices =
-    getMyServices
+    workerService
       ?.map((service) => {
         const serviceDate = new Date(service.datetime);
         const isIncludedStatus = [
@@ -152,7 +154,7 @@ function WorkerEvents() {
     [filteredServices]
   );
   const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 });
-  if (loadingMyServices) {
+  if (isLoadingWorkerServices) {
     return (
       <ScreenContainer>
         <View
@@ -163,7 +165,7 @@ function WorkerEvents() {
       </ScreenContainer>
     );
   }
-  if (!getMyServices) {
+  if (!workerService) {
     return (
       <ScreenContainer>
         <View
@@ -253,55 +255,68 @@ function WorkerEvents() {
                 />
               ))}
             </View>
-            <FlatList
-              data={filteredServices}
-              horizontal
-              onViewableItemsChanged={onViewRef}
-              viewabilityConfig={viewConfigRef.current}
-              showsHorizontalScrollIndicator={false}
-              pagingEnabled
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => (
-                <View style={styles.blockPeet}>
-                  <EventInfo
-                    worker={
-                      item.worker
-                        ? {
-                            reviews: 0,
-                            created_at: item.worker.created_at,
-                            id: item.worker.id,
-                            name: item.worker.meta.name,
-                            img:
-                              item.worker.meta.image ||
-                              'https://default-image-url.png', // Default image if none provided
-                          }
-                        : undefined
-                    }
-                    time={item.timeDisplay ? item.timeDisplay : item.datetime}
-                    status={item.status}
-                    address={item.address.address}
-                    comment={item.comment}
-                    role={'SITTER'}
-                    additionalPet={item.pet.parameters.additional}
-                    pet={item.pet.name}
-                    pettype={
-                      item.pet.breed?.petType.type
-                        ? item.pet.breed?.petType.type
-                        : ''
-                    }
-                    price={item.price}
-                    service={item.mainService.name}
-                  />
-                </View>
-              )}
-            />
+            {filteredServices.length === 0 ? (
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Text style={[globalStyles.text500, { fontSize: 18 }]}>
+                  Активные события отсутствуют
+                </Text>
+              </View>
+            ) : (
+              <FlatList
+                data={filteredServices}
+                horizontal
+                onViewableItemsChanged={onViewRef}
+                viewabilityConfig={viewConfigRef.current}
+                showsHorizontalScrollIndicator={false}
+                pagingEnabled
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                  <View style={styles.blockPeet}>
+                    <EventInfo
+                      worker={
+                        item.worker
+                          ? {
+                              reviews: 0,
+                              created_at: item.worker.created_at,
+                              id: item.worker.id,
+                              name: item.worker.meta.name,
+                              img:
+                                item.worker.meta.image ||
+                                'https://default-image-url.png', // Default image if none provided
+                            }
+                          : undefined
+                      }
+                      time={item.timeDisplay ? item.timeDisplay : item.datetime}
+                      status={item.status}
+                      address={item.address.address}
+                      comment={item.comment}
+                      role={'SITTER'}
+                      additionalPet={item.pet.parameters.additional}
+                      pet={item.pet.name}
+                      pettype={
+                        item.pet.breed?.petType.type
+                          ? item.pet.breed?.petType.type
+                          : ''
+                      }
+                      price={item.price}
+                      service={item.mainService.name}
+                    />
+                  </View>
+                )}
+              />
+            )}
           </View>
         </>
       )}
-      {getMyServices && selectedTab === 'waiting' && (
+      {selectedTab === 'waiting' && (
         <View>
-            {role === 'SITTER' ? <AllEvent /> :  <Waiting />}
-         
+          <AllEvent />
         </View>
       )}
     </View>

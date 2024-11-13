@@ -26,5 +26,9 @@ class ServiceService {
       const response = await baseApi.get(`service/worker/all`);
       return response.data;
     }
+    static async assignWorkerService(serviceId: string, workerId: string): Promise<any> {
+      const response = await baseApi.patch(`service/assign-worker/${serviceId}/${workerId}`);
+      return response.data;
+    }
 }
 export default ServiceService

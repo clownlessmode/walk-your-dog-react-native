@@ -36,6 +36,7 @@ import EventWaiting from '@screens/event-waiting/EventWaiting';
 import AddWindowEvent from '@screens/AddWindowEvent/AddWindowEvent';
 import AddEvent from '@screens/add-event/AddEvent';
 import Reviews from '@screens/reviews/Reviews';
+import EventDetails from '@screens/event-details/EventDetails';
 
 type ScreenConfig = {
   name: keyof Screens;
@@ -299,6 +300,13 @@ export const AUTHSCREENS: ScreenConfig[] = [
   {
     name: 'reviews',
     component: Reviews,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'eventDetails',
+    component: EventDetails,
     options: {
       headerShown: false,
     },

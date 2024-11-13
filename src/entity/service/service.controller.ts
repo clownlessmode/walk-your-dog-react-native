@@ -7,7 +7,7 @@ interface ApiError {
   error: string;
   statusCode: number;
 }
-export const useServiceController = (id?: string) => {
+export const useServiceController = (id?: string, serviceId?: string, workerId?: string) => {
   const queryClient = useQueryClient();
     const getService = useQuery({
         queryKey: ['allServices'],
@@ -48,6 +48,13 @@ export const useServiceController = (id?: string) => {
         queryKey: ['myServices'],
         queryFn: () => ServiceService.getAllWorkerService(),
       });
+      const patchAssignWorkerService = useMutation<unknown, Error, {serviceId: string; workerId: string}>({
+        mutationKey: ['myService', serviceId, workerId],
+        mutationFn: ({serviceId, workerId}) => ServiceService.assignWorkerService(serviceId as string, workerId as string),
+        onError: (error) => {
+          console.error('Ошибка при обновлении пользователя:', error);
+        },
+      });
       
       return {
         allService: getService.data,
@@ -61,6 +68,8 @@ export const useServiceController = (id?: string) => {
         workerService: getWorkerServices.data,
         isLoadingWorkerServices: getWorkerServices.isLoading,
         getAllWorkerService: getAllWorkerService.data,
-        isLoadingAllWorkerService: getAllWorkerService.isLoading
+        isLoadingAllWorkerService: getAllWorkerService.isLoading,
+        assignWorker: patchAssignWorkerService.mutateAsync,
+        isLoadingAssignWorker: patchAssignWorkerService.isPending
       }
 }

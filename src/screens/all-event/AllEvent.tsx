@@ -80,8 +80,8 @@ function AllEvent() {
       );
     }
     const handleEventPress = (event: ServiceCreateRo) => {
-        console.log("select", event)
-        // navigation.navigate('eventWaiting', { event });
+        console.log("select", event.id)
+        navigation.navigate('eventDetails', { event });
       };
   return (
     <View style={{ paddingTop: insets.top + 20 }}>
@@ -126,7 +126,7 @@ function AllEvent() {
 })
       ) : (
         <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 100}}>
-        <Text style={[globalStyles.text500]}>Событий на выбранную дату нет.</Text>
+        <Text style={[globalStyles.text500, {fontSize: 18}]}>Событий на выбранную дату нет</Text>
         </View>
       )}
     </View>

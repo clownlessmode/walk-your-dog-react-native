@@ -60,7 +60,7 @@ function EventInfo({
     `${getRussianEnding(count, ['отзыв', 'отзыва', 'отзывов'])}`;
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <View>
       <View style={{ gap: 14 }}>
         <View style={styles.wrapper}>
           <StatusText status={status} />
@@ -160,7 +160,7 @@ function EventInfo({
           <></>
         )}
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
