@@ -58,30 +58,6 @@ function Form() {
         value: pet.id,
       }))
     : [];
-  // console.log(petTypes)
-
-  // const formatInterval = (value: any) => {
-  //   if (!value) return '';
-
-  //   // Массив сокращений дней недели
-  //   const daysMap = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-  //   const selectedDays = value.days?.map((day: any) => daysMap[day]) || [];
-  //   const daysString = selectedDays.join(', ');
-
-  //   // Преобразование времени из формата ISO
-  //   const formatTime = (isoString: any) => {
-  //     const date = new Date(isoString);
-  //     const hours = date.getHours().toString().padStart(2, '0');
-  //     const minutes = date.getMinutes().toString().padStart(2, '0');
-  //     return `${hours}:${minutes}`;
-  //   };
-
-  //   const timeString = value.start && value.end
-  //     ? `${formatTime(value.start)} - ${formatTime(value.end)}`
-  //     : '';
-
-  //   return `${daysString} ${timeString}`;
-  // };
   const { control, handleSubmit, formState, reset, watch, setValue } =
     useForm<FormData>({
       defaultValues: {
@@ -339,12 +315,14 @@ function Form() {
           close={'Сохранить'}
           hasBackdrop={true}
           trigger={
+            <View>
             <Input
               value={intervalDisplay || 'Выберите интервал для работы'}
               editable={false}
               placeholder="Выберите интервал для работы"
               style={[intervalError ? styles.inputError : styles.input]}
             />
+            </View>
           }
         >
           <SelectInterval

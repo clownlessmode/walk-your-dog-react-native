@@ -18,5 +18,13 @@ class ServiceService {
       const response = await baseApi.get(`service/customer/${id}`);
       return response.data;
     }
+    static async getWorkerServices(id: string): Promise<any> {
+      const response = await baseApi.get(`service/worker/${id}`);
+      return response.data;
+    }
+    static async getAllWorkerService(): Promise<any> {
+      const response = await baseApi.get(`service/worker/all`);
+      return response.data;
+    }
 }
 export default ServiceService

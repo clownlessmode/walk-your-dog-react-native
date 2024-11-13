@@ -21,6 +21,8 @@ import useRoleStore from '@screens/auth/role.store';
 import CalendarEvent from '@screens/calendar-event/CalendarEvent';
 import ProfileWorker from '@screens/profile-worker/ProfileWorker';
 import ProfileUser from '@screens/profile-user/ProfileUser';
+import WorkerEvents from '@screens/worker-events/WorkerEvents';
+import CurrentTasks from '@screens/current-tasks/CurrentTasks';
 
 const Tab = createBottomTabNavigator();
 
@@ -89,36 +91,73 @@ export default function AppStack() {
           },
         }}
       >
-        <Tab.Screen
-          name="Главная"
-          component={Home}
-          options={{
-            tabBarLabel: 'Главная',
-            headerShown: false,
-            tabBarIcon: ({ focused, color, size }) => (
-              <MaterialCommunityIcons
-                name={focused ? 'home' : 'home-outline'}
-                color={color}
-                size={30}
-              />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="События"
-          component={Events}
-          options={{
-            headerShown: false,
-            tabBarLabel: 'События',
-            tabBarIcon: ({ focused, color, size }) => (
-              <MaterialCommunityIcons
-                name={focused ? 'bell' : 'bell-outline'}
-                color={color}
-                size={size}
-              />
-            ),
-          }}
-        />
+        {role === 'SITTER' ? (
+    <Tab.Screen
+      name="События"
+      component={WorkerEvents}
+      options={{
+        tabBarLabel: 'События',
+        headerShown: false,
+        tabBarIcon: ({ focused, color, size }) => (
+          <MaterialCommunityIcons
+            name={focused ? 'calendar' : 'calendar-outline'}
+            color={color}
+            size={30}
+          />
+        ),
+      }}
+    />
+  ) : (
+    <Tab.Screen
+      name="Главная"
+      component={Home}
+      options={{
+        tabBarLabel: 'Главная',
+        headerShown: false,
+        tabBarIcon: ({ focused, color, size }) => (
+          <MaterialCommunityIcons
+            name={focused ? 'home' : 'home-outline'}
+            color={color}
+            size={30}
+          />
+        ),
+      }}
+    />
+  )}
+        
+        {role === 'SITTER' ? (
+    <Tab.Screen
+      name="Записи"
+      component={CurrentTasks}
+      options={{
+        headerShown: false,
+        tabBarLabel: 'Записи',
+        tabBarIcon: ({ focused, color, size }) => (
+          <MaterialCommunityIcons
+            name={focused ? 'clipboard' : 'clipboard-outline'}
+            color={color}
+            size={30}
+          />
+        ),
+      }}
+    />
+  ) : (
+    <Tab.Screen
+      name="События"
+      component={Events}
+      options={{
+        headerShown: false,
+        tabBarLabel: 'События',
+        tabBarIcon: ({ focused, color, size }) => (
+          <MaterialCommunityIcons
+            name={focused ? 'bell' : 'bell-outline'}
+            color={color}
+            size={size}
+          />
+        ),
+      }}
+    />
+  )}
 
         <Tab.Screen
           name="Прогулка"

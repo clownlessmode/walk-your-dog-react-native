@@ -38,6 +38,17 @@ export const useServiceController = (id?: string) => {
         refetchInterval: 5000, 
         enabled: !!id
       });
+      const getWorkerServices = useQuery<ServiceCreateRo[]>({
+        queryKey: ['myServices', id],
+        queryFn: () => ServiceService.getWorkerServices(id as string),
+        refetchInterval: 5000, 
+        enabled: !!id
+      });
+      const getAllWorkerService = useQuery({
+        queryKey: ['myServices'],
+        queryFn: () => ServiceService.getAllWorkerService(),
+      });
+      
       return {
         allService: getService.data,
         isLoadService: getService.isLoading,
@@ -47,5 +58,9 @@ export const useServiceController = (id?: string) => {
         isErrorCreateServices: postService.isError,
         getMyServices: getMyServices.data,
         loadingMyServices: getMyServices.isLoading,
+        workerService: getWorkerServices.data,
+        isLoadingWorkerServices: getWorkerServices.isLoading,
+        getAllWorkerService: getAllWorkerService.data,
+        isLoadingAllWorkerService: getAllWorkerService.isLoading
       }
 }
