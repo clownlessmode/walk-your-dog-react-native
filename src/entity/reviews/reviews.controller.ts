@@ -18,7 +18,7 @@ export const useReviewController = (workerId?: string) => {
     queryKey: ['workerReviews', workerId],
     queryFn: () => ReviewService.getWorkerReviews(workerId as string),
     enabled: !!workerId,
-    // refetchInterval: 5000, // Интервал обновления данных, при необходимости
+    refetchInterval: 5000, // Интервал обновления данных, при необходимости
   });
 
   // Создание нового отзыва

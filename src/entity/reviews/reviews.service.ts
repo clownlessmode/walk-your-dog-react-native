@@ -5,11 +5,7 @@ import { Review } from '@entity/users/model/user.interface';
 class ReviewService {
   // Метод для создания отзыва
   static async createReview(dto: CreateReviewDto): Promise<Review> {
-    const response = await baseApi.post(`reviews`, dto, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const response = await baseApi.post(`reviews`, dto, {});
     return response.data;
   }
 

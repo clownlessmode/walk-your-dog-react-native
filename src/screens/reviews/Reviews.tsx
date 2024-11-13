@@ -1,35 +1,56 @@
-import GoBack from '@features/go-back/GoBack'
-import globalStyles from '@shared/constants/globalStyles'
-import ScreenContainer from '@shared/ui/containers/ScreenContainer'
-import Header from '@shared/ui/header/Header'
-import ReviewBlock from '@shared/ui/review-block/ReviewBlock'
-import React from 'react'
-import { FlatList, Text } from 'react-native'
-const mockReviews = [
-    { id: '1', user: { name: 'Иван' }, date: '8 сент 20:41', nameService: 'Купание', reviewText: 'Все круто было' },
-    { id: '2', user: { name: 'Мария' }, date: '7 сент 14:20', nameService: 'Стрижка', reviewText: 'Все прошло отлично!' },
-  ];
-function Reviews({route}: any) {
-    const {countReviews} = route.params
+import { useReviewController } from '@entity/reviews/reviews.controller';
+import { Review } from '@entity/users/model/user.interface';
+import useUserStore from '@entity/users/user.store';
+import GoBack from '@features/go-back/GoBack';
+import globalStyles from '@shared/constants/globalStyles';
+import ScreenContainer from '@shared/ui/containers/ScreenContainer';
+import Header from '@shared/ui/header/Header';
+import ReviewBlock from '@shared/ui/review-block/ReviewBlock';
+import getReviewWord from '@shared/utils/getReviewWord';
+import React, { useState } from 'react';
+import { ActivityIndicator, FlatList, Text, View } from 'react-native';
+
+function Reviews({ route }: any) {
+  const { user } = useUserStore();
+  const { workerReviews, isLoadingWorkerReviews } = useReviewController(
+    user?.worker.id
+  );
+
+  if (isLoadingWorkerReviews) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#9D9D9D" />
+      </View>
+    );
+  }
+  const topLevelReviews = workerReviews;
+
   return (
     <ScreenContainer>
-        <Header before={<GoBack />}>Отзывы</Header>
-        <Text style={[globalStyles.text500, {fontSize: 30}]}>{}</Text>
-        {/* <FlatList
-        data={mockReviews} // Данные для FlatList (замените на реальные данные)
+      <Header before={<GoBack />}>Отзывы</Header>
+      <Text
+        style={[
+          globalStyles.text500,
+          {
+            fontSize: 30,
+            width: '100%',
+            textAlign: 'center',
+            paddingVertical: 16,
+          },
+        ]}
+      >
+        {workerReviews?.length != undefined
+          ? getReviewWord(workerReviews?.length)
+          : 'Нет отзывов'}
+      </Text>
+      <FlatList
+        data={topLevelReviews} // Данные для FlatList (замените на реальные данные)
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <ReviewBlock
-            user={item.user}
-            date={item.date}
-            nameService={item.nameService}
-            reviewText={item.reviewText}
-          />
-        )}
-        contentContainerStyle={{ paddingBottom: 20 }} 
-      />*/}
+        renderItem={({ item }) => <ReviewBlock review={item} />}
+        contentContainerStyle={{ paddingBottom: 20 }}
+      />
     </ScreenContainer>
-  )
+  );
 }
 
-export default Reviews
+export default Reviews;
