@@ -1,3 +1,4 @@
+import { useReviewController } from '@entity/reviews/reviews.controller';
 import { User } from '@entity/users/model/user.interface';
 import UserProfile from '@entity/users/ui/user-profile/UserProfile';
 import useUserStore from '@entity/users/user.store';
@@ -13,14 +14,15 @@ import React from 'react';
 import { Text, View } from 'react-native';
 
 function ProfileWorker() {
-  const navigation = useAppNavigation()
+  const navigation = useAppNavigation();
   const { user } = useUserStore();
-  const balanceTextColor = user?.balance.general === 0 ? '#4c131a' : 'black';
+  console.log(user);
+  const { workerReviews } = useReviewController(user?.id);
 
   const handleNavReviews = () => {
     // const countReviews = user?.reviewsCount || 'Нет отзывов';
     // navigation.navigate('reviews', {countReviews})
-  }
+  };
   return (
     <ScrollContainer
       header={
@@ -30,8 +32,8 @@ function ProfileWorker() {
         </>
       }
     >
-      <View style={{gap: 16}}>
-        <ReviewBlock />
+      <View style={{ gap: 16 }}>
+        {/* <ReviewBlock /> */}
         <UserProfile
           name={user ? user?.meta.name : ''}
           description={user ? user?.meta.email : ''}
@@ -39,19 +41,23 @@ function ProfileWorker() {
         />
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <BlockInfoUser
-          onPress={handleNavReviews}
-            title={user?.meta.city ? user?.meta.city : ''}
+            onPress={handleNavReviews}
+            title={workerReviews ? `${workerReviews.length} отзывов` : ''}
             description={'Оставили ваши клиенты'}
             buttonDescription={'Как влиять на рейтинг?'}
-            variant='dark'
+            variant="dark"
           />
           <BlockInfoUser
-            title={user?.meta.city ? user?.meta.city : ''}
-            description={'Оставили ваши клиенты'}
+            title={
+              user?.balance.general != undefined
+                ? `${user?.balance.general}`
+                : ''
+            }
+            description={'Вы заработали до вывода'}
             buttonDescription={'Как вывести деньги?'}
           />
         </View>
-        <WorkerDetails user={user as User}/>
+        <WorkerDetails user={user as User} />
       </View>
     </ScrollContainer>
   );
