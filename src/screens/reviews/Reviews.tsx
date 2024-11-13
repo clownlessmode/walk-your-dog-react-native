@@ -14,7 +14,7 @@ function Reviews({route}: any) {
   return (
     <ScreenContainer>
         <Header before={<GoBack />}>Отзывы</Header>
-        <Text style={[globalStyles.text500, {fontSize: 30}]}>{getReviewWord(countReviews)}</Text>
+        <Text style={[globalStyles.text500, {fontSize: 30}]}>{}</Text>
         {/* <FlatList
         data={mockReviews} // Данные для FlatList (замените на реальные данные)
         keyExtractor={(item) => item.id}

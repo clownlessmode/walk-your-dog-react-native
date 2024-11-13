@@ -21,7 +21,7 @@ function ProfileWorker() {
 
   const handleNavReviews = () => {
     // const countReviews = user?.reviewsCount || 'Нет отзывов';
-    // navigation.navigate('reviews', {countReviews})
+    navigation.navigate('reviews', {countReviews: '0'})
   };
   return (
     <ScrollContainer
