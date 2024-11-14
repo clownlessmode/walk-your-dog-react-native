@@ -91,7 +91,7 @@ const scrollToBottom = () => {
   if (isLoadingChat) {
   return (
     <View style={styles.loader}>
-      <ActivityIndicator size="large" color="#000" />
+      <ActivityIndicator size="small" color="#9D9D9D" />
     </View>
   );
 }

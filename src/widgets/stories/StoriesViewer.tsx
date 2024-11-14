@@ -43,7 +43,7 @@ const StoryViewer: React.FC = () => {
     <View style={{ flex: 1 }}>
       {/* Display loading spinner if stories are still loading */}
       {isStoriesLoading || !stories ? (
-        <ActivityIndicator size="small" color="black" />
+        <ActivityIndicator size="small" color="#9D9D9D" />
       ) : (
         <>
           <MiniStories stories={stories} onStoryPress={handleStoryPress} />

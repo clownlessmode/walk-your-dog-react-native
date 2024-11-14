@@ -5,7 +5,7 @@ import AddRecord from '@screens/add-record/AddRecord';
 import Button from '@shared/ui/button/Button';
 import Drawer from '@shared/ui/drawer/Drawer';
 import UpcomingEvent from '@shared/ui/upcoming-event/UpcomingEvent';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import styles from './styles';
 import globalStyles from '@shared/constants/globalStyles';
@@ -15,29 +15,25 @@ function UpcomingEvents() {
   const { getMyServices, loadingMyServices } = useServiceController(user?.id);
   const [modalVisible, setModalVisible] = useState(false);
 
-  // Форматирование даты
-  const formatDate = useCallback(
-    (date: Date, format: 'short' | 'long' = 'long') => {
-      const options: Intl.DateTimeFormatOptions = {
-        day: 'numeric',
-        month: 'long',
-      };
-      return date.toLocaleString('ru-RU', options);
-    },
-    []
-  );
+  // Локальное состояние для хранения событий
+  const [events, setEvents] = useState<ServiceCreateRo[]>([]);
 
-  // Рендеринг списка событий
+  useEffect(() => {
+    if (getMyServices && getMyServices.length > 0) {
+      setEvents(getMyServices);
+    }
+  }, [getMyServices]);
+
   const renderEvents = () => {
     if (loadingMyServices) {
       return (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator color="black" size="small" />
+          <ActivityIndicator size="small" color="#9D9D9D" />
         </View>
       );
     }
 
-    if (!getMyServices || getMyServices.length === 0) {
+    if (!events || events.length === 0) {
       return (
         <View style={styles.noEventsContainer}>
           <Text style={[globalStyles.text400, styles.noEventsText]}>
@@ -47,25 +43,20 @@ function UpcomingEvents() {
       );
     }
 
-    return  getMyServices
-      .slice(0, 2)
-      .map((event: ServiceCreateRo, index: number) => (
-        <UpcomingEvent
-          key={index}
-          datetime={event.datetime}
-          nameService={event.mainService.name}
-          petName={event.pet.name}
-        />
-          
-      ));
-   
+    return events.slice(0, 2).map((event, index) => (
+      <UpcomingEvent
+        key={index}
+        datetime={event.datetime}
+        nameService={event.mainService.name}
+        petName={event.pet.name}
+      />
+    ));
   };
 
   return (
     <View>
       <View style={styles.events}>
         <Text style={styles.eventsTitle}>Ближайшие события</Text>
-
         <View style={styles.scrollEvent}>{renderEvents()}</View>
 
         <Drawer
@@ -84,5 +75,6 @@ function UpcomingEvents() {
     </View>
   );
 }
+
 
 export default UpcomingEvents;

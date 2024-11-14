@@ -18,8 +18,6 @@ function AllEvent() {
     const [markedDates, setMarkedDates] = useState<{ [key: string]: { dots?: { color: string }[]; selected?: boolean; selectedColor?: string } }>({});
     const [selectedEvents, setSelectedEvents] = useState<ServiceCreateRo[]>([]);
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
-// console.log(getAllWorkerService)
-  
     // Получаем текущую дату в формате YYYY-MM-DD
     const today = new Date().toISOString().split('T')[0];
   
@@ -75,7 +73,7 @@ function AllEvent() {
     if (isLoadingAllWorkerService) {
       return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" color="blue" />
+          <ActivityIndicator size="small" color="#9D9D9D" />
         </View>
       );
     }

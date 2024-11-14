@@ -30,7 +30,7 @@ const Button = ({
       {isLoading ? (
         <ActivityIndicator
           size="small"
-          color={variant === 'dark' ? 'white' : '#262626'}
+          color={variant === 'dark' ? 'white' : '#9D9D9D'}
         />
       ) : (
         <View style={{flexDirection: "row", alignItems: "center", gap: 10}}>

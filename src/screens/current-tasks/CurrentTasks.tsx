@@ -27,7 +27,7 @@ function CurrentTasks() {
       <ScreenContainer>
         <Header before={<GoBack />}>Архив событий</Header>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="small" color="black" />
+          <ActivityIndicator size="small" color="#9D9D9D" />
         </View>
       </ScreenContainer>
     );

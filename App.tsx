@@ -20,7 +20,7 @@ export default function App() {
   const { fontsLoaded, onLayoutRootView, isReady } = useLoadFonts();
   const queryClient = new QueryClient({});
   if (!fontsLoaded && isReady && !isHydrated) {
-    return <ActivityIndicator size="large" />;
+    return <ActivityIndicator size="small" color="#9D9D9D"/>;
   }
 
   return (

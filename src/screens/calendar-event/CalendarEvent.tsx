@@ -11,13 +11,9 @@ function CalendarEvent({ setModalVisible }: Props) {
   const navigation = useAppNavigation();
 
   const handlePress = (route: any) => {
-    if (setModalVisible) setModalVisible(false);
+    navigation.navigate(route);
+      if (setModalVisible) setModalVisible(false);
     
-
-    // Немного задерживаем навигацию, чтобы модальное окно успело закрыться
-    setTimeout(() => {
-      navigation.navigate(route);
-    }, 300);
   };
 
   return (

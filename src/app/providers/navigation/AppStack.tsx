@@ -236,7 +236,7 @@ export default function AppStack() {
         setModalVisible={setModalVisible} // Pass the function to change visibility
       >
         {role === 'SITTER' ? (
-          <CalendarEvent />
+          <CalendarEvent setModalVisible={setModalVisible}/>
         ) : (
           <AddRecord setModalVisible={setModalVisible} />
         )}

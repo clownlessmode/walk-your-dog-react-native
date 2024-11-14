@@ -120,11 +120,9 @@ function WebViewPayment() {
       </View>
     );
   }
-
-  // iOS loading view
   return (
     <View style={styles.container}>
-      <ActivityIndicator size="large" color="#0000ff" />
+      <ActivityIndicator size="small" color="#9D9D9D" />
     </View>
   );
 }

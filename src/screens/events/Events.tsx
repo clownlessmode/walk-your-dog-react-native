@@ -22,6 +22,7 @@ import EventInfo from '@shared/ui/event-info/EventInfo';
 import Waiting from '@screens/waiting/Waiting';
 import { Location } from '@screens/map/map.store';
 import WebView from 'react-native-webview';
+import { ServiceCreateRo } from '@entity/service/model/service.interface';
 
 function Events() {
   const [selectedTab, setSelectedTab] = useState('active');
@@ -31,10 +32,33 @@ function Events() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const { user } = useUserStore();
   const { getMyServices, loadingMyServices } = useServiceController(user?.id);
+  console.log(getMyServices)
+  const [events, setEvents] = useState<ServiceCreateRo[]>([]);
   const [initialLocation, setInitialLocation] = useState<
     { lat: number; lon: number } | undefined
   >(undefined);
+  useEffect(() => {
+    if (getMyServices && getMyServices.length > 0) {
+      setEvents(getMyServices);
+    }
+  }, [getMyServices]);
+  const [timeoutReached, setTimeoutReached] = useState(false); // Контроль времени ожидания
+  const [isDataLoadedOnce, setIsDataLoadedOnce] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setTimeoutReached(true);
+    }, 25000);
 
+    return () => clearTimeout(timer);
+  }, []);
+  useEffect(() => {
+    if (getMyServices && getMyServices.length > 0) {
+      setIsDataLoadedOnce(true);
+      setTimeoutReached(false);
+    }
+  }, [getMyServices]);
+
+  const [isLocating, setIsLocating] = useState(false);
   useEffect(() => {
     const getLocation = async () => {
       // Запрос разрешения на доступ к местоположению
@@ -52,7 +76,7 @@ function Events() {
 
     getLocation();
   }, []);
-  const [isLocating, setIsLocating] = useState(false);
+ 
   const yaMapRef = useRef<WebView>(null);
   const getUserLocation = async () => {
     setIsLocating(true);
@@ -82,51 +106,34 @@ function Events() {
   const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
   const threeHoursFromNow = new Date(now.getTime() + 3 * 60 * 60 * 1000);
 
-  const filteredServices =
-    getMyServices
-      ?.map((service) => {
-        const serviceDate = new Date(service.datetime);
-        const isIncludedStatus = [
-          'В работе',
-          'Ожидание отчета',
-          'Поиск исполнителя',
-        ].includes(service.status);
+  const filteredServices = events
+  ?.map((service) => {
+    const serviceDate = new Date(service.datetime);
+    const isIncludedStatus = ['В работе', 'Ожидание отчета', 'Поиск исполнителя'].includes(service.status);
 
-        // Check if the service is within the display range (from two hours ago to three hours from now)
-        const isInTimeRange =
-          serviceDate >= twoHoursAgo && serviceDate <= threeHoursFromNow;
+    const isInTimeRange = serviceDate >= twoHoursAgo && serviceDate <= threeHoursFromNow;
 
-        let timeDisplay = '';
-        if (serviceDate > now && serviceDate <= threeHoursFromNow) {
-          // Service is starting within the next three hours
-          const remainingTime = Math.max(
-            0,
-            serviceDate.getTime() - now.getTime()
-          );
-          const hours = Math.floor(remainingTime / (1000 * 60 * 60));
-          const minutes = Math.floor(
-            (remainingTime % (1000 * 60 * 60)) / (1000 * 60)
-          );
-          timeDisplay = `До начала ${hours} ч ${minutes} м`;
-        } else if (serviceDate <= now) {
-          // Service has already started, calculate how long it has been in progress
-          const elapsedTime = now.getTime() - serviceDate.getTime();
-          const hours = Math.floor(elapsedTime / (1000 * 60 * 60));
-          const minutes = Math.floor(
-            (elapsedTime % (1000 * 60 * 60)) / (1000 * 60)
-          );
-          timeDisplay = `В работе ${hours} ч ${minutes} м`;
-        }
+    let timeDisplay = '';
+    if (serviceDate > now && serviceDate <= threeHoursFromNow) {
+      const remainingTime = Math.max(0, serviceDate.getTime() - now.getTime());
+      const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+      const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+      timeDisplay = `До начала ${hours} ч ${minutes} м`;
+    } else if (serviceDate <= now) {
+      const elapsedTime = now.getTime() - serviceDate.getTime();
+      const hours = Math.floor(elapsedTime / (1000 * 60 * 60));
+      const minutes = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60));
+      timeDisplay = `В работе ${hours} ч ${minutes} м`;
+    }
 
-        return {
-          ...service,
-          isIncludedStatus,
-          isInTimeRange,
-          timeDisplay,
-        };
-      })
-      .filter((service) => service.isIncludedStatus && service.isInTimeRange) ||
-    [];
+    return {
+      ...service,
+      isIncludedStatus,
+      isInTimeRange,
+      timeDisplay,
+    };
+  })
+  .filter((service) => service.isIncludedStatus && service.isInTimeRange) || [];
 
   const [event, setEvent] = useState<Location | null>(null);
   const onViewRef = useCallback(
@@ -134,54 +141,27 @@ function Events() {
       if (viewableItems.length > 0) {
         const newIndex = viewableItems[0].index;
         if (filteredServices[newIndex] && filteredServices[newIndex].address) {
-          setCurrentIndex(newIndex);
           setEvent(filteredServices[newIndex].address);
-          console.log('Current Address:', filteredServices[newIndex].address);
-        } else {
-          console.warn(`Address is missing for item at index ${newIndex}`);
-          console.log(
-            'Filtered Service at this index:',
-            filteredServices[newIndex]
-          );
         }
       }
     },
     [filteredServices]
   );
   const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 });
-  if (loadingMyServices) {
+  if ((loadingMyServices || !timeoutReached) && !isDataLoadedOnce) {
     return (
       <ScreenContainer>
-        <View
-          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-        >
-          <ActivityIndicator size="small" color="black" />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="small" color="#9D9D9D" />
         </View>
       </ScreenContainer>
     );
   }
-  if (!getMyServices) {
+  if (!events || events.length === 0) {
     return (
       <ScreenContainer>
-        <View
-          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-        >
-          <Text style={[globalStyles.text500, { fontSize: 18 }]}>
-            Архив пуст
-          </Text>
-        </View>
-      </ScreenContainer>
-    );
-  }
-  if (!filteredServices) {
-    return (
-      <ScreenContainer>
-        <View
-          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-        >
-          <Text style={[globalStyles.text500, { fontSize: 18 }]}>
-            Архив пуст
-          </Text>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={[globalStyles.text500, { fontSize: 18 }]}>Архив пуст</Text>
         </View>
       </ScreenContainer>
     );
@@ -264,6 +244,19 @@ function Events() {
                 />
               ))}
             </View>
+            {filteredServices.length === 0 ? (
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Text style={[globalStyles.text500, { fontSize: 18 }]}>
+                  Активные события отсутствуют
+                </Text>
+              </View>
+            ) : (
             <FlatList
               data={filteredServices}
               horizontal
@@ -304,6 +297,7 @@ function Events() {
                 </View>
               )}
             />
+            )}
           </View>
         </>
       )}

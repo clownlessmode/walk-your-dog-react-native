@@ -8,7 +8,7 @@ interface Props {
 }
 function Balances({ balanceType, selectedBalance }: Props) {
   const { user } = useUserStore();
-  const balanceTextColor = user?.balance.general === 0 ? '#da4c5d' : 'black';
+  const balanceTextColor = user?.balance.general === 0 ? '#da4c5d' : '';
   return (
     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
       <TouchableOpacity

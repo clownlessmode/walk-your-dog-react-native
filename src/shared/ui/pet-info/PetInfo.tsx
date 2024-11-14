@@ -15,7 +15,6 @@ interface Props {
 
 function PetInfo({ variant = 'grey', pet, onPress, selectedPet }: Props) {
   const petsArray = Array.isArray(pet) ? pet : [pet]; // Преобразуем в массив, если это один объект
-
   return (
     <View style={{ gap: 10 }}>
       {petsArray.length === 0 && (

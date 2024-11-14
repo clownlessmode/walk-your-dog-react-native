@@ -12,6 +12,7 @@ import * as MyLocation from 'expo-location';
 import {
   ActivityIndicator,
   FlatList,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -36,6 +37,16 @@ function WorkerEvents() {
   const { workerService, isLoadingWorkerServices } = useServiceController(
     user?.id
   );
+  // console.log(workerService)
+  const [localWorkerService, setLocalWorkerService] = useState(workerService || []);
+  const [isDataLoadedOnce, setIsDataLoadedOnce] = useState(false);
+  const [timeoutReached, setTimeoutReached] = useState(false);
+
+  useEffect(() => {
+    if (workerService && workerService.length > 0) {
+      setLocalWorkerService(workerService);
+    }
+  }, [workerService]);
   const [initialLocation, setInitialLocation] = useState<
     { lat: number; lon: number } | undefined
   >(undefined);
@@ -88,19 +99,21 @@ function WorkerEvents() {
   const threeHoursFromNow = new Date(now.getTime() + 3 * 60 * 60 * 1000);
 
   const filteredServices =
-    workerService
+    localWorkerService
       ?.map((service) => {
         const serviceDate = new Date(service.datetime);
         const isIncludedStatus = [
           'В работе',
           'Ожидание отчета',
           'Поиск исполнителя',
+          'В ожидании'
         ].includes(service.status);
 
         // Check if the service is within the display range (from two hours ago to three hours from now)
         const isInTimeRange =
           serviceDate >= twoHoursAgo && serviceDate <= threeHoursFromNow;
-
+          console.log(`Сервис: ${service.id}, Дата: ${serviceDate}, Время: ${service.datetime}`);
+          console.log(`Включен статус: ${isIncludedStatus}, Временной диапазон: ${isInTimeRange}`);
         let timeDisplay = '';
         if (serviceDate > now && serviceDate <= threeHoursFromNow) {
           // Service is starting within the next three hours
@@ -154,30 +167,28 @@ function WorkerEvents() {
     [filteredServices]
   );
   const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 });
-  if (isLoadingWorkerServices) {
+  if (isLoadingWorkerServices || localWorkerService === undefined || localWorkerService.length === 0) {
     return (
       <ScreenContainer>
-        <View
-          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-        >
-          <ActivityIndicator size="small" color="black" />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="small" color="#9D9D9D" />
         </View>
       </ScreenContainer>
     );
   }
-  if (!workerService) {
-    return (
-      <ScreenContainer>
-        <View
-          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-        >
-          <Text style={[globalStyles.text500, { fontSize: 18 }]}>
-            Архив пуст
-          </Text>
-        </View>
-      </ScreenContainer>
-    );
-  }
+  // if (localWorkerService.length === 0) {
+  //   return (
+  //     <ScreenContainer>
+  //       <View
+  //         style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+  //       >
+  //         <Text style={[globalStyles.text500, { fontSize: 18 }]}>
+  //           Активные события отсутствуют
+  //         </Text>
+  //       </View>
+  //     </ScreenContainer>
+  //   );
+  // }
   if (!filteredServices) {
     return (
       <ScreenContainer>
@@ -251,7 +262,6 @@ function WorkerEvents() {
                   name="ellipse"
                   size={8}
                   color={index === currentIndex ? 'black' : 'grey'}
-                  style={{ margin: 3 }}
                 />
               ))}
             </View>
@@ -268,6 +278,7 @@ function WorkerEvents() {
                 </Text>
               </View>
             ) : (
+              <ScrollView>
               <FlatList
                 data={filteredServices}
                 horizontal
@@ -310,6 +321,7 @@ function WorkerEvents() {
                   </View>
                 )}
               />
+              </ScrollView>
             )}
           </View>
         </>

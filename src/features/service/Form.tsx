@@ -220,7 +220,7 @@ function Form() {
               alignItems: 'center',
             }}
           >
-            <ActivityIndicator size={'large'} color={'black'} />
+            <ActivityIndicator size="small" color="#9D9D9D" />
           </View>
         ) : (
           <View style={styles.serviceContainer}>

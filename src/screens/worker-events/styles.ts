@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
   pagination: {
     flexDirection: "row",
     justifyContent: "center",
+    alignItems: 'center'
   },
 });
 export default styles;

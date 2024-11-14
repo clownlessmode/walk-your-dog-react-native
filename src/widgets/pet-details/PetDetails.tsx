@@ -54,7 +54,7 @@ const PetDetails = () => {
 
           {loadPetService ? (
             <View>
-              <ActivityIndicator size={'small'} color={'black'} />
+              <ActivityIndicator size="small" color="#9D9D9D" />
             </View>
           ) : getPetService.length > 0 ? (
             <View style={{ gap: 10 }}>

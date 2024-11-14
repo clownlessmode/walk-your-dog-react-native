@@ -61,7 +61,7 @@ const Dropdown = ({
     } else {
       // Логика для одиночного выбора
       onSelect(newValue); // Отдаем строку
-      toggleDropdown()
+      toggleDropdown();
     }
   };
 
@@ -79,12 +79,12 @@ const Dropdown = ({
           .filter((value) => !selectedSet.has(value));
 
         onSelect([...selectedValue, ...remainingOptions]); // Добавляем оставшиеся опции
-        toggleDropdown()
+        toggleDropdown();
       }
     } else {
       // Если ничего не выбрано, выбираем все
       onSelect(options.map((option) => option.value));
-      toggleDropdown()
+      toggleDropdown();
     }
   };
 
@@ -170,8 +170,8 @@ const Dropdown = ({
               ) : (
                 <ActivityIndicator
                   style={{ padding: 30 }}
-                  color="#9D9D9D"
                   size="small"
+                  color="#9D9D9D"
                 />
               )
             }

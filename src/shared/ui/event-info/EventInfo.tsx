@@ -152,8 +152,8 @@ function EventInfo({
         {role === 'SITTER' ? (
           <>
             <Button onPress={() => console.log("Связь с владельцем")}>Связаться с владельцем</Button>
-            <TouchableOpacity onPress={() => console.log("Чат с подержкой")}>
-              <Text>Чат с подержкой</Text>
+            <TouchableOpacity style={{alignItems: 'center'}} onPress={() => console.log("Чат с подержкой")}>
+              <Text style={[globalStyles.text500]}>Чат с подержкой</Text>
             </TouchableOpacity>
           </>
         ) : (

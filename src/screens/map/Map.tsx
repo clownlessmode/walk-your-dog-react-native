@@ -118,7 +118,7 @@ function Map() {
       />
        <TouchableOpacity style={styles.locationButton} onPress={getUserLocation}>
         {isLocating ? (
-          <ActivityIndicator size="small" color="black" /> 
+          <ActivityIndicator size="small" color="#9D9D9D"/> 
         ) : (
           <FontAwesome name="location-arrow" size={24} color="black" />
         )}

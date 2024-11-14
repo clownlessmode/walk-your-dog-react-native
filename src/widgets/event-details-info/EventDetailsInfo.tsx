@@ -14,6 +14,8 @@ import { AntDesign } from '@expo/vector-icons';
 import PetCard from '@widgets/pet-card/PetCard';
 import { useServiceController } from '@entity/service/service.controller';
 import useUserStore from '@entity/users/user.store';
+import Toast from 'react-native-toast-message';
+import { useAppNavigation } from '@shared/hooks/useAppNavigation';
 interface Props {
   status: string;
   address: string;
@@ -49,6 +51,7 @@ function EventDetailsItem({
   serviceId,
   role = 'CLIENT',
 }: Props) {
+  const navigation = useAppNavigation()
     const {user} = useUserStore()
     // console.log('Отдаю', user?.id)
     const {assignWorker, isLoadingAssignWorker} = useServiceController()
@@ -67,14 +70,22 @@ function EventDetailsItem({
 
 
   const handleAssignWorker = async () => {
-    console.log("SERVICE", serviceId);
-    console.log("USER", user?.id);
-  
     if (serviceId && user?.id) {
       try {
         const response = await assignWorker({ serviceId, workerId: user.id });
+        Toast.show({
+          type:'success',
+          text1: 'Успешно',
+          text2: 'Вы успешно взяли заказ!',
+        })
+        navigation.goBack()
       } catch (error) {
         console.error("Ошибка при назначении работника:", error);
+        Toast.show({
+          type:'error',
+          text1: 'Ошибка',
+          text2: 'Произошла ошибка!',
+        })
       }
     }
   };

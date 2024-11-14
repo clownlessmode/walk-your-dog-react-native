@@ -41,7 +41,7 @@ function Abonements() {
         <View
           style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         >
-          <ActivityIndicator size="large" color="#9D9D9D" />
+          <ActivityIndicator size="small" color="#9D9D9D" />
         </View>
       ) : myAbonements.length === 0 ? (
         <View

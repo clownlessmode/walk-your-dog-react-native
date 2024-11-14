@@ -1,4 +1,4 @@
-import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery, useQueryClient, UseQueryOptions } from "@tanstack/react-query";
 import ServiceService from "./service.service";
 import { ServiceCreateDto, ServiceCreateRo} from "./model/service.interface";
 import { AxiosError } from "axios";
@@ -38,12 +38,13 @@ export const useServiceController = (id?: string, serviceId?: string, workerId?:
         refetchInterval: 5000, 
         enabled: !!id
       });
-      const getWorkerServices = useQuery<ServiceCreateRo[]>({
+      const getWorkerServices = useQuery<ServiceCreateRo[], Error, ServiceCreateRo[], [string, string | undefined]>({
         queryKey: ['myServices', id],
         queryFn: () => ServiceService.getWorkerServices(id as string),
-        refetchInterval: 5000, 
-        enabled: !!id
-      });
+        refetchInterval: 5000,
+        enabled: !!id,
+        keepPreviousData: true,
+      } as UseQueryOptions<ServiceCreateRo[], Error, ServiceCreateRo[], [string, string | undefined]>);
       const getAllWorkerService = useQuery({
         queryKey: ['myServices'],
         queryFn: () => ServiceService.getAllWorkerService(),

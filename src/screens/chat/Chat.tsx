@@ -106,7 +106,7 @@ function Chat() {
         <View
           style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
         >
-          <ActivityIndicator size="large" color="#000" />
+          <ActivityIndicator size="small" color="#9D9D9D" />
         </View>
       ) : (
         <FlatList
