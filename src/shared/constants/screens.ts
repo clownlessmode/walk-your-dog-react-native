@@ -38,6 +38,7 @@ import AddEvent from '@screens/add-event/AddEvent';
 import Reviews from '@screens/reviews/Reviews';
 import EventDetails from '@screens/event-details/EventDetails';
 import SignUpPetAdd from '@screens/sign-up-pet-add/SignUpPetAdd';
+import FinishedEvent from '@screens/finished-event/FinishedEvent';
 
 type ScreenConfig = {
   name: keyof Screens;
@@ -315,6 +316,13 @@ export const AUTHSCREENS: ScreenConfig[] = [
   {
     name: 'eventDetails',
     component: EventDetails,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'finishedEvent',
+    component: FinishedEvent,
     options: {
       headerShown: false,
     },

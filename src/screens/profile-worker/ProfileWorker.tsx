@@ -12,16 +12,15 @@ import getReviewWord from '@shared/utils/getReviewWord';
 import sliceId from '@shared/utils/sliceId';
 import WorkerDetails from '@widgets/worker-details/WorkerDetails';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 
 function ProfileWorker() {
   const navigation = useAppNavigation();
   const { user } = useUserStore();
   console.log(user);
-  const { workerReviews } = useReviewController(user?.worker.id);
+  const { workerReviews, isLoadingWorkerReviews } = useReviewController(user?.worker.id);
 
   const handleNavReviews = () => {
-    // const countReviews = user?.reviewsCount || 'Нет отзывов';
     navigation.navigate('reviews', { countReviews: '0' });
   };
   return (
@@ -43,9 +42,13 @@ function ProfileWorker() {
           <BlockInfoUser
             onPress={handleNavReviews}
             title={
-              workerReviews?.length != undefined
-                ? getReviewWord(workerReviews?.length)
-                : 'Нет отзывов'
+              isLoadingWorkerReviews ? (
+                <ActivityIndicator size="small" color="#000" />
+              ) : workerReviews?.length ? (
+                getReviewWord(workerReviews?.length)
+              ) : (
+                'Нет отзывов'
+              )
             }
             description={'Оставили ваши клиенты'}
             buttonDescription={'Как влиять на рейтинг?'}

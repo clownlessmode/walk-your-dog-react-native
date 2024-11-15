@@ -10,21 +10,16 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
-  StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
-// import styles from './styles';
 import globalStyles from '@shared/constants/globalStyles';
 import InputMessage from '@shared/ui/input-message/InputMessage';
-import { Feather } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
 import { useChatsController } from '@entity/chats/chats.controller';
 import { Chat, Message } from '@entity/users/model/user.interface';
 import { useSocket } from '@app/providers/SocketContext';
 import useUserStore from '@entity/users/user.store';
+import styles from './styles';
 type UserChatRouteProp = RouteProp<Screens, 'userChat'>;
 function UserChat() {
   const { user } = useUserStore();
@@ -33,26 +28,23 @@ function UserChat() {
   const { id, name, image } = route.params;
   if (!id) return null;
 
-  const { messages:chat, isLoadingMessages:isLoadingChat} = useChatsController(id);
+  const { messages: chat, isLoadingMessages: isLoadingChat } =
+    useChatsController(id);
   const [messages, setMessages] = useState<Message[]>([]);
-    useEffect(() => {
+  useEffect(() => {
     if (chat) {
       setMessages(chat);
       scrollToBottom();
     }
   }, [chat]);
-  
+
   const [newMessage, setNewMessage] = useState('');
-
-
 
   const flatListRef = useRef<FlatList>(null);
 
-const scrollToBottom = () => {
-  flatListRef.current?.scrollToEnd({ animated: true });
-};
-
-
+  const scrollToBottom = () => {
+    flatListRef.current?.scrollToEnd({ animated: true });
+  };
 
   useEffect(() => {
     scrollToBottom();
@@ -89,20 +81,12 @@ const scrollToBottom = () => {
     setNewMessage('');
   };
   if (isLoadingChat) {
-  return (
-    <View style={styles.loader}>
-      <ActivityIndicator size="small" color="#9D9D9D" />
-    </View>
-  );
-}
-
-// if (messages.length === 0) {
-//   return (
-//     <View style={styles.messageContainer}>
-//       <Text>No messages to display</Text>
-//     </View>
-//   );
-// }
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="small" color="#9D9D9D" />
+      </View>
+    );
+  }
 
   const renderMessage = ({ item }: { item: Message }) => (
     <View
@@ -115,11 +99,11 @@ const scrollToBottom = () => {
     >
       {item.sender.id !== user?.id && (
         <Image
-           source={
-                item.sender?.meta?.image
-                  ? { uri:  item.sender?.meta?.image }
-                  : require('@assets/signUp/avatarUser.png')
-              }
+          source={
+            item.sender?.meta?.image
+              ? { uri: item.sender?.meta?.image }
+              : require('@assets/signUp/avatarUser.png')
+          }
           style={styles.avatar}
         />
       )}
@@ -153,15 +137,15 @@ const scrollToBottom = () => {
         <Header before={<GoBack />}>
           <View style={styles.headerContent}>
             <Image
-             source={
-              image
-                ? { uri: image } // Используем переданную фотографию
-                : require('@assets/signUp/avatarUser.png')
-            }
+              source={
+                image
+                  ? { uri: image } // Используем переданную фотографию
+                  : require('@assets/signUp/avatarUser.png')
+              }
               style={styles.avatar}
             />
             <Text style={[globalStyles.text500, styles.textHeader]}>
-            {name || 'Неизвестен'} 
+              {name || 'Неизвестен'}
             </Text>
           </View>
         </Header>
@@ -192,38 +176,4 @@ const scrollToBottom = () => {
   );
 }
 
-const styles = StyleSheet.create({
-  loader: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  headerContent: { flexDirection: 'row', gap: 12 },
-  avatar: { width: 40, height: 40, borderRadius: 20 },
-  textHeader: { alignSelf: 'center' },
-  messageRow: { flexDirection: 'row', marginBottom: 12 },
-  myMessageRow: { justifyContent: 'flex-end' },
-  otherMessageRow: { justifyContent: 'flex-start' },
-  messageContainer: { maxWidth: '70%', borderRadius: 10, padding: 10 },
-  myMessage: { backgroundColor: '#DCF8C6' },
-  otherMessage: { backgroundColor: '#E5E5EA' },
-  myMesText: { color: '#000' },
-  otherMesText: { color: '#000' },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingVertical: 14,
-  },
-  attachButton: { backgroundColor: '#F0F0F0', padding: 10, borderRadius: 9999 },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 20,
-  },
-  emptyText: {
-    fontSize: 18,
-    color: '#9D9D9D',
-    textAlign: 'center',
-  },
-});
-
 export default UserChat;
-

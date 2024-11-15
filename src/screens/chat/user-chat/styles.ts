@@ -1,51 +1,36 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-  messageContainer: {
-    padding: 12,
-    borderRadius: 16,
-    maxWidth: '80%',
-  },
-  myMessage: {
-    alignSelf: 'flex-end',
-    backgroundColor: '#262626',
-  },
-  otherMessage: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#E7EFBE',
-  },
-  myMesText: {
-    color: '#FFFFFF',
-  },
-  otherMesText: {
-    color: '#000000',
-  },
-  messageRow: {
+  loader: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  headerContent: { flexDirection: 'row', gap: 12 },
+  avatar: { width: 40, height: 40, borderRadius: 20 },
+  textHeader: { alignSelf: 'center' },
+  messageRow: { flexDirection: 'row', gap: 10, paddingBottom: 10 },
+  myMessageRow: { justifyContent: 'flex-end' },
+  otherMessageRow: { justifyContent: 'flex-start' },
+  messageContainer: { maxWidth: '70%', borderRadius: 10, padding: 10 },
+  myMessage: { backgroundColor: '#DCF8C6' },
+  otherMessage: { backgroundColor: '#E5E5EA' },
+  myMesText: { color: '#000' },
+  otherMesText: { color: '#000' },
+  inputContainer: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
-    width: '100%',
-  },
-  myMessageRow: {
-    justifyContent: 'flex-end',
-  },
-  otherMessageRow: {
+    alignItems: 'center',
     gap: 8,
-    justifyContent: 'flex-start',
+    paddingVertical: 14,
   },
-  avatar: {
-    width: 40,
-    height: 40,
+  attachButton: { backgroundColor: '#F0F0F0', padding: 10, borderRadius: 9999 },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
   },
-  textHeader: {
-    fontSize: 20,
+  emptyText: {
+    fontSize: 18,
+    color: '#9D9D9D',
     textAlign: 'center',
   },
-  image: {
-    width: 50,
-    height: 50,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ccc',
-  },
 });
+
 export default styles;

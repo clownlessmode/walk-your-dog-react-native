@@ -14,14 +14,14 @@ function UserChat({ name, message, dayOfWeek, image }: Props) {
     <View style={styles.wrapper}>
       <Image
         source={image ? { uri: image } : require('@assets/signUp/avatarUser.png')}
-        style={{ width: 50, height: 50 }}
+        style={{ width: 50, height: 50, borderRadius: 9999 }}
       />
       <View style={{ width: '100%' }}>
         <View style={styles.nameDate}>
           <Text style={[globalStyles.text500, {fontSize: 16}]}>{`${name}`}</Text>
           <Text style={[globalStyles.text500, {opacity: 0.5}]}>{dayOfWeek}</Text>
         </View>
-        <Text style={[globalStyles.text400, {opacity: 0.5}]}>{message}</Text>
+        <Text style={[globalStyles.text400, {opacity: 0.5, maxWidth: '80%'}]}>{message}</Text>
       </View>
     </View>
   );

@@ -206,7 +206,7 @@ function EventDetailsItem({
               Связаться с владельцем
             </Button>
             <TouchableOpacity onPress={() => console.log('Чат с подержкой')}>
-              <Text>Чат с подержкой</Text>
+              <Text>Чат с поддержкой</Text>
             </TouchableOpacity>
           </>
         ) : (

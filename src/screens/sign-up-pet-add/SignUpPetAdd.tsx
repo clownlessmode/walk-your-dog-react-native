@@ -17,7 +17,7 @@ function SignUpPetAdd() {
   return (
     <ScrollContainer
       header={
-        <Header>Дополнительная информация о питомце</Header>
+        <Header style={{paddingHorizontal: 15}}>Дополнительная информация о питомце</Header>
       }
     >
         

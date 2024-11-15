@@ -52,6 +52,7 @@ export type Screens = {
   eventDetails: { event: ServiceCreateRo };
   curentTasks: undefined;
   signUpPetAdd: { petId: string };
+  finishedEvent: undefined
 };
 
 type formattedData = {

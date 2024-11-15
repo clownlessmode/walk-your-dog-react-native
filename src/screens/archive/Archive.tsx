@@ -3,7 +3,7 @@ import useUserStore from '@entity/users/user.store';
 import GoBack from '@features/go-back/GoBack';
 import ScreenContainer from '@shared/ui/containers/ScreenContainer';
 import Header from '@shared/ui/header/Header';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 import styles from './styles';
 import globalStyles from '@shared/constants/globalStyles';
@@ -11,6 +11,9 @@ import { ServiceCreateRo } from '@entity/service/model/service.interface';
 import ServiceInfo from '@shared/ui/service-info/ServiceInfo';
 import Drawer from '@shared/ui/drawer/Drawer';
 import DrawerInfoEvent from '@shared/ui/drawer-info-event/DrawerInfoEvent';
+import Button from '@shared/ui/button/Button';
+import { useAppNavigation } from '@shared/hooks/useAppNavigation';
+import { useChatsController } from '@entity/chats/chats.controller';
 interface GroupedService {
   year: number;
   month: string;
@@ -20,8 +23,20 @@ interface GroupedService {
   }[];
 }
 function Archive() {
+  const navigation = useAppNavigation()
   const { user } = useUserStore();
+  const { chats, isLoading } = useChatsController(user?.id);
   const { getMyServices, loadingMyServices } = useServiceController(user?.id);
+  console.log("NE STORE",getMyServices)
+  const [localMyService, setLocalMyService] = useState(
+    getMyServices || []
+  );
+  useEffect(() => {
+    if (getMyServices && getMyServices.length > 0) {
+      setLocalMyService(getMyServices);
+    }
+  }, [getMyServices]);
+  console.log("STORE",localMyService)
   if (loadingMyServices) {
     return (
       <ScreenContainer>
@@ -32,7 +47,7 @@ function Archive() {
       </ScreenContainer>
     );
   }
-  if (!getMyServices) {
+  if (!localMyService) {
     return (
       <ScreenContainer>
         <Header before={<GoBack />}>Архив событий</Header>
@@ -78,8 +93,28 @@ function Archive() {
 
     return Object.values(groupedPayments);
   };
-  const groupedData = groupPaymentsByDate(getMyServices);
-  if (groupedData.length === 0) {
+
+  const handleSupportChat = () => {
+    if (!chats || chats.length === 0) {
+      console.error('Нет доступных чатов');
+      return;
+    }
+  
+    const supportChat = chats[0]; // Предполагаем, что чат с поддержкой всегда первый
+    if (!supportChat) {
+      console.error('Чат с поддержкой не найден');
+      return;
+    }
+  
+    navigation.navigate('userChat', {
+      id: supportChat.id,
+      name: supportChat.user2.meta.name,
+      image: supportChat.user2.meta.image,
+    });
+  };
+
+  const groupedData = groupPaymentsByDate(localMyService);
+  if (localMyService.length === 0) {
     return (
       <ScreenContainer>
         <Header before={<GoBack />}>Архив событий</Header>
@@ -127,6 +162,7 @@ function Archive() {
                   });
                   return (
                     <Drawer
+                    close={<Button onPress={handleSupportChat}>Связаться с поддержкой</Button>}
                       trigger={
                         <ServiceInfo
                           pet={service.pet}

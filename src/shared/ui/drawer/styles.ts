@@ -30,6 +30,9 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "rgba(210, 210, 210, 0.4)",
       },
+      overlayNoShadow: {
+        flex: 1,
+      },
       handle: {
         width: "40%",
         height: 5,

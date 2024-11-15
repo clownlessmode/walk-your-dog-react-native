@@ -199,7 +199,7 @@ function Form() {
         render={({ field: { onChange, value }, fieldState }) =>
           Platform.OS === 'ios' ? (
             <Drawer
-              close={'Готово'}
+              close={<Button>Готово</Button>}
               trigger={
                 <View style={{ gap: 2, width: '100%' }}>
                   <View

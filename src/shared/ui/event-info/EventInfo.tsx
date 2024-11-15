@@ -56,11 +56,21 @@ function EventInfo({
   additionalPet,
   role = 'CLIENT',
 }: Props) {
+  //  const { time: timerTime } = useTime(time);
+
+  //  // For a stopwatch (counting from now)
+  //  const { time: stopwatchTime } = useTime();
   const { user } = useUserStore();
   const navigation = useAppNavigation();
   const { chats, isLoading } = useChatsController(user?.id);
+  // console.log("CHATS", chats)
   const { createChat, isLoadingCreateChat } = useChatsController();
   const { userInfo } = useUserController();
+  const fetchUserMeta = async (userId: string) => {
+    const response = await baseApi.get(`/users/${userId}`);
+    return response.data;
+  };
+
   const handleCreateChat = async (targetUserId: string) => {
     if (!user?.id || !targetUserId) {
       console.error('Недостаточно данных для создания чата');
@@ -96,20 +106,39 @@ function EventInfo({
     try {
       const newChat = await createChat(dto);
 
-      // Получаем данные пользователя через контроллер
-      const otherUser =
+      // Если meta отсутствует, загружаем данные
+      const user1Meta =
         newChat.user1Id === user.id
-          ? await userInfo(newChat.user2Id)
-          : await userInfo(newChat.user1Id);
+          ? await fetchUserMeta(newChat.user1Id)
+          : await fetchUserMeta(newChat.user2Id);
 
       navigation.navigate('userChat', {
         id: newChat.id,
-        name: otherUser.meta.name,
-        image: otherUser.meta.image,
+        name: user1Meta.name,
+        image: user1Meta.image,
       });
     } catch (error) {
       console.error('Ошибка при создании чата:', error);
     }
+  };
+
+  const handleSupportChat = () => {
+    if (!chats || chats.length === 0) {
+      console.error('Нет доступных чатов');
+      return;
+    }
+
+    const supportChat = chats[0]; // Предполагаем, что чат с поддержкой всегда первый
+    if (!supportChat) {
+      console.error('Чат с поддержкой не найден');
+      return;
+    }
+
+    navigation.navigate('userChat', {
+      id: supportChat.id,
+      name: supportChat.user2.meta.name,
+      image: supportChat.user2.meta.image,
+    });
   };
 
   const getRussianEnding = (number: number, words: string[]) => {
@@ -122,6 +151,11 @@ function EventInfo({
   };
   const reviewsText = (count: number) =>
     `${getRussianEnding(count, ['отзыв', 'отзыва', 'отзывов'])}`;
+
+const finishedEvent = () => {
+  console.log('Завершить заказ')
+  navigation.navigate('finishedEvent')
+}
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -223,12 +257,15 @@ function EventInfo({
             >
               Связаться с владельцем
             </Button>
-            <Button onPress={() => console.log('Завершить заказ')}>
-              Завершить заказ
-            </Button>
+            {status === 'В работе' && (
+              <Button onPress={finishedEvent}>
+                Завершить заказ
+              </Button>
+            )}
+
             <TouchableOpacity
               style={{ alignItems: 'center' }}
-              onPress={() => console.log('Чат с подержкой')}
+              onPress={handleSupportChat}
             >
               <Text style={[globalStyles.text500]}>Чат с подержкой</Text>
             </TouchableOpacity>
@@ -243,9 +280,9 @@ function EventInfo({
             </Button>
             <TouchableOpacity
               style={{ alignItems: 'center' }}
-              onPress={() => console.log('Чат с подержкой')}
+              onPress={handleSupportChat}
             >
-              <Text style={[globalStyles.text500]}>Чат с подержкой</Text>
+              <Text style={[globalStyles.text500]}>Чат с поддержкой</Text>
             </TouchableOpacity>
           </View>
         )}

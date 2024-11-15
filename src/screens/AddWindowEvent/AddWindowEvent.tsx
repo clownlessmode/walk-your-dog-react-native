@@ -44,7 +44,7 @@ function AddWindowEvent() {
       <CalendarWidgets />
       <View style={{ gap: 10, paddingTop: 10, paddingBottom: 20 }}>
         <Drawer
-          close={'Сохранить'}
+          close={<Button>Сохранить</Button>}
           hasBackdrop={true}
           trigger={
             <ServiceInput title="Дата" description={selectedDateDescription} />

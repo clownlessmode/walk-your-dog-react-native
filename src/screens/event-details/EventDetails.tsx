@@ -64,7 +64,7 @@ function EventDetails() {
       }}
     >
       <View style={{ paddingHorizontal: 15 }}>
-        <Header before={<GoBack />}>Событие</Header>
+        <Header before={<GoBack />}>Событауцаие</Header>
       </View>
       <MapEvent
         apiKey="4ae2e824-85eb-482c-9eab-88f665a7d668"

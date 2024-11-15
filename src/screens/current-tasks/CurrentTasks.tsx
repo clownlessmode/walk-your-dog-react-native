@@ -11,6 +11,9 @@ import ServiceInfo from '@shared/ui/service-info/ServiceInfo';
 import Drawer from '@shared/ui/drawer/Drawer';
 import DrawerInfoEvent from '@shared/ui/drawer-info-event/DrawerInfoEvent';
 import styles from './styles';
+import Button from '@shared/ui/button/Button';
+import { useChatsController } from '@entity/chats/chats.controller';
+import { useAppNavigation } from '@shared/hooks/useAppNavigation';
 interface GroupedService {
   year: number;
   month: string;
@@ -20,6 +23,7 @@ interface GroupedService {
   }[];
 }
 function CurrentTasks() {
+  const navigation = useAppNavigation()
   const { user } = useUserStore();
   const { workerService, isLoadingWorkerServices } = useServiceController(
     user?.id
@@ -169,6 +173,25 @@ function CurrentTasks() {
   //     </ScreenContainer>
   //   );
   // }
+  const { chats, isLoading } = useChatsController(user?.id);
+  const handleSupportChat = () => {
+    if (!chats || chats.length === 0) {
+      console.error('Нет доступных чатов');
+      return;
+    }
+  
+    const supportChat = chats[0]; // Предполагаем, что чат с поддержкой всегда первый
+    if (!supportChat) {
+      console.error('Чат с поддержкой не найден');
+      return;
+    }
+  
+    navigation.navigate('userChat', {
+      id: supportChat.id,
+      name: supportChat.user2.meta.name,
+      image: supportChat.user2.meta.image,
+    });
+  };
   return (
     <ScreenContainer>
       <Header before={<GoBack />}>Текущие задачи</Header>
@@ -194,6 +217,7 @@ function CurrentTasks() {
             return (
               <View style={styles.section}>
                 <Drawer
+                 close={<Button onPress={handleSupportChat}>Связаться с поддержкой</Button>}
                   trigger={
                     <ServiceInfo
                       pet={item.pet}

@@ -9,7 +9,7 @@ import Button from '../button/Button';
 import globalStyles from '@shared/constants/globalStyles';
 import styles from './styles';
 interface Props extends TouchableOpacityProps {
-  title: string;
+  title: string | React.ReactNode;
   description: string;
   buttonDescription: string;
   variant?: 'light' | 'dark';

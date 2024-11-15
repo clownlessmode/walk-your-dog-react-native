@@ -20,9 +20,16 @@ import { Pet } from '@entity/pets/model/pet.interface';
 import { useAuthPetController } from '@entity/pets/pet.controller';
 import { usePetServiceController } from '@entity/pet-service/pet-service.controller';
 import PetCard from '@widgets/pet-card/PetCard';
+import Button from '@shared/ui/button/Button';
+import useUserStore from '@entity/users/user.store';
+import { useChatsController } from '@entity/chats/chats.controller';
+import { useAppNavigation } from '@shared/hooks/useAppNavigation';
 
 const PetDetails = () => {
+  const navigation = useAppNavigation()
   const route = useRoute();
+  const {user} = useUserStore()
+  const { chats, isLoading } = useChatsController(user?.id);
   const { pet } = route.params as { pet: Pet };
   const { getPetService, loadPetService } = usePetServiceController(pet?.id);
   const { deletePet } = useAuthPetController();
@@ -44,6 +51,25 @@ const PetDetails = () => {
     setModalVisible(false);
   };
 
+  const handleSupportChat = () => {
+    if (!chats || chats.length === 0) {
+      console.error('Нет доступных чатов');
+      return;
+    }
+  
+    const supportChat = chats[0]; // Предполагаем, что чат с поддержкой всегда первый
+    if (!supportChat) {
+      console.error('Чат с поддержкой не найден');
+      return;
+    }
+  
+    navigation.navigate('userChat', {
+      id: supportChat.id,
+      name: supportChat.user2.meta.name,
+      image: supportChat.user2.meta.image,
+    });
+  };
+
   return (
     <ScrollContainer
       header={<Header before={<GoBack />}>Профиль питомца</Header>}
@@ -62,6 +88,7 @@ const PetDetails = () => {
                 Ближайшие события
               </Text>
               <Drawer
+               close={<Button onPress={handleSupportChat}>Связаться с поддержкой</Button>}
                 trigger={
                   <EventBlock
                     address={getPetService[0].address.address}
@@ -115,11 +142,12 @@ const PetDetails = () => {
           (pet.parameters.homeName || submitted ? (
             <PetCard pet={pet}/>
           ) : (
-            <AddForm
+            <></>
+            // <AddForm
               
              
-              pet={pet}
-            />
+            //   pet={pet}
+            // />
           ))}
 
         <TouchableOpacity

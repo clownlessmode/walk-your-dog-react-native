@@ -40,6 +40,10 @@ function MyAddress() {
     const response = await updateAddress(data);
     console.log(response);
   };
+
+  const handleMarkerPress = () => {
+    setIsModalVisible(true);
+  };
   return (
     <>
       <MyAddressMap
@@ -47,11 +51,13 @@ function MyAddress() {
         apiKey="4ae2e824-85eb-482c-9eab-88f665a7d668"
         initialLocation={{ lat: lat, lon: lon }}
         markerIcon="https://i.ibb.co/Mfj99Lx/Pin-fill.png"
+        onMarkerPress={() => {
+          setIsModalVisible(true);
+        }}
       />
       <Drawer
         modalVisible={isModalVisible}
         setModalVisible={setIsModalVisible}
-        // close="Сохранить"
         hasBackdrop={false}
       >
         <View>

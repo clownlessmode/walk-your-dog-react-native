@@ -58,6 +58,7 @@ function DrawerInfoEvent({
       return { dayMonth: 'Нет данных', hoursMinutes: '' };
     }
   };
+  
 
   const { dayMonth, hoursMinutes } = parseDateTime(datetime);
   return (
@@ -102,7 +103,6 @@ function DrawerInfoEvent({
               : worker?.meta.name || 'Нет данных'
           }
         />
-      <Button>Связаться с поддержкой</Button>
     </View>
   </View>
   );

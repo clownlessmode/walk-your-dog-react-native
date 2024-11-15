@@ -79,7 +79,7 @@ function AddForm({ petId }: Props) {
     navigation.navigate('appStack');
   };
   return (
-    <View style={{ gap: 20 }}>
+    <View style={{ gap: 20, paddingBottom: 20 }}>
       <Controller
         name="howFindUs"
         control={control}
@@ -386,7 +386,7 @@ function AddForm({ petId }: Props) {
         render={({ field: { onChange, value }, fieldState }) =>
           Platform.OS === 'ios' ? (
             <Drawer
-              close={'Готово'}
+              close={<Button>Готово</Button>}
               trigger={
                 <View style={{ gap: 2, width: '100%' }}>
                   <View

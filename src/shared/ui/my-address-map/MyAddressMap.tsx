@@ -17,18 +17,19 @@ interface Location {
 }
 
 interface YandexMapComponentProps {
-  needHeader?: boolean
+  needHeader?: boolean;
   title?: string;
   apiKey: string;
   initialLocation?: Coordinates;
   onLocationSelect?: (location: Location) => void;
   customMapStyle?: string;
   markerIcon?: string;
+  onMarkerPress?: () => void;
 }
 
 interface WebViewMessage {
-  type: 'locationSelected';
-  coordinates?: Coordinates;
+  type: 'locationSelected' | 'markerClicked'; // Добавляем возможные значения type
+  coordinates?: Coordinates; // Оставляем, если locationSelected передает координаты
   address?: string;
 }
 
@@ -40,6 +41,7 @@ const MyAddressMap: React.FC<YandexMapComponentProps> = ({
   customMapStyle = '',
   markerIcon = '',
   needHeader = true,
+  onMarkerPress,
 }) => {
   const webViewRef = useRef<WebView>(null);
 
@@ -77,14 +79,24 @@ const MyAddressMap: React.FC<YandexMapComponentProps> = ({
 
             const placemark = new ymaps.Placemark([${initialLocation.lat}, ${initialLocation.lon}], {}, {
               draggable: false,
-              ${markerIcon ? `
+              ${
+                markerIcon
+                  ? `
                 iconLayout: 'default#image',
                 iconImageHref: '${markerIcon}',
                 iconImageSize: [50, 50],
                 iconImageOffset: [-25, -25]
-              ` : ''}
+              `
+                  : ''
+              }
             });
             map.geoObjects.add(placemark);
+
+             placemark.events.add('click', () => {
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        type: 'markerClicked',
+      }));
+    });
 
             map.controls.remove('routeButtonControl');
             map.controls.remove('trafficControl');
@@ -104,24 +116,31 @@ const MyAddressMap: React.FC<YandexMapComponentProps> = ({
             coordinates: data.coordinates,
             address: data.address || 'Не удалось получить адрес',
           });
+      } else if (data.type === 'markerClicked') {
+        // Обработка нажатия на маркер
+        if (onMarkerPress) {
+          onMarkerPress();
+        }
       }
     } catch (error) {
       console.error('Ошибка при обработке сообщения из WebView:', error);
     }
   };
-  const insets = useSafeAreaInsets()
+  const insets = useSafeAreaInsets();
   return (
-    <View style={{ 
-      paddingBottom: 15,
-      paddingTop: needHeader ? insets.top + 10 : 0,
-      backgroundColor: 'white',
-      flex: 1,
-    }}>
-      {needHeader &&
-      <Header style={{ paddingHorizontal: 15 }} before={<GoBack />}>
-        {title}
-      </Header>
-      }
+    <View
+      style={{
+        paddingBottom: 15,
+        paddingTop: needHeader ? insets.top + 10 : 0,
+        backgroundColor: 'white',
+        flex: 1,
+      }}
+    >
+      {needHeader && (
+        <Header style={{ paddingHorizontal: 15 }} before={<GoBack />}>
+          {title}
+        </Header>
+      )}
       <WebView
         ref={webViewRef}
         source={{ html: mapHTML }}

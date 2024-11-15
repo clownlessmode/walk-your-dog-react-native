@@ -312,7 +312,7 @@ function Form() {
 
       <View style={{ gap: 2, width: '100%' }}>
         <Drawer
-          close={'Сохранить'}
+          close={<Button>Сохранить</Button>}
           hasBackdrop={true}
           trigger={
             <Input

@@ -8,6 +8,7 @@ import { useAppNavigation } from '@shared/hooks/useAppNavigation';
 import useRoleStore from '../role.store';
 import useUserStore from '@entity/users/user.store';
 import Form from '@features/sign-up-pet/Form';
+import FinishedEvent from '@screens/finished-event/FinishedEvent';
 
 
 const Identity = () => {
@@ -20,14 +21,15 @@ const Identity = () => {
 
   return (
     <ScreenContainer style={{justifyContent: 'space-between'}}>
-      <Logotype />
+      {/* <Logotype />
       <View style={styles.buttonContainer}>
         <Button onPress={() => handleRole('CLIENT')}>Клиент</Button>
         <Button variant="light" onPress={() => handleRole('SITTER')}>
           Сотрудник
         </Button>
       </View>
-      <ContactSupport />
+      <ContactSupport /> */}
+      <FinishedEvent />
     </ScreenContainer>
   );
 };

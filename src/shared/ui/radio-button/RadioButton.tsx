@@ -5,6 +5,7 @@ import styles from './styles';
 import globalStyles from '@shared/constants/globalStyles';
 import Drawer from '../drawer/Drawer';
 import DrawerInfo from '../drawer-info/DrawerInfo';
+import Button from '../button/Button';
 
 interface Props {
   checked: boolean;
@@ -40,7 +41,7 @@ const RadioButton = ({
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
           <Text style={ [globalStyles.text500, {fontSize: 16}]}>{price} руб</Text>
           <Drawer
-            close="Понятно"
+            close={<Button>Понятно</Button>}
             trigger={
               <View style={styles.triggerButton}>
                 <Text>i</Text>

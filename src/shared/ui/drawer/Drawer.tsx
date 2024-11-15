@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import {
   Animated,
   Dimensions,
@@ -15,7 +15,7 @@ import Button from '../button/Button';
 interface Props {
   trigger?: React.ReactNode;
   children: React.ReactNode;
-  close?: string;
+  close?: ReactElement<{ onPress: () => void }>;
   modalVisible?: boolean;
   setModalVisible?: (visible: boolean) => void;
   hasBackdrop?: boolean;
@@ -29,7 +29,7 @@ function Drawer({
   close,
   modalVisible,
   setModalVisible,
-  hasBackdrop=true,
+  hasBackdrop = true,
 }: Props) {
   const panAnim = React.useRef(new Animated.Value(height)).current;
   const opacityAnim = React.useRef(new Animated.Value(0)).current;
@@ -124,7 +124,7 @@ function Drawer({
   });
 
   return (
-    <View >
+    <View>
       <TouchableOpacity onPress={() => toggleModalVisible(!isModalVisible)}>
         {trigger}
       </TouchableOpacity>
@@ -134,7 +134,7 @@ function Drawer({
         animationType="slide"
         transparent={true}
       >
-        {hasBackdrop && (
+        {hasBackdrop ? (
           <TouchableWithoutFeedback
             onPress={() => {
               Animated.parallel([
@@ -157,6 +157,29 @@ function Drawer({
           >
             <Animated.View style={[styles.overlay, { opacity: opacityAnim }]} />
           </TouchableWithoutFeedback>
+        ) : (
+          <TouchableWithoutFeedback
+            onPress={() => {
+              Animated.parallel([
+                Animated.timing(panAnim, {
+                  toValue: height,
+                  duration: 300,
+                  useNativeDriver: true,
+                  easing: Easing.in(Easing.ease),
+                }),
+                Animated.timing(opacityAnim, {
+                  toValue: 0,
+                  duration: 300,
+                  useNativeDriver: true,
+                  easing: Easing.in(Easing.ease),
+                }),
+              ]).start(() => {
+                toggleModalVisible(false);
+              });
+            }}
+          >
+            <Animated.View style={[styles.overlayNoShadow]} />
+          </TouchableWithoutFeedback>
         )}
         <Animated.View
           {...panResponder.panHandlers}
@@ -174,7 +197,16 @@ function Drawer({
           <View style={{ width: '100%' }}>
             {children}
             {close && (
-              <Button onPress={() => toggleModalVisible(false)}>{close}</Button>
+              <View style={{ marginTop: 16 }}>
+                {React.isValidElement(close)
+                  ? React.cloneElement(close, {
+                      onPress: () => {
+                        toggleModalVisible(false);
+                        close.props.onPress();
+                      },
+                    })
+                  : close}
+              </View>
             )}
           </View>
         </Animated.View>
