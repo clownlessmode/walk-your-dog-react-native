@@ -32,7 +32,7 @@ function Events() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const { user } = useUserStore();
   const { getMyServices, loadingMyServices } = useServiceController(user?.id);
-  console.log(getMyServices)
+
   const [events, setEvents] = useState<ServiceCreateRo[]>([]);
   const [initialLocation, setInitialLocation] = useState<
     { lat: number; lon: number } | undefined
@@ -76,7 +76,7 @@ function Events() {
 
     getLocation();
   }, []);
- 
+
   const yaMapRef = useRef<WebView>(null);
   const getUserLocation = async () => {
     setIsLocating(true);
@@ -106,40 +106,54 @@ function Events() {
   const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
   const threeHoursFromNow = new Date(now.getTime() + 3 * 60 * 60 * 1000);
 
-  const filteredServices = events
-  ?.map((service) => {
-    const serviceDate = new Date(service.datetime);
-    const isIncludedStatus = ['В работе', 'Ожидание отчета', 'Поиск исполнителя'].includes(service.status);
+  const filteredServices =
+    events
+      ?.map((service) => {
+        const serviceDate = new Date(service.datetime);
+        const isIncludedStatus = [
+          'В работе',
+          'Ожидание отчета',
+          'Поиск исполнителя',
+        ].includes(service.status);
 
-    const isInTimeRange = serviceDate >= twoHoursAgo && serviceDate <= threeHoursFromNow;
+        const isInTimeRange =
+          serviceDate >= twoHoursAgo && serviceDate <= threeHoursFromNow;
+        let timeDisplay = '';
+        if (serviceDate > now && serviceDate <= threeHoursFromNow) {
+          const remainingTime = Math.max(
+            0,
+            serviceDate.getTime() - now.getTime()
+          );
+          const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+          const minutes = Math.floor(
+            (remainingTime % (1000 * 60 * 60)) / (1000 * 60)
+          );
+          timeDisplay = `До начала ${hours} ч ${minutes} м`;
+        } else if (serviceDate <= now) {
+          const elapsedTime = now.getTime() - serviceDate.getTime();
+          const hours = Math.floor(elapsedTime / (1000 * 60 * 60));
+          const minutes = Math.floor(
+            (elapsedTime % (1000 * 60 * 60)) / (1000 * 60)
+          );
+          timeDisplay = `В работе ${hours} ч ${minutes} м`;
+        }
 
-    let timeDisplay = '';
-    if (serviceDate > now && serviceDate <= threeHoursFromNow) {
-      const remainingTime = Math.max(0, serviceDate.getTime() - now.getTime());
-      const hours = Math.floor(remainingTime / (1000 * 60 * 60));
-      const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
-      timeDisplay = `До начала ${hours} ч ${minutes} м`;
-    } else if (serviceDate <= now) {
-      const elapsedTime = now.getTime() - serviceDate.getTime();
-      const hours = Math.floor(elapsedTime / (1000 * 60 * 60));
-      const minutes = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60));
-      timeDisplay = `В работе ${hours} ч ${minutes} м`;
-    }
-
-    return {
-      ...service,
-      isIncludedStatus,
-      isInTimeRange,
-      timeDisplay,
-    };
-  })
-  .filter((service) => service.isIncludedStatus && service.isInTimeRange) || [];
+        return {
+          ...service,
+          isIncludedStatus,
+          isInTimeRange,
+          timeDisplay,
+        };
+      })
+      .filter((service) => service.isIncludedStatus && service.isInTimeRange) ||
+    [];
 
   const [event, setEvent] = useState<Location | null>(null);
   const onViewRef = useCallback(
     ({ viewableItems }: any) => {
       if (viewableItems.length > 0) {
         const newIndex = viewableItems[0].index;
+        setCurrentIndex(newIndex);
         if (filteredServices[newIndex] && filteredServices[newIndex].address) {
           setEvent(filteredServices[newIndex].address);
         }
@@ -151,7 +165,9 @@ function Events() {
   if ((loadingMyServices || !timeoutReached) && !isDataLoadedOnce) {
     return (
       <ScreenContainer>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+        >
           <ActivityIndicator size="small" color="#9D9D9D" />
         </View>
       </ScreenContainer>
@@ -160,8 +176,12 @@ function Events() {
   if (!events || events.length === 0) {
     return (
       <ScreenContainer>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={[globalStyles.text500, { fontSize: 18 }]}>Архив пуст</Text>
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <Text style={[globalStyles.text500, { fontSize: 18 }]}>
+            Архив пуст
+          </Text>
         </View>
       </ScreenContainer>
     );
@@ -183,12 +203,14 @@ function Events() {
         style={{ paddingHorizontal: 15 }}
         before={
           <TouchableOpacity style={{ opacity: 0 }}>
-            <Text style={{ fontSize: 16 }}>Архив</Text>
+            <Text style={{ fontSize: 16 }}>События</Text>
           </TouchableOpacity>
         }
         after={
           <TouchableOpacity onPress={() => navigation.navigate('archive')}>
-            <Text style={[globalStyles.text500, { fontSize: 16 }]}>Архив</Text>
+            <Text style={[globalStyles.text500, { fontSize: 16 }]}>
+              Архив
+            </Text>
           </TouchableOpacity>
         }
       >
@@ -240,7 +262,6 @@ function Events() {
                   name="ellipse"
                   size={8}
                   color={index === currentIndex ? 'black' : 'grey'}
-                  style={{ margin: 3 }}
                 />
               ))}
             </View>
@@ -257,46 +278,46 @@ function Events() {
                 </Text>
               </View>
             ) : (
-            <FlatList
-              data={filteredServices}
-              horizontal
-              onViewableItemsChanged={onViewRef}
-              viewabilityConfig={viewConfigRef.current}
-              showsHorizontalScrollIndicator={false}
-              pagingEnabled
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => (
-                <View style={styles.blockPeet}>
-                  <EventInfo
-                    worker={
-                      item.worker
-                        ? {
-                            reviews: 0,
-                            created_at: item.worker.created_at,
-                            id: item.worker.id,
-                            name: item.worker.meta.name,
-                            img:
-                              item.worker.meta.image ||
-                              'https://default-image-url.png', // Default image if none provided
-                          }
-                        : undefined
-                    }
-                    time={item.timeDisplay ? item.timeDisplay : item.datetime}
-                    status={item.status}
-                    address={item.address.address}
-                    comment={item.comment}
-                    pet={item.pet.name}
-                    pettype={
-                      item.pet.breed?.petType.type
-                        ? item.pet.breed?.petType.type
-                        : ''
-                    }
-                    price={item.price}
-                    service={item.mainService.name}
-                  />
-                </View>
-              )}
-            />
+              <FlatList
+                data={filteredServices}
+                horizontal
+                onViewableItemsChanged={onViewRef}
+                viewabilityConfig={viewConfigRef.current}
+                showsHorizontalScrollIndicator={false}
+                pagingEnabled
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                  <View style={styles.blockPeet}>
+                    <EventInfo
+                      worker={
+                        item.worker
+                          ? {
+                              reviews: 0,
+                              created_at: item.worker.created_at,
+                              id: item.worker.id,
+                              name: item.worker.meta.name,
+                              img:
+                                item.worker.meta.image ||
+                                'https://default-image-url.png', // Default image if none provided
+                            }
+                          : undefined
+                      }
+                      time={item.timeDisplay ? item.timeDisplay : item.datetime}
+                      status={item.status}
+                      address={item.address.address}
+                      comment={item.comment}
+                      pet={item.pet.name}
+                      pettype={
+                        item.pet.breed?.petType.type
+                          ? item.pet.breed?.petType.type
+                          : ''
+                      }
+                      price={item.price}
+                      service={item.mainService.name}
+                    />
+                  </View>
+                )}
+              />
             )}
           </View>
         </>

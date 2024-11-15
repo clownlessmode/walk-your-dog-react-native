@@ -37,6 +37,7 @@ import AddWindowEvent from '@screens/AddWindowEvent/AddWindowEvent';
 import AddEvent from '@screens/add-event/AddEvent';
 import Reviews from '@screens/reviews/Reviews';
 import EventDetails from '@screens/event-details/EventDetails';
+import SignUpPetAdd from '@screens/sign-up-pet-add/SignUpPetAdd';
 
 type ScreenConfig = {
   name: keyof Screens;
@@ -83,6 +84,13 @@ export const AUTHSCREENS: ScreenConfig[] = [
   {
     name: 'signUpPet',
     component: SignUpPet,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'signUpPetAdd',
+    component: SignUpPetAdd,
     options: {
       headerShown: false,
     },

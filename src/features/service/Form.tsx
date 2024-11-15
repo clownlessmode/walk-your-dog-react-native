@@ -29,7 +29,12 @@ function Form() {
   const navigation = useAppNavigation();
   const { user } = useUserStore();
   const { allService, isLoadService } = useServiceController();
-  const { createService, isLoadingCreateServices, isErrorCreateServices, errorCreateServices } = useServiceController();
+  const {
+    createService,
+    isLoadingCreateServices,
+    isErrorCreateServices,
+    errorCreateServices,
+  } = useServiceController();
   const {
     setService,
     removeService,
@@ -41,11 +46,7 @@ function Form() {
     setSelectedPet,
     selectedPet,
   } = useServiceStore();
-  const {
-    control,
-    handleSubmit,
-    formState,
-  } = useForm({
+  const { control, handleSubmit, formState } = useForm({
     defaultValues: {
       pet: user?.pets[0].id,
       address: user?.meta.addresses[0].id,
@@ -74,9 +75,25 @@ function Form() {
       return 'Пожалуйста, выберите дату и время';
     }
 
-    // Проверяем, что дата не в прошлом
-    if (new Date(data.date) < new Date()) {
+    const selectedService = allService.find(
+      (service: any) => service.id === selectedMainService?.mainId
+    );
+
+    const selectedDate = new Date(data.date);
+    const currentDate = new Date();
+    const timeDifference =
+      (selectedDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60); // разница в часах
+
+    if (selectedDate < currentDate) {
       return 'Выбранная дата не может быть в прошлом';
+    }
+
+    if (selectedService?.name === 'Срочный выгул' && timeDifference > 2) {
+      return 'Срочный выгул можно выбрать только до 2 часов от текущего времени';
+    }
+
+    if (selectedService?.name !== 'Срочный выгул' && timeDifference < 2) {
+      return 'Эту услугу можно выбрать только более, чем за 2 часа от текущего времени';
     }
 
     return null;
@@ -88,7 +105,7 @@ function Form() {
     if (selectedMainService?.mainId === undefined) {
       validationError = 'Пожалуйста, выберите основную услугу';
     }
-    
+
     if (validationError) {
       setValidationError(validationError);
       return;
@@ -106,9 +123,8 @@ function Form() {
     };
     console.info('FORMATTED DATA: ', formattedData);
     const response = await createService(formattedData);
-    
-    if (response)
-    navigation.navigate('appStack')
+
+    if (response) navigation.navigate('appStack');
   };
 
   if (isErrorCreateServices) {
@@ -117,8 +133,8 @@ function Form() {
       text1: 'Ошибка',
       text2: 'Недостаточно средств для оплаты',
       onPress: () => {
-        navigation.navigate('deposit')
-      }
+        navigation.navigate('deposit');
+      },
     });
   }
 
@@ -233,32 +249,32 @@ function Form() {
                       name={service.name.toLowerCase()}
                       render={({ field: { onChange, value }, fieldState }) => (
                         <>
-                        <RadioButton
-                          price={parseFloat(service.price)}
-                          showInfoButton={true}
-                          title={service.name}
-                          checked={value}
-                          onPress={() => {
-                            const isSelected = !value;
-                            onChange(isSelected);
-                            handleServiceToggle(
-                              service,
-                              parseFloat(service.price),
-                              isSelected,
-                              true // true indicates main service
-                            );
-                          }}
-                          disabled={
-                            selectedMainService &&
-                            !isMainServiceSelected(service.id)
-                          }
-                        />
-                        {fieldState.error && (
-                          <Error
-                            style={{ justifyContent: 'flex-start' }}
-                            title={fieldState.error.message}
+                          <RadioButton
+                            price={parseFloat(service.price)}
+                            showInfoButton={true}
+                            title={service.name}
+                            checked={value}
+                            onPress={() => {
+                              const isSelected = !value;
+                              onChange(isSelected);
+                              handleServiceToggle(
+                                service,
+                                parseFloat(service.price),
+                                isSelected,
+                                true // true indicates main service
+                              );
+                            }}
+                            disabled={
+                              selectedMainService &&
+                              !isMainServiceSelected(service.id)
+                            }
                           />
-                        )}
+                          {fieldState.error && (
+                            <Error
+                              style={{ justifyContent: 'flex-start' }}
+                              title={fieldState.error.message}
+                            />
+                          )}
                         </>
                       )}
                     />
@@ -365,14 +381,16 @@ function Form() {
           flexDirection: 'column',
         }}
       >
-      
-       {validationError && (
-        <Error title={validationError} style={{ marginBottom: 16 }} />
-      )}
+        {validationError && (
+          <Error title={validationError} style={{ marginBottom: 16 }} />
+        )}
 
-  
-        <Button  isLoading={isLoadingCreateServices} onPress={handleSubmit(onSumbit)}>Далее</Button>
-        
+        <Button
+          isLoading={isLoadingCreateServices}
+          onPress={handleSubmit(onSumbit)}
+        >
+          Далее
+        </Button>
       </View>
     </ScrollView>
   );

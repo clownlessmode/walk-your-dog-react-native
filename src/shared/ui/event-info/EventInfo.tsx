@@ -10,6 +10,12 @@ import StatusText from '../status/Status';
 import Executor from '../executor/Executor';
 import useTime from '@shared/hooks/useTime';
 import Button from '../button/Button';
+import { useChatsController } from '@entity/chats/chats.controller';
+import useUserStore from '@entity/users/user.store';
+import { ChatsCreateDto } from '@entity/chats/model/chats.interface';
+import { useAppNavigation } from '@shared/hooks/useAppNavigation';
+import { baseApi } from '@shared/api/base.api';
+import { useUserController } from '@entity/users/user.controller';
 interface Props {
   status: string;
   address: string;
@@ -26,6 +32,12 @@ interface Props {
     created_at: string;
     reviews: number;
   };
+  client?: {
+    id: string;
+    img: string;
+    name: string;
+    created_at: string;
+  };
   additionalPet?: string;
   role?: 'CLIENT' | 'SITTER';
 }
@@ -40,13 +52,65 @@ function EventInfo({
   price,
   comment,
   worker,
+  client,
   additionalPet,
   role = 'CLIENT',
 }: Props) {
-  //  const { time: timerTime } = useTime(time);
+  const { user } = useUserStore();
+  const navigation = useAppNavigation();
+  const { chats, isLoading } = useChatsController(user?.id);
+  const { createChat, isLoadingCreateChat } = useChatsController();
+  const { userInfo } = useUserController();
+  const handleCreateChat = async (targetUserId: string) => {
+    if (!user?.id || !targetUserId) {
+      console.error('Недостаточно данных для создания чата');
+      return;
+    }
 
-  //  // For a stopwatch (counting from now)
-  //  const { time: stopwatchTime } = useTime();
+    const existingChat = chats?.find(
+      (chat) =>
+        (chat.user1.id === user.id && chat.user2.id === targetUserId) ||
+        (chat.user2.id === user.id && chat.user1.id === targetUserId)
+    );
+
+    if (existingChat) {
+      navigation.navigate('userChat', {
+        id: existingChat.id,
+        name:
+          existingChat.user1.id === user.id
+            ? existingChat.user2.meta.name
+            : existingChat.user1.meta.name,
+        image:
+          existingChat.user1.id === user.id
+            ? existingChat.user2.meta.image
+            : existingChat.user1.meta.image,
+      });
+      return;
+    }
+
+    const dto: ChatsCreateDto = {
+      user1Id: user.id,
+      user2Id: targetUserId,
+    };
+
+    try {
+      const newChat = await createChat(dto);
+
+      // Получаем данные пользователя через контроллер
+      const otherUser =
+        newChat.user1Id === user.id
+          ? await userInfo(newChat.user2Id)
+          : await userInfo(newChat.user1Id);
+
+      navigation.navigate('userChat', {
+        id: newChat.id,
+        name: otherUser.meta.name,
+        image: otherUser.meta.image,
+      });
+    } catch (error) {
+      console.error('Ошибка при создании чата:', error);
+    }
+  };
 
   const getRussianEnding = (number: number, words: string[]) => {
     const cases = [2, 0, 1, 1, 1, 2];
@@ -60,7 +124,7 @@ function EventInfo({
     `${getRussianEnding(count, ['отзыв', 'отзыва', 'отзывов'])}`;
 
   return (
-    <View>
+    <ScrollView showsVerticalScrollIndicator={false}>
       <View style={{ gap: 14 }}>
         <View style={styles.wrapper}>
           <StatusText status={status} />
@@ -118,49 +182,75 @@ function EventInfo({
         )}
         <View style={{ gap: 10 }}>
           <Text style={[globalStyles.text500, { fontSize: 16 }]}>
-            Исполнитель:
+            {role === 'SITTER' ? 'Клиент:' : 'Исполнитель:'}
           </Text>
-          {worker ? (
+          {(role === 'SITTER' && user) || (role === 'CLIENT' && worker) ? (
             <UserProfile
-              name={worker.name}
-              description={normalizeData(worker.created_at)}
-              image={worker.img}
+              name={
+                (role === 'SITTER' ? client?.name : worker?.name) ||
+                'Нет данных'
+              }
+              description={normalizeData(
+                (role === 'SITTER' ? client?.created_at : worker?.created_at) ||
+                  ''
+              )}
+              image={(role === 'SITTER' ? client?.img : worker?.img) || ''}
               additional={
-                <TouchableOpacity
-                  // onPress={() => navigation.navigate('reviews', event.worker.id)}
-                  style={{
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Text style={[globalStyles.text500, { fontSize: 16 }]}>
-                    {worker.reviews}
-                  </Text>
-                  <Text style={[globalStyles.text500, { fontSize: 16 }]}>
-                    {reviewsText(worker.reviews)}
-                  </Text>
-                </TouchableOpacity>
+                role === 'CLIENT' && worker ? (
+                  <TouchableOpacity
+                    style={{ flexDirection: 'column', alignItems: 'center' }}
+                  >
+                    <Text style={[globalStyles.text500, { fontSize: 16 }]}>
+                      {worker.reviews}
+                    </Text>
+                    <Text style={[globalStyles.text500, { fontSize: 16 }]}>
+                      {reviewsText(worker.reviews)}
+                    </Text>
+                  </TouchableOpacity>
+                ) : undefined
               }
             />
           ) : (
-            <View>
-              <Executor />
-            </View>
+            <Executor />
           )}
         </View>
 
         {role === 'SITTER' ? (
-          <>
-            <Button onPress={() => console.log("Связь с владельцем")}>Связаться с владельцем</Button>
-            <TouchableOpacity style={{alignItems: 'center'}} onPress={() => console.log("Чат с подержкой")}>
+          <View style={{ gap: 12 }}>
+            <Button
+              onPress={() => handleCreateChat(client?.id || '')}
+              isLoading={isLoadingCreateChat}
+            >
+              Связаться с владельцем
+            </Button>
+            <Button onPress={() => console.log('Завершить заказ')}>
+              Завершить заказ
+            </Button>
+            <TouchableOpacity
+              style={{ alignItems: 'center' }}
+              onPress={() => console.log('Чат с подержкой')}
+            >
               <Text style={[globalStyles.text500]}>Чат с подержкой</Text>
             </TouchableOpacity>
-          </>
+          </View>
         ) : (
-          <></>
+          <View style={{ gap: 12 }}>
+            <Button
+              onPress={() => handleCreateChat(worker?.id || '')}
+              isLoading={isLoadingCreateChat}
+            >
+              Связаться с исполнителем
+            </Button>
+            <TouchableOpacity
+              style={{ alignItems: 'center' }}
+              onPress={() => console.log('Чат с подержкой')}
+            >
+              <Text style={[globalStyles.text500]}>Чат с подержкой</Text>
+            </TouchableOpacity>
+          </View>
         )}
       </View>
-    </View>
+    </ScrollView>
   );
 }
 

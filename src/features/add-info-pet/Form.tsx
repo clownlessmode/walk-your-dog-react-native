@@ -5,7 +5,7 @@ import Drawer from '@shared/ui/drawer/Drawer';
 import Dropdown from '@shared/ui/dropdown/Dropdown';
 import Error from '@shared/ui/error/Error';
 import Input from '@shared/ui/input/Input';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Controller, useForm } from 'react-hook-form';
 import { Platform, Text, TouchableOpacity, View } from 'react-native';
@@ -19,15 +19,19 @@ import { diet } from './options/diet';
 import { howFindUs } from './options/howFindUs';
 import { useAuthPetController } from '@entity/pets/pet.controller';
 import { Pet } from '@entity/pets/model/pet.interface';
+import { useAppNavigation } from '@shared/hooks/useAppNavigation';
 interface Props {
-  pet: Pet
-  setShowAddInfo: React.Dispatch<React.SetStateAction<boolean>>;
-  setSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
+  petId: string;
 }
-function AddForm({pet, setShowAddInfo, setSubmitted}:Props) {
-  const {parametersPet, isLoadingParameters} = useAuthPetController(pet.id)
+function AddForm({ petId }: Props) {
+  const navigation = useAppNavigation();
+  const { parametersPet, isLoadingParameters } = useAuthPetController(petId);
   const [modalVisible, setModalVisible] = useState(false);
-  const { control, handleSubmit } = useForm({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       homeName: '',
       colorPet: '',
@@ -67,10 +71,12 @@ function AddForm({pet, setShowAddInfo, setSubmitted}:Props) {
       howFindUs: '',
     },
   });
+  useEffect(() => {
+    console.log('Ошибки формы:', errors);
+  }, [errors]);
   const onSubmit = async (data: any) => {
-    const response = await parametersPet({...data})
-    setShowAddInfo(false);
-    setSubmitted(true);
+    await parametersPet({ ...data });
+    navigation.navigate('appStack');
   };
   return (
     <View style={{ gap: 20 }}>
@@ -360,15 +366,15 @@ function AddForm({pet, setShowAddInfo, setSubmitted}:Props) {
       <Controller
         name="untied"
         control={control}
-        rules={{  required: true }}
+        rules={{ required: true }}
         render={({ field: { onChange, value }, fieldState }) => (
           <Switch
             value={value}
             onChange={onChange}
             title="Развязан?"
             options={[
-              { label: 'Да', value: true },
-              { label: 'Нет', value: false },
+              { label: 'Да', value: 'Да' },
+              { label: 'Нет', value: 'Нет' },
             ]}
           />
         )}
@@ -376,7 +382,7 @@ function AddForm({pet, setShowAddInfo, setSubmitted}:Props) {
       <Controller
         name="lastDayPuppy"
         control={control}
-        rules={{  required: true }}
+        rules={{ required: true }}
         render={({ field: { onChange, value }, fieldState }) =>
           Platform.OS === 'ios' ? (
             <Drawer
@@ -491,7 +497,7 @@ function AddForm({pet, setShowAddInfo, setSubmitted}:Props) {
       <Controller
         name="diet"
         control={control}
-        rules={{  required: true }}
+        rules={{ required: true }}
         render={({ field: { onChange, value }, fieldState }) => (
           <View style={{ gap: 2, width: '100%', zIndex: 97 }}>
             <Dropdown
@@ -541,15 +547,15 @@ function AddForm({pet, setShowAddInfo, setSubmitted}:Props) {
       <Controller
         name="separationExperience"
         control={control}
-        rules={{  required: true }}
+        rules={{ required: true }}
         render={({ field: { onChange, value }, fieldState }) => (
           <Switch
             value={value}
             onChange={onChange}
             title="Опыт разлуки с хозяином"
             options={[
-              { label: 'Да', value: true },
-              { label: 'Нет', value: false },
+              { label: 'Да', value: 'Да' },
+              { label: 'Нет', value: 'Нет' },
             ]}
           />
         )}
@@ -665,7 +671,7 @@ function AddForm({pet, setShowAddInfo, setSubmitted}:Props) {
       <Controller
         name="training"
         control={control}
-        rules={{  required: true }}
+        rules={{ required: true }}
         render={({ field: { onChange, value }, fieldState }) => (
           <View style={{ gap: 2, width: '100%', zIndex: 96 }}>
             <Dropdown
@@ -715,7 +721,7 @@ function AddForm({pet, setShowAddInfo, setSubmitted}:Props) {
       <Controller
         name="attitudePeople"
         control={control}
-        rules={{  required: true }}
+        rules={{ required: true }}
         render={({ field: { onChange, value }, fieldState }) => (
           <View style={{ gap: 2, width: '100%', zIndex: 95 }}>
             <Dropdown
@@ -738,7 +744,7 @@ function AddForm({pet, setShowAddInfo, setSubmitted}:Props) {
       <Controller
         name="attitudeDogs"
         control={control}
-        rules={{  required: true }}
+        rules={{ required: true }}
         render={({ field: { onChange, value }, fieldState }) => (
           <View style={{ gap: 2, width: '100%', zIndex: 94 }}>
             <Dropdown
@@ -761,15 +767,15 @@ function AddForm({pet, setShowAddInfo, setSubmitted}:Props) {
       <Controller
         name="knowLeash"
         control={control}
-        rules={{  required: true }}
+        rules={{ required: true }}
         render={({ field: { onChange, value }, fieldState }) => (
           <Switch
             value={value}
             onChange={onChange}
             title="Знает поводок?"
             options={[
-              { label: 'Да', value: true },
-              { label: 'Нет', value: false },
+              { label: 'Да', value: 'Да' },
+              { label: 'Нет', value: 'Нет' },
             ]}
           />
         )}
@@ -777,15 +783,15 @@ function AddForm({pet, setShowAddInfo, setSubmitted}:Props) {
       <Controller
         name="knowMuzzle"
         control={control}
-        rules={{  required: true }}
+        rules={{ required: true }}
         render={({ field: { onChange, value }, fieldState }) => (
           <Switch
             value={value}
             onChange={onChange}
             title="Знает намордник?"
             options={[
-              { label: 'Да', value: true },
-              { label: 'Нет', value: false },
+              { label: 'Да', value: 'Да' },
+              { label: 'Нет', value: 'Нет' },
             ]}
           />
         )}
@@ -793,7 +799,7 @@ function AddForm({pet, setShowAddInfo, setSubmitted}:Props) {
       <Controller
         name="refusalMuzzle"
         control={control}
-        rules={{  required: true }}
+        rules={{ required: true }}
         render={({ field: { onChange, value }, fieldState }) => (
           <View style={{ gap: 6 }}>
             <Switch
@@ -841,7 +847,7 @@ function AddForm({pet, setShowAddInfo, setSubmitted}:Props) {
       <Controller
         name="numberWalks"
         control={control}
-        rules={{  required: true }}
+        rules={{ required: true }}
         render={({ field: { onChange, value }, fieldState }) => (
           <View style={{ gap: 2, width: '100%', zIndex: 93 }}>
             <Dropdown
@@ -999,15 +1005,15 @@ function AddForm({pet, setShowAddInfo, setSubmitted}:Props) {
       <Controller
         name="returnOwner"
         control={control}
-        rules={{  required: true }}
+        rules={{ required: true }}
         render={({ field: { onChange, value }, fieldState }) => (
           <Switch
             value={value}
             onChange={onChange}
             title="Собака возвращается только хозяину"
             options={[
-              { label: 'Да', value: true },
-              { label: 'Нет', value: false },
+              { label: 'Да', value: 'Да' },
+              { label: 'Нет', value: 'Нет' },
             ]}
           />
         )}
@@ -1039,7 +1045,15 @@ function AddForm({pet, setShowAddInfo, setSubmitted}:Props) {
           </View>
         )}
       />
-      <Button onPress={handleSubmit(onSubmit)}>Дополнить</Button>
+      <Button
+        isLoading={isLoadingParameters}
+        onPress={() => {
+          console.log('Кнопка нажата'); // Лог для проверки
+          handleSubmit(onSubmit)();
+        }}
+      >
+        Дополнить
+      </Button>
     </View>
   );
 }

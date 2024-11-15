@@ -13,6 +13,8 @@ import globalStyles from '@shared/constants/globalStyles';
 import Button from '../button/Button';
 import { User } from '@entity/users/model/user.interface';
 import { Location } from '@screens/map/map.store';
+import useUserStore from '@entity/users/user.store';
+import useRoleStore from '@screens/auth/role.store';
 
 interface Props {
   datetime?: string;
@@ -22,6 +24,7 @@ interface Props {
   addressMap?: Location;
   worker?: User;
   dateTimeFormat?: string;
+  client?: User 
 }
 function DrawerInfoEvent({
   datetime,
@@ -30,8 +33,10 @@ function DrawerInfoEvent({
   address,
   addressMap,
   worker,
-  dateTimeFormat
+  dateTimeFormat,
+  client
 }: Props) {
+  const {role} = useRoleStore()
   const gender = pet.parameters.gender === 'MALE' ? 'Мальчик' : 'Девочка';
   // const { dayMonth, hoursMinutes } = formatDate(datetime);
   const formatBirthdate = (date: string | Date | undefined) => {
@@ -87,7 +92,16 @@ function DrawerInfoEvent({
       <InputInfo title={'Дата рождения'} description={formatBirthdate(pet.birthdate)} />
       <InputInfo title={'Пол'} description={gender} />
       {address.lat  ? <InputInfo title={'Адрес'} description={`${address.address}`} /> : <></>}
-      {worker && <InputInfo title="Исполнитель" description={worker.meta.name || 'Нет данных'} />}
+
+   
+      <InputInfo
+          title={role === 'SITTER' ? 'Клиент' : 'Исполнитель'}
+          description={
+            role === 'SITTER'
+              ? client?.meta.name || 'Нет данных'
+              : worker?.meta.name || 'Нет данных'
+          }
+        />
       <Button>Связаться с поддержкой</Button>
     </View>
   </View>

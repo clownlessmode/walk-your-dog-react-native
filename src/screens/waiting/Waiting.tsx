@@ -22,13 +22,19 @@ function Waiting() {
   const [initialLoad, setInitialLoad] = useState(true);
 
   const today = new Date().toISOString().split('T')[0];
+  const now = new Date();
 
   // Сохранение полученных данных, если они корректные, с защитой от перезаписи пустыми данными
   useEffect(() => {
-    if (getMyServices && getMyServices.length > 0) {
-      setLocalServices(getMyServices);
-      setInitialLoad(false); // Завершаем начальную загрузку, если данные получены
-    } else if (getMyServices && getMyServices.length === 0 && initialLoad) {
+    if (Array.isArray(getMyServices) && getMyServices.length > 0) {
+      const futureServices = getMyServices.filter((event) => {
+        const eventDateTime = new Date(event.datetime);
+        return eventDateTime > now; // Событие должно быть позже текущего момента
+      });
+
+      setLocalServices(futureServices);
+      setInitialLoad(false); // Завершаем начальную загрузку
+    }  else if (Array.isArray(getMyServices) && getMyServices.length === 0 && initialLoad) {
       // Если это начальная загрузка и данные пустые, сохраняем пустое состояние и завершаем начальную загрузку
       setInitialLoad(false);
     }

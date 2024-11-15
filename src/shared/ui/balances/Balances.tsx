@@ -8,7 +8,7 @@ interface Props {
 }
 function Balances({ balanceType, selectedBalance }: Props) {
   const { user } = useUserStore();
-  const balanceTextColor = user?.balance.general === 0 ? '#da4c5d' : '';
+  const balanceTextColor = (balanceType === 'general' && user?.balance.general === 0) ? '#da4c5d' : undefined;
   return (
     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
       <TouchableOpacity
@@ -19,13 +19,13 @@ function Balances({ balanceType, selectedBalance }: Props) {
         ]}
       >
         <Text
-          style={[
-            styles.balanceText,
-            balanceType === 'general'
-              ? styles.selectedText
-              : styles.unselectedText,
-            { color: balanceTextColor },
-          ]}
+         style={[
+          styles.balanceText,
+          balanceType === 'general'
+            ? styles.selectedText
+            : styles.unselectedText,
+          balanceTextColor ? { color: balanceTextColor } : null,
+        ]}
         >
           {user?.balance.general} ₽
         </Text>

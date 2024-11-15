@@ -78,7 +78,6 @@ function AllEvent() {
       );
     }
     const handleEventPress = (event: ServiceCreateRo) => {
-        console.log("select", event.id)
         navigation.navigate('eventDetails', { event });
       };
   return (

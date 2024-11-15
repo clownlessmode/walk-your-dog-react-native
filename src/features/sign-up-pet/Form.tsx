@@ -118,11 +118,12 @@ function Form() {
     formData.append('health', data.health);
     formData.append('additional', data.additional);
     formData.append('owner', data.owner);
-    await signUpPet(formData);
+   const response = ( await signUpPet(formData));
+   console.log(response.id)
     // setIsRegistered(true)
     reset();
-    // navigation.navigate("notificationsQuestion")
-    navigation.navigate('appStack');
+    navigation.navigate("signUpPetAdd", {petId: response.id})
+    
   };
 
   const toggleAdditionalInfo = () => {

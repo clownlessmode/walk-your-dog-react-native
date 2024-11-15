@@ -37,7 +37,7 @@ export type Screens = {
   };
   findNumber: undefined;
   signUpSitter: undefined;
-  userChat: { id: string };
+  userChat: { id: string, name: string, image: string };
   deposit: undefined;
   webViewPayment: { uri: string };
   payment: { variant: 'success' | 'error' };
@@ -50,7 +50,8 @@ export type Screens = {
   addWindowEvent: undefined
   reviews: {countReviews: string}
   eventDetails: { event: ServiceCreateRo };
-  curentTasks: undefined
+  curentTasks: undefined;
+  signUpPetAdd: { petId: string };
 };
 
 type formattedData = {

@@ -67,18 +67,32 @@ function Chat() {
     return format(dateObj, 'd MMM', { locale: ru });
   };
 
-  const renderChatItem: ListRenderItem<ChatType> = ({ item }) => (
+  const renderChatItem: ListRenderItem<ChatType> = ({ item }) => {
+    const lastMessage = item.messages.length > 0 ? item.messages[item.messages.length - 1] : null;
+    const otherUser =
+    item.user1.id === user?.id ? item.user2 : item.user1;
+     return (
     <TouchableOpacity
-      onPress={() => navigation.navigate('userChat', { id: item.id })}
+      onPress={() => navigation.navigate('userChat', {
+        id: item.id,
+        name: otherUser.meta.name, // Передаем имя собеседника
+        image: otherUser.meta.image, // Передаем фото собеседника
+      })
+    }
     >
       <UserChat
-        image={item.user2.meta.image}
-        name={item.user2.meta.name}
-        message={`${item.messages[item.messages.length - 1].sender.meta.name}: ${item.messages[item.messages.length - 1].content}`}
+        image={otherUser.meta.image}
+        name={otherUser.meta.name}
+        message={
+          lastMessage
+            ? `${lastMessage.sender?.meta?.name || 'Неизвестный'}: ${lastMessage.content || ''}`
+            : 'Нет сообщений'
+        }
         dayOfWeek={`${formatDate(item.updated_at)}`}
       />
     </TouchableOpacity>
-  );
+    )
+}
 // const [selectedImages, setSelectedImages] = useState<string[]>([]);
 
   // const pickImage = async () => {

@@ -3,7 +3,7 @@ import useUserStore from '@entity/users/user.store';
 import GoBack from '@features/go-back/GoBack';
 import ScreenContainer from '@shared/ui/containers/ScreenContainer';
 import Header from '@shared/ui/header/Header';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 import globalStyles from '@shared/constants/globalStyles';
 import { ServiceCreateRo } from '@entity/service/model/service.interface';
@@ -21,137 +21,203 @@ interface GroupedService {
 }
 function CurrentTasks() {
   const { user } = useUserStore();
-  const { getMyServices, loadingMyServices } = useServiceController(user?.id);
-  if (loadingMyServices) {
-    return (
-      <ScreenContainer>
-        <Header before={<GoBack />}>Архив событий</Header>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="small" color="#9D9D9D" />
-        </View>
-      </ScreenContainer>
-    );
-  }
-  if (!getMyServices) {
-    return (
-      <ScreenContainer>
-        <Header before={<GoBack />}>Архив событий</Header>
-        <View style={styles.loadingContainer}>
-          <Text style={[globalStyles.text500, { fontSize: 18 }]}>
-            Архив пуст
-          </Text>
-        </View>
-      </ScreenContainer>
-    );
-  }
-  const groupPaymentsByDate = (
-    service: ServiceCreateRo[]
-  ): GroupedService[] => {
-    const groupedPayments: { [key: string]: GroupedService } = {};
-    const now = new Date(); // Текущая дата и время
+  const { workerService, isLoadingWorkerServices } = useServiceController(
+    user?.id
+  );
+  const [localWorkerService, setLocalWorkerService] = useState(
+    workerService || []
+  );
+  useEffect(() => {
+    if (workerService && workerService.length > 0) {
+      setLocalWorkerService(workerService);
+    }
+  }, [workerService]);
+  const now = new Date();
+  const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+  const threeHoursFromNow = new Date(now.getTime() + 3 * 60 * 60 * 1000);
 
-    service
-      .filter((service) => new Date(service.datetime) <= now) // Оставляем только прошедшие события
-      .forEach((service) => {
-        const date = new Date(service.created_at);
-        const year = date.getFullYear();
-        const month = date.toLocaleString('ru-RU', { month: 'long' });
-        const day = date.toLocaleDateString('ru-RU', {
-          day: 'numeric',
-          month: 'long',
-        });
+  const filteredServices =
+    localWorkerService
+      ?.map((service) => {
+        console.info('STATUS', service.status);
+        const serviceDate = new Date(service.datetime);
+        const isIncludedStatus = [
+          'В работе',
+          'Ожидание отчета',
+          'Поиск исполнителя',
+          'В ожидании',
+        ].includes(service.status);
 
-        const key = `${year}-${month}`;
-
-        if (!groupedPayments[key]) {
-          groupedPayments[key] = { year, month, days: [] };
+        // Check if the service is within the display range (from two hours ago to three hours from now)
+        const isInTimeRange =
+          serviceDate >= twoHoursAgo && serviceDate <= threeHoursFromNow;
+        let timeDisplay = '';
+        if (serviceDate > now && serviceDate <= threeHoursFromNow) {
+          // Service is starting within the next three hours
+          const remainingTime = Math.max(
+            0,
+            serviceDate.getTime() - now.getTime()
+          );
+          const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+          const minutes = Math.floor(
+            (remainingTime % (1000 * 60 * 60)) / (1000 * 60)
+          );
+          timeDisplay = `До начала ${hours} ч ${minutes} м`;
+        } else if (serviceDate <= now) {
+          // Service has already started, calculate how long it has been in progress
+          const elapsedTime = now.getTime() - serviceDate.getTime();
+          const hours = Math.floor(elapsedTime / (1000 * 60 * 60));
+          const minutes = Math.floor(
+            (elapsedTime % (1000 * 60 * 60)) / (1000 * 60)
+          );
+          timeDisplay = `В работе ${hours} ч ${minutes} м`;
         }
 
-        let dayGroup = groupedPayments[key].days.find((d) => d.day === day);
-        if (!dayGroup) {
-          dayGroup = { day, payments: [] };
-          groupedPayments[key].days.push(dayGroup);
-        }
+        return {
+          ...service,
+          isIncludedStatus,
+          isInTimeRange,
+          timeDisplay,
+        };
+      })
+      .filter((service) => service.isIncludedStatus && service.isInTimeRange) ||
+    [];
+  const formatDateTime = (datetime: string | Date) => {
+    const date = new Date(datetime);
 
-        dayGroup.payments.push(service);
-      });
+    // Формат времени (часы:минуты)
+    const time = date.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false, // 24-часовой формат
+    });
 
-    return Object.values(groupedPayments);
+    // Формат даты (день и месяц)
+    const formattedDate = date.toLocaleDateString('ru-RU', {
+      day: '2-digit',
+      month: 'long',
+    });
+
+    return { time, formattedDate };
   };
-  const groupedData = groupPaymentsByDate(getMyServices);
-  if (groupedData.length === 0) {
-    return (
-      <ScreenContainer>
-        <Header>Текущие задачи</Header>
-        <View style={styles.loadingContainer}>
-          <Text style={[globalStyles.text500, { fontSize: 18 }]}>
-            Задачи отсутсвуют
-          </Text>
-        </View>
-      </ScreenContainer>
-    );
-  }
+  // if (isLoadingWorkerServices) {
+  //   return (
+  //     <ScreenContainer>
+  //       <Header before={<GoBack />}>Архив событий</Header>
+  //       <View style={styles.loadingContainer}>
+  //         <ActivityIndicator size="small" color="#9D9D9D" />
+  //       </View>
+  //     </ScreenContainer>
+  //   );
+  // }
+  // if (!workerService) {
+  //   return (
+  //     <ScreenContainer>
+  //       <Header before={<GoBack />}>Архив событий</Header>
+  //       <View style={styles.loadingContainer}>
+  //         <Text style={[globalStyles.text500, { fontSize: 18 }]}>
+  //           Архив пуст
+  //         </Text>
+  //       </View>
+  //     </ScreenContainer>
+  //   );
+  // }
+  // const groupPaymentsByDate = (
+  //   service: ServiceCreateRo[]
+  // ): GroupedService[] => {
+  //   const groupedPayments: { [key: string]: GroupedService } = {};
+  //   const now = new Date(); // Текущая дата и время
+
+  //   service
+  //     .filter((service) => new Date(service.datetime) <= now) // Оставляем только прошедшие события
+  //     .forEach((service) => {
+  //       const date = new Date(service.created_at);
+  //       const year = date.getFullYear();
+  //       const month = date.toLocaleString('ru-RU', { month: 'long' });
+  //       const day = date.toLocaleDateString('ru-RU', {
+  //         day: 'numeric',
+  //         month: 'long',
+  //       });
+
+  //       const key = `${year}-${month}`;
+
+  //       if (!groupedPayments[key]) {
+  //         groupedPayments[key] = { year, month, days: [] };
+  //       }
+
+  //       let dayGroup = groupedPayments[key].days.find((d) => d.day === day);
+  //       if (!dayGroup) {
+  //         dayGroup = { day, payments: [] };
+  //         groupedPayments[key].days.push(dayGroup);
+  //       }
+
+  //       dayGroup.payments.push(service);
+  //     });
+
+  //   return Object.values(groupedPayments);
+  // };
+  // const groupedData = groupPaymentsByDate(workerService);
+  // if (groupedData.length === 0) {
+  //   return (
+  //     <ScreenContainer>
+  //       <Header>Текущие задачи</Header>
+  //       <View style={styles.loadingContainer}>
+  //         <Text style={[globalStyles.text500, { fontSize: 18 }]}>
+  //           Задачи отсутсвуют
+  //         </Text>
+  //       </View>
+  //     </ScreenContainer>
+  //   );
+  // }
   return (
     <ScreenContainer>
       <Header before={<GoBack />}>Текущие задачи</Header>
-      <FlatList
-        data={groupedData}
-        keyExtractor={(item) => `${item.year}-${item.month}`}
-        renderItem={({ item }) => (
-          <View style={styles.section}>
-            <Text style={[globalStyles.text500, styles.year]}>{item.year}</Text>
-            <Text style={[globalStyles.text600, styles.month]}>
-              {item.month}
-            </Text>
+      {filteredServices.length === 0 ? (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Text style={[globalStyles.text500, { fontSize: 18 }]}>
+            Активные события отсутствуют
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={filteredServices}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => {
+            const { time, formattedDate } = formatDateTime(item.datetime);
 
-            {item.days.map((dayItem) => (
-              <View
-                key={`${item.year}-${item.month}-${dayItem.day}`}
-                style={styles.daySection}
-              >
-                {dayItem.payments.map((service: ServiceCreateRo) => {
-                  const date = new Date(service.datetime);
-                  const time = date.toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false,
-                  });
-                  const formattedDate = date.toLocaleDateString('ru-RU', {
-                    day: '2-digit',
-                    month: 'long',
-                  });
-                  const formattedDateDraw = date.toLocaleDateString('ru-RU', {
-                    day: '2-digit',
-                    month: 'long',
-                    year: 'numeric',
-                  });
-                  return (
-                    <Drawer
-                      trigger={
-                        <ServiceInfo
-                          pet={service.pet}
-                          time={time}
-                          formattedDate={formattedDate}
-                          service={service}
-                        />
-                      }
-                    >
-                      <DrawerInfoEvent
-                        key={service.id}
-                        address={service.address}
-                        nameService={service.mainService.name}
-                        pet={service.pet}
-                        worker={service.worker ?? undefined}
-                        datetime={service.datetime}
-                      />
-                    </Drawer>
-                  );
-                })}
+            return (
+              <View style={styles.section}>
+                <Drawer
+                  trigger={
+                    <ServiceInfo
+                      pet={item.pet}
+                      time={time}
+                      formattedDate={formattedDate}
+                      service={item}
+                    />
+                  }
+                >
+                  <DrawerInfoEvent
+                    key={item.id}
+                    address={item.address}
+                    nameService={item.mainService.name}
+                    pet={item.pet}
+                    // worker={item.worker ?? undefined}
+                    datetime={item.datetime}
+                    client={item.customer}
+                  />
+                </Drawer>
               </View>
-            ))}
-          </View>
-        )}
-      />
+            );
+          }}
+        />
+      )}
     </ScreenContainer>
   );
 }

@@ -30,7 +30,7 @@ function UserChat() {
   const { user } = useUserStore();
   const route = useRoute<UserChatRouteProp>();
   const { socket } = useSocket();
-  const { id } = route.params;
+  const { id, name, image } = route.params;
   if (!id) return null;
 
   const { messages:chat, isLoadingMessages:isLoadingChat} = useChatsController(id);
@@ -96,13 +96,13 @@ const scrollToBottom = () => {
   );
 }
 
-if (messages.length === 0) {
-  return (
-    <View style={styles.messageContainer}>
-      <Text>No messages to display</Text>
-    </View>
-  );
-}
+// if (messages.length === 0) {
+//   return (
+//     <View style={styles.messageContainer}>
+//       <Text>No messages to display</Text>
+//     </View>
+//   );
+// }
 
   const renderMessage = ({ item }: { item: Message }) => (
     <View
@@ -153,15 +153,15 @@ if (messages.length === 0) {
         <Header before={<GoBack />}>
           <View style={styles.headerContent}>
             <Image
-              source={
-                messages[0].sender?.meta?.image
-                  ? { uri: messages[0].sender?.meta?.image }
-                  : require('@assets/signUp/avatarUser.png')
-              }
+             source={
+              image
+                ? { uri: image } // Используем переданную фотографию
+                : require('@assets/signUp/avatarUser.png')
+            }
               style={styles.avatar}
             />
             <Text style={[globalStyles.text500, styles.textHeader]}>
-              {messages[0].sender?.meta?.name || 'Неизвестен'}
+            {name || 'Неизвестен'} 
             </Text>
           </View>
         </Header>
@@ -174,6 +174,11 @@ if (messages.length === 0) {
           keyExtractor={(item) => item.id}
           ref={flatListRef}
           onContentSizeChange={scrollToBottom}
+          ListEmptyComponent={() => (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>Начните диалог</Text>
+            </View>
+          )}
         />
         <View style={styles.inputContainer}>
           <InputMessage
@@ -207,6 +212,17 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
   },
   attachButton: { backgroundColor: '#F0F0F0', padding: 10, borderRadius: 9999 },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  emptyText: {
+    fontSize: 18,
+    color: '#9D9D9D',
+    textAlign: 'center',
+  },
 });
 
 export default UserChat;

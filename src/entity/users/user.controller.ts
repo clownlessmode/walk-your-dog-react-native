@@ -34,7 +34,7 @@ export const useUserController = () => {
 
     return {
         getMe: refetchUser,
-        user: getUser.data,
+        userInfo: getUser.data,
         deleteUser: deleteUser.mutateAsync,
     }
 };

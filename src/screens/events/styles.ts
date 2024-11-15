@@ -3,7 +3,6 @@ import { Dimensions, StyleSheet } from "react-native";
 const { width } = Dimensions.get("window");
 const styles = StyleSheet.create({
   wrapper: {
-    
     paddingVertical: 12,
     flex: 1,
     elevation: 5,
@@ -26,6 +25,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15
   },
   pagination: {
+    gap: 6,
     flexDirection: "row",
     justifyContent: "center",
   },

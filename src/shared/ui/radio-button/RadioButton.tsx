@@ -25,7 +25,7 @@ const RadioButton = ({
   return (
     <View style={styles.radioButtonContainer}>
       <TouchableOpacity onPress={disabled ? undefined : onPress}>
-        <View style={{ flexDirection: 'row', gap: 12 }}>
+        <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
           <View
             style={[styles.radioButton, checked && styles.radioButtonChecked]}
           >

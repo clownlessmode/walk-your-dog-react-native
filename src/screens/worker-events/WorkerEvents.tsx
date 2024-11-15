@@ -37,8 +37,10 @@ function WorkerEvents() {
   const { workerService, isLoadingWorkerServices } = useServiceController(
     user?.id
   );
-  // console.log(workerService)
-  const [localWorkerService, setLocalWorkerService] = useState(workerService || []);
+  console.log('workerservice', workerService);
+  const [localWorkerService, setLocalWorkerService] = useState(
+    workerService || []
+  );
   const [isDataLoadedOnce, setIsDataLoadedOnce] = useState(false);
   const [timeoutReached, setTimeoutReached] = useState(false);
 
@@ -101,19 +103,18 @@ function WorkerEvents() {
   const filteredServices =
     localWorkerService
       ?.map((service) => {
+        console.info('STATUS', service.status);
         const serviceDate = new Date(service.datetime);
         const isIncludedStatus = [
           'В работе',
           'Ожидание отчета',
           'Поиск исполнителя',
-          'В ожидании'
+          'В ожидании',
         ].includes(service.status);
 
         // Check if the service is within the display range (from two hours ago to three hours from now)
         const isInTimeRange =
           serviceDate >= twoHoursAgo && serviceDate <= threeHoursFromNow;
-          console.log(`Сервис: ${service.id}, Дата: ${serviceDate}, Время: ${service.datetime}`);
-          console.log(`Включен статус: ${isIncludedStatus}, Временной диапазон: ${isInTimeRange}`);
         let timeDisplay = '';
         if (serviceDate > now && serviceDate <= threeHoursFromNow) {
           // Service is starting within the next three hours
@@ -154,82 +155,17 @@ function WorkerEvents() {
         if (filteredServices[newIndex] && filteredServices[newIndex].address) {
           setCurrentIndex(newIndex);
           setEvent(filteredServices[newIndex].address);
-          console.log('Current Address:', filteredServices[newIndex].address);
-        } else {
-          console.warn(`Address is missing for item at index ${newIndex}`);
-          console.log(
-            'Filtered Service at this index:',
-            filteredServices[newIndex]
-          );
         }
       }
     },
     [filteredServices]
   );
   const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 });
-  if (isLoadingWorkerServices || localWorkerService === undefined || localWorkerService.length === 0) {
-    return (
-      <ScreenContainer>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="small" color="#9D9D9D" />
-        </View>
-      </ScreenContainer>
-    );
-  }
-  // if (localWorkerService.length === 0) {
-  //   return (
-  //     <ScreenContainer>
-  //       <View
-  //         style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-  //       >
-  //         <Text style={[globalStyles.text500, { fontSize: 18 }]}>
-  //           Активные события отсутствуют
-  //         </Text>
-  //       </View>
-  //     </ScreenContainer>
-  //   );
-  // }
-  if (!filteredServices) {
-    return (
-      <ScreenContainer>
-        <View
-          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-        >
-          <Text style={[globalStyles.text500, { fontSize: 18 }]}>
-            Архив пуст
-          </Text>
-        </View>
-      </ScreenContainer>
-    );
-  }
 
-  // console.log(event)
   return (
-    <View
-      style={[
-        {
-          position: 'relative',
-          paddingTop: insets.top,
-          backgroundColor: 'white',
-          flex: 1,
-        },
-      ]}
-    >
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <Header style={{ paddingHorizontal: 15 }}>События</Header>
-      <View
-        style={{
-          justifyContent: 'center',
-          flexDirection: 'row',
-          alignItems: 'center',
-          position: 'absolute',
-          top: 100,
-          right: '28%',
-          gap: 10,
-          zIndex: 99999,
-          width: '100%',
-          maxWidth: 170,
-        }}
-      >
+      <View style={styles.tabButton}>
         <TabButton
           onPress={() => setSelectedTab('active')}
           variant={selectedTab === 'active' ? 'dark' : 'light'}
@@ -278,7 +214,6 @@ function WorkerEvents() {
                 </Text>
               </View>
             ) : (
-              <ScrollView>
               <FlatList
                 data={filteredServices}
                 horizontal
@@ -290,19 +225,27 @@ function WorkerEvents() {
                 renderItem={({ item }) => (
                   <View style={styles.blockPeet}>
                     <EventInfo
-                      worker={
-                        item.worker
-                          ? {
-                              reviews: 0,
-                              created_at: item.worker.created_at,
-                              id: item.worker.id,
-                              name: item.worker.meta.name,
-                              img:
-                                item.worker.meta.image ||
-                                'https://default-image-url.png', // Default image if none provided
-                            }
-                          : undefined
-                      }
+                     worker={
+                      role === 'CLIENT'
+                        ? {
+                            reviews: 0,
+                            created_at: item.worker?.created_at || '',
+                            id: item.worker?.id || '',
+                            name: item.worker?.meta?.name || '',
+                            img: item.worker?.meta?.image || '',
+                          }
+                        : undefined
+                    }
+                    client={
+                      role === 'SITTER'
+                        ? {
+                            id: item.customer.id || '',
+                            name: item.customer.meta.name || '',
+                            img: item.customer.meta.image  || '',
+                            created_at: item.customer.meta.created_at  || '',
+                          }
+                        : undefined
+                    }
                       time={item.timeDisplay ? item.timeDisplay : item.datetime}
                       status={item.status}
                       address={item.address.address}
@@ -321,7 +264,6 @@ function WorkerEvents() {
                   </View>
                 )}
               />
-              </ScrollView>
             )}
           </View>
         </>

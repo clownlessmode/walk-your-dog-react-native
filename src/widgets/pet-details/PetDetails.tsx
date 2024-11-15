@@ -116,8 +116,8 @@ const PetDetails = () => {
             <PetCard pet={pet}/>
           ) : (
             <AddForm
-              setSubmitted={setSubmitted}
-              setShowAddInfo={setShowAddInfo}
+              
+             
               pet={pet}
             />
           ))}

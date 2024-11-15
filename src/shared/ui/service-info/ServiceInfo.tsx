@@ -13,7 +13,7 @@ interface Props {
   pet: Pet;
   service: ServiceCreateRo;
   time: string;
-  formattedDate: string;
+  formattedDate?: string;
 }
 function ServiceInfo({ pet, service, time, formattedDate }: Props) {
   let styleStatus;
@@ -33,6 +33,7 @@ function ServiceInfo({ pet, service, time, formattedDate }: Props) {
     default:
       styleStatus = styles.default;
   }
+
   return (
     <View style={styles.container}>
       <View style={styles.main}>
@@ -64,8 +65,8 @@ function ServiceInfo({ pet, service, time, formattedDate }: Props) {
           </View>
         </View>
       </View>
-      <View style={[{ justifyContent: 'center' }]}>
-        <Text style={[globalStyles.text500, styleStatus, styles.status]}>
+      <View style={[{ justifyContent: 'center'}, styles.status, styleStatus]}>
+        <Text style={[globalStyles.text500, {color: 'white'}]}>
           {service.status}
         </Text>
       </View>

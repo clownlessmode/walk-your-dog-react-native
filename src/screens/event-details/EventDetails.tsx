@@ -55,7 +55,6 @@ function EventDetails() {
       </View>
     );
   }
-
   return (
     <View
       style={{
@@ -83,13 +82,13 @@ function EventDetails() {
           address={event.address?.address || 'Адрес не указан'}
           comment={event.comment || 'Комментарий отсутствует'}
           pet={event.pet?.name || 'Нет данных'}
-          pettype={event.pet?.breed?.petType?.type || 'Неизвестно'}
+          pettype={event.pet?.breed?.name || 'Неизвестно'}
           price={event.price || 0}
           service={event.mainService?.name || 'Услуга не указана'}
           img={event.customer.meta.image}
           nameClient={event.customer.meta.name || 'Имя не указано'}
           phoneClient={event.customer.meta.telephone || 'Номер телефона не указан'}
-          additionalPet={event.pet.parameters.health || 'Номер телефона не указан'}
+          additionalPet={event.pet.parameters.health || 'Дополнительная информация не указана'}
           petAll={event.pet}
         />
       </View>
