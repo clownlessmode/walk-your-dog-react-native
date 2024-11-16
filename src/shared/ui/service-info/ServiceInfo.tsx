@@ -66,7 +66,7 @@ function ServiceInfo({ pet, service, time, formattedDate }: Props) {
         </View>
       </View>
       <View style={[{ justifyContent: 'center'}, styles.status, styleStatus]}>
-        <Text style={[globalStyles.text500, {color: 'white'}]}>
+        <Text  numberOfLines={1} ellipsizeMode="tail" style={[globalStyles.text500, {color: 'white'}]}>
           {service.status}
         </Text>
       </View>

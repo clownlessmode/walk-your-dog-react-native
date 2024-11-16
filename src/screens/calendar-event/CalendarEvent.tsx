@@ -19,10 +19,10 @@ function CalendarEvent({ setModalVisible }: Props) {
   return (
     <View style={{ alignItems: 'center', gap: 20 }}>
       <Text style={[globalStyles.text500, { fontSize: 16 }]}>
-        Календарь событий
+        Добавление отчетов
       </Text>
       <ImageRecord
-        onPress={() => handlePress('addEvent')}
+        onPress={() => handlePress('reports')}
         variant="reminder"
         title="Добавить отчет"
       />

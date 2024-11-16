@@ -62,7 +62,7 @@ export default function AppStack() {
   const CustomTabBarLabel = ({ focused, color, size, title }: any) => (
     <View style={{ alignItems: 'center', gap: 5 }}>
       <MaterialCommunityIcons name="plus" color={'black'} size={30} />
-      <Text style={{ color: '#979797', fontSize: 10, paddingTop: 10 }}>
+      <Text style={{textAlign: 'center', color: '#979797', fontSize: 10, paddingTop: 10 }}>
         {title}
       </Text>
     </View>
@@ -162,7 +162,7 @@ export default function AppStack() {
               <CustomTabBarLabel
                 color={color}
                 size={size}
-                title={role === 'SITTER' ? 'Начать заказ' : 'Прогулка'}
+                title={role === 'SITTER' ? 'Просмотреть отчеты' : 'Прогулка'}
               />
             ),
             tabBarButton: (props) => (

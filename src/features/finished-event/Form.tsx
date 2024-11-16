@@ -15,21 +15,28 @@ import useTimerStore from '@widgets/time-progress/time.store';
 import Toast from 'react-native-toast-message';
 import TimerToast from '@features/timer-toast/TimerToast';
 import { useReportController } from '@entity/reports/reports.controller';
+import { useAppNavigation } from '@shared/hooks/useAppNavigation';
 
 interface FormData {
   images: any[];
   comment: any;
 }
 
-function Form() {
-  const { reportAttach, loadingReportsAttach } = useReportController();
+interface Props {
+  serviceId: string;
+}
+
+function Form({serviceId}: Props) {
+  // console.log(serviceId)
+  const navigation = useAppNavigation()
+  const { reportAttach, loadingReportsAttach } = useReportController(serviceId);
   const { startTimer } = useTimerStore();
   const [modalVisible, setModalVisible] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    startTimer(); // Запускаем таймер при входе на страницу
+    startTimer();
   }, [startTimer]);
 
   const { control, handleSubmit, getValues, setValue, formState } =
@@ -67,8 +74,9 @@ function Form() {
 
   const onSubmit = async (data: FormData) => {
     console.log('Форма отправлена:', data);
-    // const response = await reportAttach({ serviceId });
-    // console.log("Ответ от сервера reportClose", response)
+    const response = await reportAttach({...data});
+    console.log("Ответ от сервера reportClose", response)
+    navigation.goBack()
   };
 
   return (

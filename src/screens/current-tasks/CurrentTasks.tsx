@@ -47,7 +47,7 @@ function CurrentTasks() {
         const serviceDate = new Date(service.datetime);
         const isIncludedStatus = [
           'В работе',
-          'Ожидание отчета',
+          'Ожидание отчёта',
           'Поиск исполнителя',
           'В ожидании',
         ].includes(service.status);

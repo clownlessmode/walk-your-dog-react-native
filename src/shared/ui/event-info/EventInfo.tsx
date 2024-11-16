@@ -18,7 +18,7 @@ import { baseApi } from '@shared/api/base.api';
 import { useUserController } from '@entity/users/user.controller';
 import { useReportController } from '@entity/reports/reports.controller';
 interface Props {
-  serviceId: string;
+  serviceId?: string;
   status: string;
   address: string;
   service: string;
@@ -158,9 +158,13 @@ function EventInfo({
 
   const finishedEvent = async () => {
     console.log('Завершить заказ');
-    const response = await reportClose({ serviceId });
-    console.log("Ответ от сервера reportClose", response)
-    navigation.navigate('finishedEvent');
+    if (serviceId) {
+      const response = await reportClose({ serviceId });
+      console.log('Ответ от сервера reportClose', response);
+      navigation.navigate('finishedEvent', {serviceId: serviceId});
+    } else {
+      console.log('Для завершение заказа нет айди заказа');
+    }
   };
 
   return (
@@ -264,7 +268,9 @@ function EventInfo({
               Связаться с владельцем
             </Button>
             {status === 'В работе' && (
-              <Button isLoading={loadingReportsClose} onPress={finishedEvent}>Завершить заказ</Button>
+              <Button isLoading={loadingReportsClose} onPress={finishedEvent}>
+                Завершить заказ
+              </Button>
             )}
 
             <TouchableOpacity

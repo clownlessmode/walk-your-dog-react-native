@@ -112,7 +112,7 @@ function Events() {
         const serviceDate = new Date(service.datetime);
         const isIncludedStatus = [
           'В работе',
-          'Ожидание отчета',
+          'Ожидание отчёта',
           'Поиск исполнителя',
         ].includes(service.status);
 
