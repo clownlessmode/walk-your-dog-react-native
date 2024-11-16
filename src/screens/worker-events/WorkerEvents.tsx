@@ -225,27 +225,28 @@ function WorkerEvents() {
                 renderItem={({ item }) => (
                   <View style={styles.blockPeet}>
                     <EventInfo
-                     worker={
-                      role === 'CLIENT'
-                        ? {
-                            reviews: 0,
-                            created_at: item.worker?.created_at || '',
-                            id: item.worker?.id || '',
-                            name: item.worker?.meta?.name || '',
-                            img: item.worker?.meta?.image || '',
-                          }
-                        : undefined
-                    }
-                    client={
-                      role === 'SITTER'
-                        ? {
-                            id: item.customer.id || '',
-                            name: item.customer.meta.name || '',
-                            img: item.customer.meta.image  || '',
-                            created_at: item.customer.meta.created_at  || '',
-                          }
-                        : undefined
-                    }
+                      worker={
+                        role === 'CLIENT'
+                          ? {
+                              reviews: 0,
+                              created_at: item.worker?.created_at || '',
+                              id: item.worker?.id || '',
+                              name: item.worker?.meta?.name || '',
+                              img: item.worker?.meta?.image || '',
+                            }
+                          : undefined
+                      }
+                      client={
+                        role === 'SITTER'
+                          ? {
+                              id: item.customer.id || '',
+                              name: item.customer.meta.name || '',
+                              img: item.customer.meta.image || '',
+                              created_at: item.customer.meta.created_at || '',
+                            }
+                          : undefined
+                      }
+                      serviceId={item.id}
                       time={item.timeDisplay ? item.timeDisplay : item.datetime}
                       status={item.status}
                       address={item.address.address}

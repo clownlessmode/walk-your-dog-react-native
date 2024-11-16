@@ -198,14 +198,14 @@ function Drawer({
             {children}
             {close && (
               <View style={{ marginTop: 16 }}>
-                {React.isValidElement(close)
-                  ? React.cloneElement(close, {
-                      onPress: () => {
-                        toggleModalVisible(false);
-                        close.props.onPress();
-                      },
-                    })
-                  : close}
+               {React.isValidElement(close)
+  ? React.cloneElement(close, {
+      onPress: () => {
+        toggleModalVisible(false);
+        close.props.onPress?.(); // Безопасно вызываем onPress, если он есть
+      },
+    })
+  : close}
               </View>
             )}
           </View>

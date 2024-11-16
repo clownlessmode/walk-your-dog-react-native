@@ -21,15 +21,14 @@ const Identity = () => {
 
   return (
     <ScreenContainer style={{justifyContent: 'space-between'}}>
-      {/* <Logotype />
+      <Logotype />
       <View style={styles.buttonContainer}>
         <Button onPress={() => handleRole('CLIENT')}>Клиент</Button>
         <Button variant="light" onPress={() => handleRole('SITTER')}>
           Сотрудник
         </Button>
       </View>
-      <ContactSupport /> */}
-      <FinishedEvent />
+      <ContactSupport />
     </ScreenContainer>
   );
 };

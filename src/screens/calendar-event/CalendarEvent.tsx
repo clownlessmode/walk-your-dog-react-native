@@ -24,7 +24,7 @@ function CalendarEvent({ setModalVisible }: Props) {
       <ImageRecord
         onPress={() => handlePress('addEvent')}
         variant="reminder"
-        title="Добавить окна для записи"
+        title="Добавить отчет"
       />
     </View>
   );

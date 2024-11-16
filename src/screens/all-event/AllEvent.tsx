@@ -14,6 +14,7 @@ function AllEvent() {
     const { user } = useUserStore();
     const navigation = useAppNavigation();
     const { getAllWorkerService, isLoadingAllWorkerService } = useServiceController();
+    console.log('work service', getAllWorkerService)
     const insets = useSafeAreaInsets();
     const [markedDates, setMarkedDates] = useState<{ [key: string]: { dots?: { color: string }[]; selected?: boolean; selectedColor?: string } }>({});
     const [selectedEvents, setSelectedEvents] = useState<ServiceCreateRo[]>([]);

@@ -16,7 +16,9 @@ import { ChatsCreateDto } from '@entity/chats/model/chats.interface';
 import { useAppNavigation } from '@shared/hooks/useAppNavigation';
 import { baseApi } from '@shared/api/base.api';
 import { useUserController } from '@entity/users/user.controller';
+import { useReportController } from '@entity/reports/reports.controller';
 interface Props {
+  serviceId: string;
   status: string;
   address: string;
   service: string;
@@ -43,6 +45,7 @@ interface Props {
 }
 
 function EventInfo({
+  serviceId,
   status,
   address,
   service,
@@ -63,6 +66,7 @@ function EventInfo({
   const { user } = useUserStore();
   const navigation = useAppNavigation();
   const { chats, isLoading } = useChatsController(user?.id);
+  const { reportClose, loadingReportsClose } = useReportController();
   // console.log("CHATS", chats)
   const { createChat, isLoadingCreateChat } = useChatsController();
   const { userInfo } = useUserController();
@@ -152,10 +156,12 @@ function EventInfo({
   const reviewsText = (count: number) =>
     `${getRussianEnding(count, ['отзыв', 'отзыва', 'отзывов'])}`;
 
-const finishedEvent = () => {
-  console.log('Завершить заказ')
-  navigation.navigate('finishedEvent')
-}
+  const finishedEvent = async () => {
+    console.log('Завершить заказ');
+    const response = await reportClose({ serviceId });
+    console.log("Ответ от сервера reportClose", response)
+    navigation.navigate('finishedEvent');
+  };
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -258,9 +264,7 @@ const finishedEvent = () => {
               Связаться с владельцем
             </Button>
             {status === 'В работе' && (
-              <Button onPress={finishedEvent}>
-                Завершить заказ
-              </Button>
+              <Button isLoading={loadingReportsClose} onPress={finishedEvent}>Завершить заказ</Button>
             )}
 
             <TouchableOpacity

@@ -8,6 +8,7 @@ interface MessageInputProps {
   onChangeText?: (text: string) => void;
   placeholder?: string;
   onSend?: () => void;
+  error?: boolean
 }
 
 function InputMessage({
@@ -15,6 +16,7 @@ function InputMessage({
   onChangeText,
   placeholder,
   onSend,
+  error
 }: MessageInputProps) {
   const handleKeyPress = ({ nativeEvent }: { nativeEvent: any }) => {
     if (nativeEvent.key === 'Enter') {
@@ -22,10 +24,12 @@ function InputMessage({
     }
   };
 
+  const inputStyle = error ? styles.inputError : styles.input;
+
   return (
     <View style={styles.inputContainer}>
       <TextInput
-        style={[styles.input, { flex: 1 }]}
+        style={[styles.input, { flex: 1 }, inputStyle]}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder || 'Сообщение'}

@@ -21,7 +21,7 @@ function PetCard({pet}: Props) {
       <DetailsItem title="Перенесенные операции и дата, осложнения" description={parameters.operationsAndComplications} />
       <DetailsItem title="Перенесенные заболевания и дата, осложнения. Беспокоит ли это сегодня." description={parameters.diseasesAndBoters} />
       <DetailsItem title="Развязан" description={parameters.untied ? 'Да' : 'Нет'} />
-      <DetailsItem title="Дата последней пустовки или щенения" description={'govno ebuchie'} />
+      {/* <DetailsItem title="Дата последней пустовки или щенения" description={'govno ebuchie'} /> */}
       <DetailsItem title="Особые приметы" description={parameters.specialSigns} />
       <DetailsItem title="Рацион питания" description={parameters.diet?.join(', ')} />
       <DetailsItem title="Любимые лакомства" description={parameters.favoriteTreats} />

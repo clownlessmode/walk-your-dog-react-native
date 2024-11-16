@@ -29,7 +29,7 @@ function ProfileUser() {
       header={
         <>
           <Header>Профиль</Header>
-          <Description>Ваш ID: {sliceId(user?.id as string)}</Description>
+          <Description>Ваш ID: {user?.id ? sliceId(user.id) : 'ID отсутствует'}</Description>
         </>
       }
     >
