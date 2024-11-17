@@ -1,4 +1,4 @@
-import { ServiceCreateRo } from '@entity/service/model/service.interface';
+import { Service, ServiceCreateRo } from '@entity/service/model/service.interface';
 import UserProfile from '@entity/users/ui/user-profile/UserProfile';
 import formatMapText from '@shared/utils/formatMapText';
 import normalizeData from '@shared/utils/normalizeDate';
@@ -33,6 +33,7 @@ interface Props {
     name: string;
     created_at: string;
     reviews: number;
+    meta: string;
   };
   client?: {
     id: string;
@@ -159,14 +160,14 @@ function EventInfo({
   const finishedEvent = async () => {
     console.log('Завершить заказ');
     if (serviceId) {
-      const response = await reportClose({ serviceId });
+      const response = await reportClose({ id: serviceId });
       console.log('Ответ от сервера reportClose', response);
-      navigation.navigate('finishedEvent', {serviceId: serviceId});
+      navigation.navigate('finishedEvent', { serviceId: serviceId });
     } else {
       console.log('Для завершение заказа нет айди заказа');
     }
   };
-
+console.log( worker?.meta)
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={{ gap: 14 }}>
@@ -242,14 +243,19 @@ function EventInfo({
               additional={
                 role === 'CLIENT' && worker ? (
                   <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('reviews', {
+                        workerId: worker?.meta, // Передаем workerId
+                      })
+                    }
                     style={{ flexDirection: 'column', alignItems: 'center' }}
                   >
                     <Text style={[globalStyles.text500, { fontSize: 16 }]}>
-                      {worker.reviews}
+                      Оставить отзыв
                     </Text>
-                    <Text style={[globalStyles.text500, { fontSize: 16 }]}>
+                    {/* <Text style={[globalStyles.text500, { fontSize: 16 }]}>
                       {reviewsText(worker.reviews)}
-                    </Text>
+                    </Text> */}
                   </TouchableOpacity>
                 ) : undefined
               }

@@ -162,7 +162,7 @@ export default function AppStack() {
               <CustomTabBarLabel
                 color={color}
                 size={size}
-                title={role === 'SITTER' ? 'Просмотреть отчеты' : 'Прогулка'}
+                title={role === 'SITTER' ? 'Заполнить отчеты' : 'Прогулка'}
               />
             ),
             tabBarButton: (props) => (

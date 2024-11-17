@@ -15,6 +15,7 @@ import { User } from '@entity/users/model/user.interface';
 import { Location } from '@screens/map/map.store';
 import useUserStore from '@entity/users/user.store';
 import useRoleStore from '@screens/auth/role.store';
+import useTimerStore from '@widgets/time-progress/time.store';
 
 interface Props {
   datetime?: string;
@@ -24,7 +25,8 @@ interface Props {
   addressMap?: Location;
   worker?: User;
   dateTimeFormat?: string;
-  client?: User 
+  client?: User
+  serviceId?: string 
 }
 function DrawerInfoEvent({
   datetime,
@@ -34,8 +36,15 @@ function DrawerInfoEvent({
   addressMap,
   worker,
   dateTimeFormat,
-  client
+  client,
+  serviceId
 }: Props) {
+  const { timers } = useTimerStore();
+  const timeLeft = serviceId ? timers[serviceId]?.timeLeft ?? 0 : 0;
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  const formattedTime = `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+
   const {role} = useRoleStore()
   const gender = pet.parameters.gender === 'MALE' ? 'Мальчик' : 'Девочка';
   // const { dayMonth, hoursMinutes } = formatDate(datetime);
@@ -88,14 +97,15 @@ function DrawerInfoEvent({
       <Text style={[globalStyles.text500, { fontSize: 24 }]}>{pet.name}</Text>
     </View>
     <View>
-      <InputInfo title={'Питомец'} description={pet.name || 'Без имени'} />
-      <InputInfo title={'Порода'} description={pet.breed?.name || ''} />
-      <InputInfo title={'Дата рождения'} description={formatBirthdate(pet.birthdate)} />
-      <InputInfo title={'Пол'} description={gender} />
+      <InputInfo editable={false} title={'Питомец'} description={pet.name || 'Без имени'} />
+      <InputInfo editable={false} title={'Порода'} description={pet.breed?.name || ''} />
+      <InputInfo editable={false} title={'Дата рождения'} description={formatBirthdate(pet.birthdate)} />
+      <InputInfo editable={false}title={'Пол'} description={gender} />
       {address.lat  ? <InputInfo title={'Адрес'} description={`${address.address}`} /> : <></>}
 
    
       <InputInfo
+      editable={false}
           title={role === 'SITTER' ? 'Клиент' : 'Исполнитель'}
           description={
             role === 'SITTER'
@@ -103,6 +113,7 @@ function DrawerInfoEvent({
               : worker?.meta.name || 'Нет данных'
           }
         />
+         <InputInfo editable={false} title={'Осталось времени для заполнения отчета'} description={formattedTime} />
     </View>
   </View>
   );

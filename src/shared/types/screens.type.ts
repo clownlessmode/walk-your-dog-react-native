@@ -48,12 +48,14 @@ export type Screens = {
   eventWaiting: { event: ServiceCreateRo };
   addEvent: undefined
   addWindowEvent: undefined
-  reviews: {countReviews: string}
+  reviews: | { workerId: string } // Случай, когда передаем workerId
+  | { countReviews: number };
   eventDetails: { event: ServiceCreateRo };
   curentTasks: undefined;
   signUpPetAdd: { petId: string };
   finishedEvent: {serviceId: string}
-  reports: undefined
+  reports: undefined,
+  profileWorkerUser: {workerId: string}
 };
 
 type formattedData = {

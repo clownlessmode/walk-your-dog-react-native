@@ -60,39 +60,42 @@ function Archive() {
     );
   }
   const groupPaymentsByDate = (
-    service: ServiceCreateRo[]
-  ): GroupedService[] => {
-    const groupedPayments: { [key: string]: GroupedService } = {};
-    const now = new Date(); // Текущая дата и время
+  service: ServiceCreateRo[]
+): GroupedService[] => {
+  const groupedPayments: { [key: string]: GroupedService } = {};
+  const now = new Date(); // Текущая дата и время
 
-    service
-      .filter((service) => new Date(service.datetime) <= now) // Оставляем только прошедшие события
-      .forEach((service) => {
-        const date = new Date(service.created_at);
-        const year = date.getFullYear();
-        const month = date.toLocaleString('ru-RU', { month: 'long' });
-        const day = date.toLocaleDateString('ru-RU', {
-          day: 'numeric',
-          month: 'long',
-        });
-
-        const key = `${year}-${month}`;
-
-        if (!groupedPayments[key]) {
-          groupedPayments[key] = { year, month, days: [] };
-        }
-
-        let dayGroup = groupedPayments[key].days.find((d) => d.day === day);
-        if (!dayGroup) {
-          dayGroup = { day, payments: [] };
-          groupedPayments[key].days.push(dayGroup);
-        }
-
-        dayGroup.payments.push(service);
+  service
+    .filter(
+      (service) =>
+        new Date(service.datetime) <= now && service.status !== 'Ожидание отчёта' // Исключаем "Ожидание отчёта"
+    )
+    .forEach((service) => {
+      const date = new Date(service.created_at);
+      const year = date.getFullYear();
+      const month = date.toLocaleString('ru-RU', { month: 'long' });
+      const day = date.toLocaleDateString('ru-RU', {
+        day: 'numeric',
+        month: 'long',
       });
 
-    return Object.values(groupedPayments);
-  };
+      const key = `${year}-${month}`;
+
+      if (!groupedPayments[key]) {
+        groupedPayments[key] = { year, month, days: [] };
+      }
+
+      let dayGroup = groupedPayments[key].days.find((d) => d.day === day);
+      if (!dayGroup) {
+        dayGroup = { day, payments: [] };
+        groupedPayments[key].days.push(dayGroup);
+      }
+
+      dayGroup.payments.push(service);
+    });
+
+  return Object.values(groupedPayments);
+};
 
   const handleSupportChat = () => {
     if (!chats || chats.length === 0) {

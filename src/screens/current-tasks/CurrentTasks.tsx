@@ -229,6 +229,7 @@ function CurrentTasks() {
                 >
                   <DrawerInfoEvent
                     key={item.id}
+                    serviceId={item.id}
                     address={item.address}
                     nameService={item.mainService.name}
                     pet={item.pet}

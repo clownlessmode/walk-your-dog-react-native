@@ -50,7 +50,7 @@ function UpcomingEvent({ img, petName, nameService, datetime }: Props) {
           <Text
             style={[globalStyles.text500, { fontSize: 15, color: '#00000085' }]}
           >
-            {petName}
+            {truncateString(`${petName}`, 9)}
           </Text>
           <Text style={[globalStyles.text500]}>
             {truncateString(`${nameService}`, 13)}

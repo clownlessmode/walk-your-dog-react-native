@@ -8,6 +8,7 @@ import {
   Status,
 } from '@entity/service/model/service.interface';
 import { Ionicons } from '@expo/vector-icons';
+import StatusText from '../status/Status';
 
 interface Props {
   pet: Pet;
@@ -16,23 +17,14 @@ interface Props {
   formattedDate?: string;
 }
 function ServiceInfo({ pet, service, time, formattedDate }: Props) {
-  let styleStatus;
-  switch (service.status) {
-    case Status.DONE:
-      styleStatus = styles.done;
-      break;
-    case Status.IN_PROGRESS:
-      styleStatus = styles.inProgress;
-      break;
-    case Status.CANCELLED:
-      styleStatus = styles.cancelled;
-      break;
-    case Status.REPORT:
-      styleStatus = styles.report;
-      break;
-    default:
-      styleStatus = styles.default;
-  }
+
+  const truncateString = (str: any, num: any) => {
+    if (str.length > num) {
+      return str.slice(0, num) + '...';
+    } else {
+      return str;
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -57,7 +49,7 @@ function ServiceInfo({ pet, service, time, formattedDate }: Props) {
             </Text>
           </View>
           <View style={{ flexDirection: 'row', gap: 6 }}>
-            <Text style={[globalStyles.text500, styles.title]}>{pet.name}</Text>
+            <Text style={[globalStyles.text500, styles.title]}>{truncateString(`${pet.name}`, 7)}</Text>
             <Text style={[globalStyles.text600, styles.slash]}>|</Text>
             <Text style={[globalStyles.text500, styles.title]}>
               {service.mainService.name}
@@ -65,10 +57,8 @@ function ServiceInfo({ pet, service, time, formattedDate }: Props) {
           </View>
         </View>
       </View>
-      <View style={[{ justifyContent: 'center'}, styles.status, styleStatus]}>
-        <Text  numberOfLines={1} ellipsizeMode="tail" style={[globalStyles.text500, {color: 'white'}]}>
-          {service.status}
-        </Text>
+      <View>
+        <StatusText status={service.status}/>
       </View>
     </View>
   );

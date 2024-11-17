@@ -21,7 +21,7 @@ function ProfileWorker() {
   const { workerReviews, isLoadingWorkerReviews } = useReviewController(user?.worker.id);
 
   const handleNavReviews = () => {
-    navigation.navigate('reviews', { countReviews: '0' });
+    navigation.navigate('reviews', { countReviews: user?.worker.reviews ? user.worker.reviews.length : 0});
   };
   return (
     <ScrollContainer

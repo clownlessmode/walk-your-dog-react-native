@@ -1,14 +1,18 @@
 import globalStyles from '@shared/constants/globalStyles';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, Text as SvgText } from 'react-native-svg';
 import useTimerStore from './time.store';
+interface Props {
+  serviceId: string;
+}
+const TimerProgress = ({serviceId}: Props) => {
+  const { timers  } = useTimerStore();
 
-const TimerProgress = () => {
-  const { timeLeft } = useTimerStore();
+  const timeLeft = timers[serviceId]?.timeLeft ?? 0;
 
   const totalMinutes = 30;
-  const percentage = (timeLeft / (totalMinutes * 60)) * 100;
+  const percentage = useMemo(() => (timeLeft / (totalMinutes * 60)) * 100, [timeLeft]);
   const radius = 70;
   const strokeWidth = 5;
   const circumference = 2 * Math.PI * radius;

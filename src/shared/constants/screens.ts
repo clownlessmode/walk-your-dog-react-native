@@ -40,6 +40,7 @@ import EventDetails from '@screens/event-details/EventDetails';
 import SignUpPetAdd from '@screens/sign-up-pet-add/SignUpPetAdd';
 import FinishedEvent from '@screens/finished-event/FinishedEvent';
 import Reports from '@screens/reports/Reports';
+import ProfileWorkerUser from '@screens/profile-worker-user/ProfileWorkerUser';
 
 type ScreenConfig = {
   name: keyof Screens;
@@ -331,6 +332,13 @@ export const AUTHSCREENS: ScreenConfig[] = [
   {
     name: 'reports',
     component: Reports,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'profileWorkerUser',
+    component: ProfileWorkerUser,
     options: {
       headerShown: false,
     },

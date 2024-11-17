@@ -26,9 +26,17 @@ function StatusText({status}: Props) {
     default:
       styleStatus = styles.default;
   }
+
+  const truncateString = (str: any, num: any) => {
+    if (str.length > num) {
+      return str.slice(0, num) + '...';
+    } else {
+      return str;
+    }
+  };
   return (
     <View style={[styles.status, styleStatus]}>
-        <Text style={styles.status}>{status}</Text>
+        <Text style={styles.status}>{truncateString(status, 9)}</Text>
     </View>
   )
 }

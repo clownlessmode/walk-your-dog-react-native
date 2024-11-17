@@ -1,37 +1,92 @@
 import { create } from 'zustand';
 
-interface TimerState {
+interface Timer {
   timeLeft: number; // Оставшееся время в секундах
   isRunning: boolean; // Таймер запущен
-  startTimer: () => void; // Запуск таймера
-  decrementTime: () => void; // Уменьшение времени
+  intervalId?: NodeJS.Timeout; // ID интервала для очистки
+}
+
+interface TimerState {
+  timers: Record<string, Timer>; // Таймеры по serviceId
+  startTimer: (serviceId: string) => void; // Запуск таймера для определённого сервиса
+  decrementTime: (serviceId: string) => void; // Уменьшение времени для определённого сервиса
+  resetTimer: (serviceId: string) => void; // Сброс таймера для определённого сервиса
 }
 
 const useTimerStore = create<TimerState>((set, get) => ({
-  timeLeft: 30 * 60, // 30 минут
-  isRunning: false,
-  startTimer: () => {
-    if (!get().isRunning) {
-      set({
-        isRunning: true,
-        timeLeft: get().timeLeft > 0 ? get().timeLeft : 30 * 60,
-      });
+  timers: {},
 
-      const interval = setInterval(() => {
-        const { timeLeft, decrementTime } = get();
-        if (timeLeft <= 0) {
-          clearInterval(interval);
-          set({ isRunning: false });
-        } else {
-          decrementTime();
-        }
-      }, 1000);
-    }
+  startTimer: (serviceId) => {
+    const { timers } = get();
+
+    if (timers[serviceId]?.isRunning) return;
+
+    const intervalId = setInterval(() => {
+      get().decrementTime(serviceId);
+    }, 1000);
+
+    set({
+      timers: {
+        ...timers,
+        [serviceId]: {
+          timeLeft: timers[serviceId]?.timeLeft ?? 30 * 60, // Установите 30 минут, если таймер ещё не существует
+          isRunning: true,
+          intervalId,
+        },
+      },
+    });
   },
-  decrementTime: () =>
-    set((state) => ({
-      timeLeft: Math.max(state.timeLeft - 1, 0),
-    })),
+
+  decrementTime: (serviceId) => {
+    set((state) => {
+      const timer = state.timers[serviceId];
+      if (!timer) return state;
+
+      const newTimeLeft = Math.max(timer.timeLeft - 1, 0);
+
+      if (newTimeLeft === 0) {
+        clearInterval(timer.intervalId);
+        return {
+          timers: {
+            ...state.timers,
+            [serviceId]: {
+              ...timer,
+              isRunning: false,
+              timeLeft: 0,
+            },
+          },
+        };
+      }
+
+      return {
+        timers: {
+          ...state.timers,
+          [serviceId]: {
+            ...timer,
+            timeLeft: newTimeLeft,
+          },
+        },
+      };
+    });
+  },
+
+  resetTimer: (serviceId) => {
+    const { timers } = get();
+
+    if (timers[serviceId]?.intervalId) {
+      clearInterval(timers[serviceId].intervalId);
+    }
+
+    set({
+      timers: {
+        ...timers,
+        [serviceId]: {
+          timeLeft: 30 * 60,
+          isRunning: false,
+        },
+      },
+    });
+  },
 }));
 
 export default useTimerStore;

@@ -2,6 +2,7 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
+    alignItems:'center',
     marginBottom: 8,
     backgroundColor: '#FAFAFA',
     flexDirection: 'row',
@@ -19,27 +20,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     color: 'black',
-  },
-  status: {
-    fontSize: 12,
-    color: 'white',
-    paddingHorizontal: 10,
-    borderRadius: 36,
-  },
-  done: {
-    backgroundColor: '#76D219',
-  },
-  inProgress: {
-    backgroundColor: '#FF8B20',
-  },
-  cancelled: {
-    backgroundColor: '#FF3B30',
-  },
-  default: {
-    backgroundColor: '#BFBFBF',
-  },
-  report: {
-    backgroundColor: '#FFD600',
   },
 });
 export default styles;

@@ -36,8 +36,8 @@ function Form({serviceId}: Props) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    startTimer();
-  }, [startTimer]);
+    startTimer(serviceId);
+  }, [startTimer, serviceId]);
 
   const { control, handleSubmit, getValues, setValue, formState } =
     useForm<FormData>({
@@ -176,7 +176,7 @@ function Form({serviceId}: Props) {
               >
                 У вас есть 30 минут на заполнение формы
               </Text>
-              <TimerProgress />
+              <TimerProgress serviceId={serviceId}/>
             </View>
           </Drawer>
         </View>

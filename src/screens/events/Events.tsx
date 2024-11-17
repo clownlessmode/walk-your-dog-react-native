@@ -112,7 +112,6 @@ function Events() {
         const serviceDate = new Date(service.datetime);
         const isIncludedStatus = [
           'В работе',
-          'Ожидание отчёта',
           'Поиск исполнителя',
         ].includes(service.status);
 
@@ -286,13 +285,17 @@ function Events() {
                 showsHorizontalScrollIndicator={false}
                 pagingEnabled
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
+                renderItem={({ item }) => {
+                  console.log('workeeeeerRev', item.worker)
+                  
+                  return (
                   <View style={styles.blockPeet}>
                     <EventInfo
                       worker={
                         item.worker
                           ? {
                               reviews: 0,
+                              meta: item.worker.worker.id,
                               created_at: item.worker.created_at,
                               id: item.worker.id,
                               name: item.worker.meta.name,
@@ -316,7 +319,7 @@ function Events() {
                       service={item.mainService.name}
                     />
                   </View>
-                )}
+                )}}
               />
             )}
           </View>

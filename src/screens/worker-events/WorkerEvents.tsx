@@ -227,7 +227,7 @@ function WorkerEvents() {
                       worker={
                         role === 'CLIENT'
                           ? {
-                              reviews: 0,
+                              reviews: item.worker?.reviews ? item.worker.reviews.length : 0,
                               created_at: item.worker?.created_at || '',
                               id: item.worker?.id || '',
                               name: item.worker?.meta?.name || '',
