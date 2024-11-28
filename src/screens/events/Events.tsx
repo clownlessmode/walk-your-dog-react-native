@@ -301,7 +301,7 @@ function Events() {
                               name: item.worker.meta.name,
                               img:
                                 item.worker.meta.image ||
-                                'https://default-image-url.png', // Default image if none provided
+                                'https://default-image-url.png',
                             }
                           : undefined
                       }
