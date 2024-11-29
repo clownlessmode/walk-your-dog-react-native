@@ -15,23 +15,13 @@
     },
     "ios": {
       "bundleIdentifier": "com.sssuettta.wyd",
-      "supportsTablet": true,
-      "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Мы используем ваше местоположение для отображения информации о ближайших объектах.",
-        "NSPhotoLibraryUsageDescription": "Это приложение запрашивает доступ к вашей галерее."
-      }
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": [
-        "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION",
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE"
-      ],
       "package": "com.sssuettta.wyd"
     },
     "web": {
